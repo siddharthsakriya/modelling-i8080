@@ -9,46 +9,36 @@ type word = bits(word_size)
 type dword_size : Int = 16
 type dword = bits(dword_size)
 
-/* enum for register names */
-enum reg8_enum = {
-    A,
-    B,
-    C,
-    D,
-    E,
-    H,
-    L
-}
-
-/* enum for register pair names */
-enum reg16_enum = {
-    BC,
-    DE,
-    HL
-}
-
-/* registers */
-bitfield dreg : dword = {
-    lower: 7 .. 0,
-    higher: 15 .. 8
-}
-
-/* 16-bit registers */
-register PC : dword
-register SP : dword
-
 /* 8-bit registers */
+enum reg_8bit_enum = {
+    B, //0
+    C, //1
+    D, //2
+    E, //3
+    H, //4
+    L, //5
+    A, //7
+    M  //6
+}
+
+/* enum for 16-bit registers */
+enum reg_16bit_enum = {
+    BC, //0
+    DE, //1
+    HL, //2
+    SP, //3
+}
+
+/* Mapping 8-bit register names to their binary representation */
+bitfield reg16 : dword = {
+    full : 15..0,
+    high : 15..8,
+    low : 7..0
+} 
+
 register A_reg : word
-register B_reg : word
-register C_reg : word
-register D_reg : word
-register E_reg : word
-register H_reg : word
-register L_reg : word
 
-/* 16-bit registers */
-register BC_reg : dword
-register DE_reg : dword
-register HL_reg : dword
-
-
+register BC_reg : reg16
+register DE_reg : reg16
+register HL_reg : reg16
+register SP_reg : reg16
