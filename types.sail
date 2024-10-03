@@ -36,7 +36,17 @@ bitfield reg16 : dword = {
     low : 7..0
 } 
 
+bitfield flag : word = {
+    S : 7,
+    Z : 6,
+    A : 4,
+    P : 2,
+    C : 0,
+    all: 7..0
+}
+
 register A_reg : word
+register SFW_reg : flag
 
 register BC_reg : reg16
 register DE_reg : reg16
