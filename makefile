@@ -18,6 +18,8 @@ $(SAIL_OUT): $(SAIL_SRC)
 	$(SAIL) -c $(SAIL_SRC) -o out
 	$(GCC) out.c $(LIB_PATH) $(CFLAGS) -o $(SAIL_OUT)
 
+
 # Clean up generated files
 clean:
 	rm -f out.c $(SAIL_OUT)
+	rm -f z3_problems

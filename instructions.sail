@@ -87,9 +87,7 @@ union clause ast = DCR : (reg_8bit_num)
 union clause ast = CMA : (unit)
 union clause ast = DAA : (unit)
 union clause ast = NOP : (unit)
-union clause ast = MOV : (reg_8bit_num, reg_8bit_num)
-union clause ast = STAX : (reg_16bit_num) //need to change the input as it is only one bit
-union clause ast = LDAX : (reg_16bit_num) //need to change the input as it is only one bit
+union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -118,8 +116,8 @@ function clause decode8 (0b00100111)
 function clause decode8 (0b00000000)
     = NOP()
 /* MOV instruction */
-function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num @ 0b000) 
-    = MOV(r1, r2)
+function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
+    = MOV(dst, src)
 
 /* execute function */
 val execute : ast -> bool
@@ -139,7 +137,7 @@ function clause execute (STC()) = {
 
 /* INR instruction */
 function clause execute (INR(r)) = {
-    var v = read_reg8(r);
+    var v = read_reg8(r);    
     SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
     v = add_bits(v, 0b00000001);
     write_reg8(r, v);
@@ -194,9 +192,10 @@ function clause execute (NOP()) = {
 
 /* MOV instruction */
 function clause execute (MOV(dst, src)) = {
-    write_reg8(r2, read_reg8(r1));
+    write_reg8(dst, read_reg8(src));
     true
 }
+
 
 function main() : unit -> unit = {
     write_reg8(0b000, 0b00011110);
@@ -207,3 +206,4 @@ function main() : unit -> unit = {
     // let res = execute(decode8(0b00000100));
     // print_bits("flag reg after first cycle: ", SFW_reg[all][7..7]);
 }
+

@@ -45,6 +45,9 @@ bitfield flag : word = {
     all: 7..0
 }
 
+
+
+
 register A_reg : word
 register SFW_reg : flag
 
