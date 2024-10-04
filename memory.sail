@@ -1,13 +1,13 @@
 // 65536 bytes of memory
-register main_memory : vector(65536, bits(8)) = vector_init(65536, 0b00000000)
+register main_memory : vector(65536, bits(8)) = vector_init(65536, 0x00)
 
-// read_mem function
-val read_mem : dword -> word
+//memory read function
+val read_mem : addr -> word
 function read_mem(addr) = {
-    main_memory[signed(addr)]
+    main_memory[unsigned(addr)]
 }
 
-val write_mem : (dword, word) -> unit
-function write_mem(addr, v) = {
-    main_memory[signed(addr)] = v
+val write_mem : (addr, word) -> unit
+function write_mem(addr, data) = {
+    main_memory[unsigned(addr)] = data
 }

@@ -2,6 +2,7 @@ default Order dec
 $include <prelude.sail>
 $include "types.sail"
 $include "utils.sail"
+$include "memory.sail"
 
 /* types for register names */
 type reg_8bit_num = bits(3)
@@ -205,5 +206,8 @@ function main() : unit -> unit = {
     // print_bits("flag reg before first cycle: ", SFW_reg[all]);
     // let res = execute(decode8(0b00000100));
     // print_bits("flag reg after first cycle: ", SFW_reg[all][7..7]);
+    print_int("this is the int version of 0x00: ", signed(0x00));
+    print_bits("memory: ", read_mem(0x0000));
+    
 }
 
