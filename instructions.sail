@@ -88,7 +88,8 @@ union clause ast = CMA : (unit)
 union clause ast = DAA : (unit)
 union clause ast = NOP : (unit)
 union clause ast = MOV : (reg_8bit_num, reg_8bit_num)
-union clause ast = STAX : (reg_16bit_num)
+union clause ast = STAX : (reg_16bit_num) //need to change the input as it is only one bit
+union clause ast = LDAX : (reg_16bit_num) //need to change the input as it is only one bit
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -105,8 +106,20 @@ function clause decode8 (0b00110111)
 function clause decode8 (0b00 @ r:reg_8bit_num @ 0b100) 
     = INR(r)
 /* DCR instruction */
-// function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101) 
-//     = DCR(r)
+function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101) 
+    = DCR(r)
+/* CMA instruction */
+function clause decode8 (0b00101111)
+    = CMA()
+/* DAA instruction */
+function clause decode8 (0b00100111)
+    = DAA()
+/* NOP instruction */
+function clause decode8 (0b00000000)
+    = NOP()
+/* MOV instruction */
+function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num @ 0b000) 
+    = MOV(r1, r2)
 
 /* execute function */
 val execute : ast -> bool
@@ -128,24 +141,69 @@ function clause execute (STC()) = {
 function clause execute (INR(r)) = {
     var v = read_reg8(r);
     SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-    v = v + 0b00000001;
+    v = add_bits(v, 0b00000001);
     write_reg8(r, v);
+    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
     SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-    SFW_reg[S] = if v == 0b01111111 then 0b1 else 0b0; //if D contains 0x7f then we need sign flag to be 1
     SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
     true
 }
 
-function main() : unit -> unit = {
-    
-    write_reg8(0b000, 0b00001111);
-    print_bits("flag reg before first cycle: ", SFW_reg[all]);
-    let res = execute(decode8(0b00000100));
-    print_bits("flag reg after first cycle: ", SFW_reg[all]);
-    let res = execute(decode8(0b00000100));
-    print_bits("flag reg after second cycle: ", SFW_reg[all]);
-    let res = execute(decode8(0b00000100));
-    print_bits("flag reg after third cycle: ", SFW_reg[all]);
+/* DCR instruction */
+function clause execute (DCR(r)) = {
+    var v = read_reg8(r);
+    v_lsbs: bits(4)  = v[3..0];
+    SFW_reg[A] = if v_lsbs == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
+    v = sub_bits(v, 0b00000001);
+    write_reg8(r, v);
+    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
+    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    true
 }
 
+/* CMA instruction */
+function clause execute (CMA()) = {
+    var v = A_reg;
+    v = xor_vec(v, 0b11111111);
+    A_reg = v;
+    true
+}
 
+/* DAA instruction */
+function clause execute (DAA()) = {
+    var v = A_reg;
+    var lower_nibble: bits(4) = v[3..0];
+    var lower_value = signed(lower_nibble);
+
+    if lower_value > 9 | SFW_reg[A] == 0b1 then {
+        v = add_bits(v, 0b00000110); //increment accumulator by 6
+    };
+    upper_nibble: bits(4) = v[7..4];
+    var upper_value = signed(upper_nibble);
+    if upper_value > 9 | SFW_reg[C] == 0b1 then {
+        upper_nibble = add_bits(upper_nibble, 0b0110);
+    };
+    true
+}   
+
+/* NOP instruction */
+function clause execute (NOP()) = {
+    true
+}
+
+/* MOV instruction */
+function clause execute (MOV(dst, src)) = {
+    write_reg8(r2, read_reg8(r1));
+    true
+}
+
+function main() : unit -> unit = {
+    write_reg8(0b000, 0b00011110);
+    let res = execute(decode8(0b00000101));
+    let res = execute(decode8(0b00000101));
+    print_int("B register after first cycle: ", signed(read_reg8(0b000)));
+    // print_bits("flag reg before first cycle: ", SFW_reg[all]);
+    // let res = execute(decode8(0b00000100));
+    // print_bits("flag reg after first cycle: ", SFW_reg[all][7..7]);
+}
