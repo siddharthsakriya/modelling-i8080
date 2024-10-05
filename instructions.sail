@@ -138,13 +138,27 @@ function clause execute (STC()) = {
 
 /* INR instruction */
 function clause execute (INR(r)) = {
-    var v = read_reg8(r);    
-    SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-    v = add_bits(v, 0b00000001);
-    write_reg8(r, v);
-    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
-    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    if r == 0b110 then {
+        //need to retrieve the memory address from HL register
+        var h_val: word = read_reg8(0b100);
+        var l_val: word = read_reg8(0b101);
+        var addr_in_mem: addr = h_val @ l_val;
+        var v = read_mem(addr_in_mem);
+        SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
+        v = add_bits(v, 0b00000001);
+        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
+        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+        write_mem(addr_in_mem, v);
+    } else {
+        var v = read_reg8(r);    
+        SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
+        v = add_bits(v, 0b00000001);
+        write_reg8(r, v);
+        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
+        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    };    
     true
 }
 
@@ -194,8 +208,10 @@ function clause execute (NOP()) = {
 /* MOV instruction */
 function clause execute (MOV(dst, src)) = {
     write_reg8(dst, read_reg8(src));
-    true
+    true 
 }
+
+
 
 
 function main() : unit -> unit = {
