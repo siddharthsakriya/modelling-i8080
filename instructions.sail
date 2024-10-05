@@ -89,6 +89,13 @@ union clause ast = CMA : (unit)
 union clause ast = DAA : (unit)
 union clause ast = NOP : (unit)
 union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
+union clause ast = STAX : (bits(1))
+union clause ast = LDAX : (bits(1))
+union clause ast = ADD : (reg_8bit_num)
+union clause ast = SUB : (reg_8bit_num)
+union clause ast = SBB : (reg_8bit_num)
+union clause ast = ANA : (reg_8bit_num)
+union clause ast = XRA : (reg_8bit_num)
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -119,6 +126,18 @@ function clause decode8 (0b00000000)
 /* MOV instruction */
 function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
     = MOV(dst, src)
+function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b0010)
+    = STAX(reg_pair)
+function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
+    = LDAX(reg_pair)
+function clause decode8 (0b10000 @ r:reg_8bit_num)
+    = ADD(r)
+function clause decode8 (0b10010 @ r:reg_8bit_num)
+    = SUB(r)
+function clause decode8 (0b10011 @ r:reg_8bit_num)
+    = SBB(r)
+function clause decode8 (0b10100 @ r:reg_8bit_num)
+    = ANA(r)
 
 /* execute function */
 val execute : ast -> bool
@@ -140,9 +159,7 @@ function clause execute (STC()) = {
 function clause execute (INR(r)) = {
     if r == 0b110 then {
         //need to retrieve the memory address from HL register
-        var h_val: word = read_reg8(0b100);
-        var l_val: word = read_reg8(0b101);
-        var addr_in_mem: addr = h_val @ l_val;
+        var addr_in_mem: addr = read_reg16(0b10);
         var v = read_mem(addr_in_mem);
         SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
         v = add_bits(v, 0b00000001);
@@ -164,14 +181,24 @@ function clause execute (INR(r)) = {
 
 /* DCR instruction */
 function clause execute (DCR(r)) = {
-    var v = read_reg8(r);
-    v_lsbs: bits(4)  = v[3..0];
-    SFW_reg[A] = if v_lsbs == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
-    v = sub_bits(v, 0b00000001);
-    write_reg8(r, v);
-    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
-    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    if r == 0b110 then {
+        var addr_in_mem: addr = read_reg16(0b10);
+        var v = read_mem(addr_in_mem);
+        SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry
+        v = sub_bits(v, 0b00000001);
+        write_mem(addr_in_mem, v);
+        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
+        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1 
+    } else {
+        var v = read_reg8(r);
+        SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
+        v = sub_bits(v, 0b00000001);
+        write_reg8(r, v);
+        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
+        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    };
     true
 }
 
@@ -211,19 +238,84 @@ function clause execute (MOV(dst, src)) = {
     true 
 }
 
+/* STAX instruction */
+function clause execute (STAX(reg_pair)) = {
+    if reg_pair == 0b0 then {
+        var addr: addr = read_reg16(0b00);
+        var v = A_reg;
+        write_mem(addr, v);
+    } else {
+        var addr: addr = read_reg16(0b01);
+        var v = A_reg;
+        write_mem(addr, v);
+    };
+    true
+}
+
+/* LDAX instruction */
+function clause execute (LDAX(reg_pair)) = {
+    if reg_pair == 0b0 then {
+        var addr: addr = read_reg16(0b00);
+        A_reg = read_mem(addr);
+    } else {
+        var addr: addr = read_reg16(0b01);
+        A_reg = read_mem(addr);
+    };
+    true
+}
+
+/* ADD instruction */
+function clause execute (ADD(r)) = {
+    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    A_reg = add_bits(A_reg, v);
+    /* TODO: flag setting*/
+    true
+}
+
+/* SUB instruction */
+function clause execute (SUB(r)) = {
+    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    A_reg = sub_bits(A_reg, v);
+    /* TODO: flag setting*/
+    true
+}
+
+/* SBB instruction */
+function clause execute (SBB(r)) = {
+    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
+    A_reg = sub_bits(A_reg, v);
+    /*TODO: flag setting*/
+    true
+}
+
+/* ANA instruction */
+function clause execute (ANA(r)) = {
+    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    A_reg = and_vec(A_reg, v);
+    true
+}
 
 
 
 function main() : unit -> unit = {
-    write_reg8(0b000, 0b00011110);
-    let res = execute(decode8(0b00000101));
-    let res = execute(decode8(0b00000101));
-    print_int("B register after first cycle: ", signed(read_reg8(0b000)));
+    // write_reg8(0b000, 0b00011110);
+    // let res = execute(decode8(0b00000101));
+    // let res = execute(decode8(0b00000101));
+    // print_int("B register after first cycle: ", signed(read_reg8(0b000)));
     // print_bits("flag reg before first cycle: ", SFW_reg[all]);
     // let res = execute(decode8(0b00000100));
     // print_bits("flag reg after first cycle: ", SFW_reg[all][7..7]);
-    print_int("this is the int version of 0x00: ", signed(0x00));
-    print_bits("memory: ", read_mem(0x0000));
-    
+    // print_int("this is the int version of 0x00: ", signed(0x00));
+    // print_bits("memory: ", read_mem(0x0000));
+    // SFW_reg[C] = 0b1;
+    // A_reg = 0b00000100;
+    // write_reg8(0b000, 0b00000010);
+    // let res = execute(decode8(0b10011000));
+    // print_bits("B register after first cycle: ", A_reg);
+    A_reg = 0b11111100;
+    write_reg8(0b000, 0b00001111);
+    let res = execute(decode8(0b10100000));
+    print_bits("A register after first cycle: ", A_reg);
 }
 
