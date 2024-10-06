@@ -95,11 +95,14 @@ union clause ast = MOV : (reg_8bit_num, reg_8bit_num)
 union clause ast = STAX : (bits(1))
 union clause ast = LDAX : (bits(1))
 union clause ast = ADD : (reg_8bit_num)
+union clause ast = ADC : (reg_8bit_num)
 union clause ast = SUB : (reg_8bit_num)
 union clause ast = SBB : (reg_8bit_num)
 union clause ast = ANA : (reg_8bit_num)
 union clause ast = XRA : (reg_8bit_num)
 union clause ast = ORA : (reg_8bit_num)
+union clause ast = CMP : (reg_8bit_num)
+
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -128,6 +131,8 @@ function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
     = LDAX(reg_pair)
 function clause decode8 (0b10000 @ r:reg_8bit_num)
     = ADD(r)
+function clause decode8 (0b10001 @ r:reg_8bit_num)
+    = ADC(r)
 function clause decode8 (0b10010 @ r:reg_8bit_num)
     = SUB(r)
 function clause decode8 (0b10011 @ r:reg_8bit_num)
@@ -138,6 +143,8 @@ function clause decode8 (0b10101 @ r:reg_8bit_num)
     = XRA(r)
 function clause decode8 (0b10110 @ r:reg_8bit_num)
     = ORA(r)
+function clause decode8 (0b10111 @ r:reg_8bit_num)
+    = CMP(r)
 
 /* execute function */
 val execute : ast -> bool
@@ -244,25 +251,48 @@ function clause execute (LDAX(reg_pair)) = {
 /* ADD instruction */
 function clause execute (ADD(r)) = {
     var v: word = read_reg8(r);
+    SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0; //if there is a carry from the 8th bit then carry flag should be 1
+    SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0; //if there is a carry from the 4th bit then auxillary flag should be 1
     A_reg = add_bits(A_reg, v);
-    /* TODO: flag setting*/
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
+function clause execute (ADC(r)) = {
+    var v: word = read_reg8(r);
+    SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), add_bits(sail_zero_extend(v, 9), sail_zero_extend(SFW_reg[C], 9)))[8..8] == 0b1 then 0b1 else 0b0;
+    SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), add_bits(sail_zero_extend(v[3..0], 5), sail_zero_extend(SFW_reg[C], 5)))[4..4] == 0b1 then 0b1 else 0b0;
+    A_reg = add_bits(A_reg, add_bits(v, sail_zero_extend(SFW_reg[C], 8)));
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+    true
+}
 /* SUB instruction */
 function clause execute (SUB(r)) = {
     var v: word = read_reg8(r);
+    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
+    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0; 
     A_reg = sub_bits(A_reg, v);
-    /* TODO: flag setting*/
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
 /* SBB instruction */
 function clause execute (SBB(r)) = {
     var v: word = read_reg8(r);
+    var v_lower_with_carry = add_bits(v[3..0], sail_zero_extend(SFW_reg[C], 4));
+    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v_lower_with_carry) then 0b1 else 0b0;    
     v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
+    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0; 
     A_reg = sub_bits(A_reg, v);
-    /*TODO: flag setting*/
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
@@ -270,24 +300,44 @@ function clause execute (SBB(r)) = {
 function clause execute (ANA(r)) = {
     var v: word = read_reg8(r);
     A_reg = and_vec(A_reg, v);
-    /*TODO: flag setting*/
+    SFW_reg[C] = 0b0;
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
 function clause execute (XRA(r)) = {
     var v: word = read_reg8(r);
     A_reg = xor_vec(A_reg, v);
-    /*TODO: flag setting*/
+    SFW_reg[C] = 0b0;
+    SFW_reg[A] = 0b0; // unsure about this
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
 function clause execute (ORA(r)) = {
     var v: word = read_reg8(r);
     A_reg = or_vec(A_reg, v);
-    /*TODO: flag setting*/
+    SFW_reg[C] = 0b0;
+    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     true
 }
 
+function clause execute (CMP(r)) = {
+    var v: word = read_reg8(r);
+    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
+    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0;
+    var res = sub_bits(A_reg, v);
+    SFW_reg[P] = if xor_reduce(res) == 0b0 then 0b1 else 0b0;
+    SFW_reg[S] = if res[7..7] == 0b1 then 0b1 else 0b0;
+    SFW_reg[Z] = if res == 0b00000000 then 0b1 else 0b0;    
+    true
+}
 
 
 function main() : unit -> unit = {
@@ -305,9 +355,18 @@ function main() : unit -> unit = {
     // write_reg8(0b000, 0b00000010);
     // let res = execute(decode8(0b10011000));
     // print_bits("B register after first cycle: ", A_reg);
-    A_reg = 0b11111100;
-    write_reg8(0b000, 0b00001111);
-    let res = execute(decode8(0b10100000));
+    // A_reg = 0b11111100;
+    // write_reg8(0b000, 0b00001111);
+    // let res = execute(decode8(0b10100000));
+    // print_bits("A register after first cycle: ", A_reg);
+    // write_reg8(0b000, 0b11111111);
+    // write_reg8(0b111, 0b11111111);
+    // let res = execute(decode8(0b10000000));
+    // print_bits("flag register ", SFW_reg[all]);
+    write_reg8(0b000, 0b00000011);
+    write_reg8(0b111, 0b00000010);
+    let res = execute(decode8(0b10010000));
+    print_bits("flag register ", SFW_reg[all]);
     print_bits("A register after first cycle: ", A_reg);
 }
 
