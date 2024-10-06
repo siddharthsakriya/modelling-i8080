@@ -28,34 +28,6 @@ mapping reg16_num_map : reg_16bit_enum <-> reg_16bit_num = {
     SP <-> 0b11
 }
 
-/* read_reg8 function */
-val read_reg8 : reg_8bit_num -> word 
-function read_reg8(r) = {
-    match r {
-        0b000 => BC_reg[high],
-        0b001 => BC_reg[low],
-        0b010 => DE_reg[high],
-        0b011 => DE_reg[low],
-        0b100 => HL_reg[high],
-        0b101 => HL_reg[low],
-        0b111 => A_reg
-    }
-}
-
-
-/* write_reg8 function */
-val write_reg8 : (reg_8bit_num, word) -> unit
-function write_reg8(r, v) = {
-    match r {
-        0b000 => BC_reg[high] = v,
-        0b001 => BC_reg[low] = v,
-        0b010 => DE_reg[high] = v,
-        0b011 => DE_reg[low] = v,
-        0b100 => HL_reg[high] = v,
-        0b101 => HL_reg[low] = v,
-        0b111 => A_reg = v
-    }
-}
 
 /* read_reg16 function */
 val read_reg16 : reg_16bit_num -> dword
@@ -79,6 +51,37 @@ function write_reg16(r, v) = {
     }
 }
 
+/* read_reg8 function */
+val read_reg8 : reg_8bit_num -> word 
+function read_reg8(r) = {
+    match r {
+        0b000 => BC_reg[high],
+        0b001 => BC_reg[low],
+        0b010 => DE_reg[high],
+        0b011 => DE_reg[low],
+        0b100 => HL_reg[high],
+        0b101 => HL_reg[low],
+        0b110 => read_mem(read_reg16(0b10)),
+        0b111 => A_reg
+    }
+}
+
+
+/* write_reg8 function */
+val write_reg8 : (reg_8bit_num, word) -> unit
+function write_reg8(r, v) = {
+    match r {
+        0b000 => BC_reg[high] = v,
+        0b001 => BC_reg[low] = v,
+        0b010 => DE_reg[high] = v,
+        0b011 => DE_reg[low] = v,
+        0b100 => HL_reg[high] = v,
+        0b101 => HL_reg[low] = v,
+        0b110 => write_mem(read_reg16(0b10), v),
+        0b111 => A_reg = v
+    }
+}
+
 scattered union ast 
 
 union clause ast = CMC : (unit)
@@ -96,34 +99,27 @@ union clause ast = SUB : (reg_8bit_num)
 union clause ast = SBB : (reg_8bit_num)
 union clause ast = ANA : (reg_8bit_num)
 union clause ast = XRA : (reg_8bit_num)
+union clause ast = ORA : (reg_8bit_num)
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
 
 /* decode8 function: decodes 8-bit instructions */
 val decode8 : instruction8 -> ast
-/* CMC instruction */
 function clause decode8 (0b00111111) 
     = CMC()
-/* STC instruction */
 function clause decode8 (0b00110111) 
     = STC()
-/* INR instruction */
 function clause decode8 (0b00 @ r:reg_8bit_num @ 0b100) 
     = INR(r)
-/* DCR instruction */
 function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101) 
     = DCR(r)
-/* CMA instruction */
 function clause decode8 (0b00101111)
     = CMA()
-/* DAA instruction */
 function clause decode8 (0b00100111)
     = DAA()
-/* NOP instruction */
 function clause decode8 (0b00000000)
     = NOP()
-/* MOV instruction */
 function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
     = MOV(dst, src)
 function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b0010)
@@ -138,6 +134,10 @@ function clause decode8 (0b10011 @ r:reg_8bit_num)
     = SBB(r)
 function clause decode8 (0b10100 @ r:reg_8bit_num)
     = ANA(r)
+function clause decode8 (0b10101 @ r:reg_8bit_num)
+    = XRA(r)
+function clause decode8 (0b10110 @ r:reg_8bit_num)
+    = ORA(r)
 
 /* execute function */
 val execute : ast -> bool
@@ -157,48 +157,25 @@ function clause execute (STC()) = {
 
 /* INR instruction */
 function clause execute (INR(r)) = {
-    if r == 0b110 then {
-        //need to retrieve the memory address from HL register
-        var addr_in_mem: addr = read_reg16(0b10);
-        var v = read_mem(addr_in_mem);
-        SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-        v = add_bits(v, 0b00000001);
-        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
-        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-        write_mem(addr_in_mem, v);
-    } else {
-        var v = read_reg8(r);    
-        SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-        v = add_bits(v, 0b00000001);
-        write_reg8(r, v);
-        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
-        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-    };    
+    var v = read_reg8(r);    
+    SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
+    v = add_bits(v, 0b00000001);
+    write_reg8(r, v);
+    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
+    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
     true
 }
 
 /* DCR instruction */
 function clause execute (DCR(r)) = {
-    if r == 0b110 then {
-        var addr_in_mem: addr = read_reg16(0b10);
-        var v = read_mem(addr_in_mem);
-        SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry
-        v = sub_bits(v, 0b00000001);
-        write_mem(addr_in_mem, v);
-        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
-        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1 
-    } else {
-        var v = read_reg8(r);
-        SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
-        v = sub_bits(v, 0b00000001);
-        write_reg8(r, v);
-        SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
-        SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-        SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-    };
+    var v = read_reg8(r);
+    SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
+    v = sub_bits(v, 0b00000001);
+    write_reg8(r, v);
+    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
+    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
     true
 }
 
@@ -266,7 +243,7 @@ function clause execute (LDAX(reg_pair)) = {
 
 /* ADD instruction */
 function clause execute (ADD(r)) = {
-    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    var v: word = read_reg8(r);
     A_reg = add_bits(A_reg, v);
     /* TODO: flag setting*/
     true
@@ -274,7 +251,7 @@ function clause execute (ADD(r)) = {
 
 /* SUB instruction */
 function clause execute (SUB(r)) = {
-    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    var v: word = read_reg8(r);
     A_reg = sub_bits(A_reg, v);
     /* TODO: flag setting*/
     true
@@ -282,7 +259,7 @@ function clause execute (SUB(r)) = {
 
 /* SBB instruction */
 function clause execute (SBB(r)) = {
-    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    var v: word = read_reg8(r);
     v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
     A_reg = sub_bits(A_reg, v);
     /*TODO: flag setting*/
@@ -291,8 +268,23 @@ function clause execute (SBB(r)) = {
 
 /* ANA instruction */
 function clause execute (ANA(r)) = {
-    var v: word = if r == 0b110 then read_mem(read_reg16(0b10)) else read_reg8(r);
+    var v: word = read_reg8(r);
     A_reg = and_vec(A_reg, v);
+    /*TODO: flag setting*/
+    true
+}
+
+function clause execute (XRA(r)) = {
+    var v: word = read_reg8(r);
+    A_reg = xor_vec(A_reg, v);
+    /*TODO: flag setting*/
+    true
+}
+
+function clause execute (ORA(r)) = {
+    var v: word = read_reg8(r);
+    A_reg = or_vec(A_reg, v);
+    /*TODO: flag setting*/
     true
 }
 
