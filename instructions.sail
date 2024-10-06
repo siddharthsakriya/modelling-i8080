@@ -102,7 +102,10 @@ union clause ast = ANA : (reg_8bit_num)
 union clause ast = XRA : (reg_8bit_num)
 union clause ast = ORA : (reg_8bit_num)
 union clause ast = CMP : (reg_8bit_num)
-
+union clause ast = RLC : (unit)
+union clause ast = RRC : (unit)
+union clause ast = RAL : (unit)
+union clause ast = RAR : (unit)
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -145,6 +148,14 @@ function clause decode8 (0b10110 @ r:reg_8bit_num)
     = ORA(r)
 function clause decode8 (0b10111 @ r:reg_8bit_num)
     = CMP(r)
+function clause decode8 (0b00000111) 
+    = RLC()
+function clause decode8 (0b00001111) 
+    = RRC()
+function clause decode8 (0b00010111)
+    = RAL()
+function clause decode8 (0b00011111)
+    = RAR()
 
 /* execute function */
 val execute : ast -> bool
@@ -339,6 +350,45 @@ function clause execute (CMP(r)) = {
     true
 }
 
+function clause execute (RLC()) = {
+    var v = A_reg;
+    var msb = v[7..7];
+    v = shiftl(v, 1);
+    v[0..0] = msb;
+    A_reg = v;
+    SFW_reg[C] = msb;
+    true
+}
+
+function clause execute(RRC()) = {
+    var v = A_reg;
+    var lsb = v[0..0];
+    v = shiftr(v, 1);
+    v[7..7] = lsb;
+    A_reg = v;
+    SFW_reg[C] = lsb;
+    true
+}
+
+function clause execute(RAL()) = {
+    var v = A_reg;
+    var msb = v[7..7];
+    v = shiftl(v, 1);
+    v[0..0] = SFW_reg[C];
+    A_reg = v;
+    SFW_reg[C] = msb;
+    true
+}
+
+function clause execute(RAR()) = {
+    var v = A_reg;
+    var lsb = v[0..0];
+    v = shiftr(v, 1);
+    v[7..7] = SFW_reg[C];
+    A_reg = v;
+    SFW_reg[C] = lsb;
+    true
+}
 
 function main() : unit -> unit = {
     // write_reg8(0b000, 0b00011110);
@@ -363,10 +413,14 @@ function main() : unit -> unit = {
     // write_reg8(0b111, 0b11111111);
     // let res = execute(decode8(0b10000000));
     // print_bits("flag register ", SFW_reg[all]);
-    write_reg8(0b000, 0b00000011);
-    write_reg8(0b111, 0b00000010);
-    let res = execute(decode8(0b10010000));
-    print_bits("flag register ", SFW_reg[all]);
+    // write_reg8(0b000, 0b00000011);
+    // write_reg8(0b111, 0b00000010);
+    // let res = execute(decode8(0b10010000));
+    // print_bits("flag register ", SFW_reg[all]);
+    // print_bits("A register after first cycle: ", A_reg);
+    write_reg8(0b111, 0b11110010);
+    let res = execute(decode8(0b00001111));
     print_bits("A register after first cycle: ", A_reg);
+    print_bits("flag register ", SFW_reg[all]);
 }
 
