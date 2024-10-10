@@ -4,7 +4,7 @@ GCC = gcc
 CFLAGS = -lgmp -lz -I /Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/
 
 # Source files
-SAIL_SRC = instructions.sail
+SAIL_SRC = main.sail
 LIB_PATH = /Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/*.c
 
 # Output files
