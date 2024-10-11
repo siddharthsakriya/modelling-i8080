@@ -52,3 +52,4 @@ register BC_reg : reg16
 register DE_reg : reg16
 register HL_reg : reg16
 register SP_reg : reg16
+register PC_reg : reg16

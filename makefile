@@ -23,3 +23,7 @@ $(SAIL_OUT): $(SAIL_SRC)
 clean:
 	rm -f out.c $(SAIL_OUT)
 	rm -f z3_problems
+	rm -f output.txt
+
+write:
+	./out| tee output.txt

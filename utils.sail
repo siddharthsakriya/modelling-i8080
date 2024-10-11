@@ -10,6 +10,11 @@ function xor_reduce(v) = {
     x
 }
 
+val increment_pc : unit -> unit
+function increment_pc() = {
+    PC_reg[full] = add_bits(PC_reg[full], 0x0001)
+}
+
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 
