@@ -8,13 +8,13 @@ $include "instructions.sail"
 
 /* Refer to page 13 of manual on deramp for startup, SP seems to be unspecified*/
 /* loads program into mem */
-function load_program(): unit -> unit = {
-    /*write program in here into memory from address 0x0000*/
-}
+// function load_program(): unit -> unit = {
+    
+// }
 
 function startup() : unit -> unit = {
     PC_reg[full] = 0x0000;
-    load_program();
+    // load_program();
 }
 
 function fetch_decode_execute(last_instruction) : bool -> bool = {

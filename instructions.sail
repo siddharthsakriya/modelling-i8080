@@ -119,6 +119,7 @@ union clause ast = RLC : (unit)
 union clause ast = RRC : (unit)
 union clause ast = RAL : (unit)
 union clause ast = RAR : (unit)
+union clause ast = PUSH : 
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -454,3 +455,5 @@ function clause execute(RAR()) = {
     print_endline("Instruction completed: RAR");
     true
 }
+
+
