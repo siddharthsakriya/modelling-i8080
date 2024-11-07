@@ -52,11 +52,34 @@ function update_c_flag(c_flag) = {
 }
 
 val read_s_flag : unit -> bits(1)
-val read_z_flag : unit -> bits(1)
-val read_a_flag : unit -> bits(1)
-val read_p_flag : unit -> bits(1)
-val read_c_flag : unit -> bits(1)
+function read_s_flag() = {
+    var flag_reg : word = AF_reg[low];
+    flag_reg[7..7];
+}
 
+val read_z_flag : unit -> bits(1)
+function read_z_flag() = {
+    var flag_reg : word = AF_reg[low];
+    flag_reg[6..6];
+}
+
+val read_a_flag : unit -> bits(1)
+function read_a_flag() = {
+    var flag_reg : word = AF_reg[low];
+    flag_reg[4..4];
+}
+
+val read_p_flag : unit -> bits(1)
+function read_p_flag() = {
+    var flag_reg : word = AF_reg[low];
+    flag_reg[2..2]
+}
+
+val read_c_flag : unit -> bits(1)
+function read_p_flag() = {
+    var flag_reg : word = AF_reg[low];
+    flag_reg[0..0]
+}
 
 val increment_pc : unit -> unit
 function increment_pc() = {
