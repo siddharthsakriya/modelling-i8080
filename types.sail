@@ -26,8 +26,7 @@ enum reg_16bit_enum = {
     BC, //0
     DE, //1
     HL, //2
-    SP, //3
-
+    AF, //3
 }
 
 /* Mapping 8-bit register names to their binary representation */
@@ -52,6 +51,7 @@ register SFW_reg : flag
 register BC_reg : reg16
 register DE_reg : reg16
 register HL_reg : reg16
+register AF_reg : reg16
 
 register SP_reg : reg16
 register PC_reg : reg16

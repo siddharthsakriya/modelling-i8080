@@ -19,7 +19,7 @@ mapping reg16_num_map : reg_16bit_enum <-> reg_16bit_num = {
     BC <-> 0b00,
     DE <-> 0b01,
     HL <-> 0b10,
-    SP <-> 0b11
+    AF <-> 0b11
 }
 
 
@@ -76,6 +76,9 @@ function write_reg8(r, v) = {
     }
 }
 
+
+
+
 /* string mappings for registers to asssist with printing */
 mapping reg8_str_map : reg_8bit_enum <-> string = {
     B <-> "B",
@@ -92,7 +95,7 @@ mapping reg16_str_map : reg_16bit_enum <-> string = {
     BC <-> "BC",
     DE <-> "DE",
     HL <-> "HL",
-    SP <-> "SP"
+    AF <-> "AF"
 }
 
 scattered union ast 
@@ -119,7 +122,6 @@ union clause ast = RLC : (unit)
 union clause ast = RRC : (unit)
 union clause ast = RAL : (unit)
 union clause ast = RAR : (unit)
-union clause ast = PUSH : 
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
