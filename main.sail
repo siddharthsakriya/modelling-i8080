@@ -28,7 +28,11 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 
 function main() : unit -> unit = {
 
-    startup();
+    // startup();
+    print_bits("refactoring", AF_reg[low]);
+    update_s_flag(0b1);
+    print_bits("after", AF_reg[low]);
 
-    while (fetch_decode_execute(true)) do ();
+
+    // while (fetch_decode_execute(true)) do ();
 }
