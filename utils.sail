@@ -76,7 +76,7 @@ function read_p_flag() = {
 }
 
 val read_c_flag : unit -> bits(1)
-function read_p_flag() = {
+function read_c_flag() = {
     var flag_reg : word = AF_reg[low];
     flag_reg[0..0]
 }
@@ -86,6 +86,15 @@ function increment_pc() = {
     PC_reg[full] = add_bits(PC_reg[full], 0x0001)
 }
 
+val print_processor_state : unit -> unit
+function print_processor_state() = {
+    print_bits("PSW: ", AF_reg[full]);
+    print_bits("HL: ", HL_reg[full]);
+    print_bits("DE: ", DE_reg[full]);
+    print_bits("BC: ", BC_reg[full]);
+    print_bits("SP: ", SP_reg[full]);
+    print_bits("PC: ", PC_reg[full]);
+}
 
 //sail_shiftleft 
 //sail_shiftright 

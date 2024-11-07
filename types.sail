@@ -46,7 +46,6 @@ bitfield reg16 : dword = {
 // }
 
 register A_reg : word
-// register SFW_reg : flag
 
 register BC_reg : reg16
 register DE_reg : reg16
