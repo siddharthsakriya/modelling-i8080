@@ -19,7 +19,7 @@ mapping reg16_num_map : reg_16bit_enum <-> reg_16bit_num = {
     BC <-> 0b00,
     DE <-> 0b01,
     HL <-> 0b10,
-    SP <-> 0b11
+    AF <-> 0b11
 }
 
 
@@ -30,7 +30,7 @@ function read_reg16(r) = {
         0b00 => BC_reg[full], 
         0b01 => DE_reg[full],
         0b10 => HL_reg[full],
-        0b11 => SP_reg[full]
+        0b11 => AF_reg[full]
     }
 }
 
@@ -56,7 +56,7 @@ function read_reg8(r) = {
         0b100 => HL_reg[high],
         0b101 => HL_reg[low],
         0b110 => read_mem(read_reg16(0b10)),
-        0b111 => A_reg
+        0b111 => AF_reg[high]
     }
 }
 
@@ -72,7 +72,7 @@ function write_reg8(r, v) = {
         0b100 => HL_reg[high] = v,
         0b101 => HL_reg[low] = v,
         0b110 => write_mem(read_reg16(0b10), v),
-        0b111 => A_reg = v
+        0b111 => AF_reg[high] = v
     }
 }
 
@@ -92,7 +92,7 @@ mapping reg16_str_map : reg_16bit_enum <-> string = {
     BC <-> "BC",
     DE <-> "DE",
     HL <-> "HL",
-    SP <-> "SP"
+    AF <-> "AF"
 }
 
 scattered union ast 
@@ -176,281 +176,285 @@ scattered function execute
 
 /* CMC instruction */
 function clause execute (CMC()) = {
-    SFW_reg[C] = if SFW_reg[C] == 0b1 then 0b0 else 0b1;  
-
+    var c_flag = read_c_flag();
+    c_flag = if c_flag == 0b1 then 0b0 else 0b1;  
+    update_c_flag(c_flag);
     print_endline("Instruction completed: CMC");
-    true
-}
-
-/* STC instruction */
-function clause execute (STC()) = {
-    SFW_reg[C] = 0b1;
-
-    print_endline("Instruction completed: STC");
-    true
-}
-
-/* INR instruction */
-function clause execute (INR(r)) = {
-    var v = read_reg8(r);    
-    SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-    v = add_bits(v, 0b00000001);
-    write_reg8(r, v);
-    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
-    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-    
-    print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
-    true
-}
-
-/* DCR instruction */
-function clause execute (DCR(r)) = {
-    var v = read_reg8(r);
-    SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
-    v = sub_bits(v, 0b00000001);
-    write_reg8(r, v);
-    SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
-    SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-    SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-
-    print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
-    true
-}
-
-/* CMA instruction */
-function clause execute (CMA()) = {
-    var v = A_reg;
-    v = xor_vec(v, 0b11111111);
-    A_reg = v;
-
-    print_endline("Instruction completed: CMA");
-    true
-}
-
-/* DAA instruction */ /* STILL TO BE DONE */
-function clause execute (DAA()) = {
-    var v = A_reg;
-    var lower_nibble: bits(4) = v[3..0];
-    var lower_value = signed(lower_nibble);
-
-    if lower_value > 9 | SFW_reg[A] == 0b1 then {
-        v = add_bits(v, 0b00000110); //increment accumulator by 6
-    };
-    upper_nibble: bits(4) = v[7..4];
-    var upper_value = signed(upper_nibble);
-    if upper_value > 9 | SFW_reg[C] == 0b1 then {
-        upper_nibble = add_bits(upper_nibble, 0b0110);
-    };
-
-    true
-}   
-
-/* NOP instruction */
-function clause execute (NOP()) = {
-    /*false right no so it doesnt infinite loop in fetch_decode_execute*/
-    print_endline("Instruction completed: NOP");
+    print_processor_state();
     false
 }
 
-/* MOV instruction */
-function clause execute (MOV(dst, src)) = {
-    write_reg8(dst, read_reg8(src));
+// /* STC instruction */
+// function clause execute (STC()) = {
+//     SFW_reg[C] = 0b1;
 
-    print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
-    true 
-}
+//     print_endline("Instruction completed: STC");
+//     true
+// }
 
-/* STAX instruction */
-function clause execute (STAX(reg_pair)) = {
-    if reg_pair == 0b0 then {
-        var addr: addr = read_reg16(0b00);
-        var v = A_reg;
-        write_mem(addr, v);
-    } else {
-        var addr: addr = read_reg16(0b01);
-        var v = A_reg;
-        write_mem(addr, v);
-    };
-
-    print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));   
-    true
-}
-
-/* LDAX instruction */
-function clause execute (LDAX(reg_pair)) = {
-    if reg_pair == 0b0 then {
-        var addr: addr = read_reg16(0b00);
-        A_reg = read_mem(addr);
-    } else {
-        var addr: addr = read_reg16(0b01);
-        A_reg = read_mem(addr);
-    };
-
-    print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
-    true
-}
-
-/* ADD instruction */
-function clause execute (ADD(r)) = {
-    var v: word = read_reg8(r);
-    SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0; //if there is a carry from the 8th bit then carry flag should be 1
-    SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0; //if there is a carry from the 4th bit then auxillary flag should be 1
-    A_reg = add_bits(A_reg, v);
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+// /* INR instruction */
+// function clause execute (INR(r)) = {
+//     var v = read_reg8(r);    
+//     SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
+//     v = add_bits(v, 0b00000001);
+//     write_reg8(r, v);
+//     SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
+//     SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+//     SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
     
-    print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+//     print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-/* ADC instruction */
-function clause execute (ADC(r)) = {
-    var v: word = read_reg8(r);
-    SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), add_bits(sail_zero_extend(v, 9), sail_zero_extend(SFW_reg[C], 9)))[8..8] == 0b1 then 0b1 else 0b0;
-    SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), add_bits(sail_zero_extend(v[3..0], 5), sail_zero_extend(SFW_reg[C], 5)))[4..4] == 0b1 then 0b1 else 0b0;
-    A_reg = add_bits(A_reg, add_bits(v, sail_zero_extend(SFW_reg[C], 8)));
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+// /* DCR instruction */
+// function clause execute (DCR(r)) = {
+//     var v = read_reg8(r);
+//     SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
+//     v = sub_bits(v, 0b00000001);
+//     write_reg8(r, v);
+//     SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
+//     SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
+//     SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+
+//     print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
+
+// /* CMA instruction */
+// function clause execute (CMA()) = {
+//     var v = A_reg;
+//     v = xor_vec(v, 0b11111111);
+//     A_reg = v;
+
+//     print_endline("Instruction completed: CMA");
+//     true
+// }
+
+// /* DAA instruction */ /* STILL TO BE DONE */
+// function clause execute (DAA()) = {
+//     var v = A_reg;
+//     var lower_nibble: bits(4) = v[3..0];
+//     var lower_value = signed(lower_nibble);
+
+//     if lower_value > 9 | SFW_reg[A] == 0b1 then {
+//         v = add_bits(v, 0b00000110); //increment accumulator by 6
+//     };
+//     upper_nibble: bits(4) = v[7..4];
+//     var upper_value = signed(upper_nibble);
+//     if upper_value > 9 | SFW_reg[C] == 0b1 then {
+//         upper_nibble = add_bits(upper_nibble, 0b0110);
+//     };
+
+//     true
+// }   
+
+// /* NOP instruction */
+// function clause execute (NOP()) = {
+//     /*false right no so it doesnt infinite loop in fetch_decode_execute*/
+//     print_endline("Instruction completed: NOP");
+//     false
+// }
+
+// /* MOV instruction */
+// function clause execute (MOV(dst, src)) = {
+//     write_reg8(dst, read_reg8(src));
+
+//     print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
+//     true 
+// }
+
+// /* STAX instruction */
+// function clause execute (STAX(reg_pair)) = {
+//     if reg_pair == 0b0 then {
+//         var addr: addr = read_reg16(0b00);
+//         var v = A_reg;
+//         write_mem(addr, v);
+//     } else {
+//         var addr: addr = read_reg16(0b01);
+//         var v = A_reg;
+//         write_mem(addr, v);
+//     };
+
+//     print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));   
+//     true
+// }
+
+// /* LDAX instruction */
+// function clause execute (LDAX(reg_pair)) = {
+//     if reg_pair == 0b0 then {
+//         var addr: addr = read_reg16(0b00);
+//         A_reg = read_mem(addr);
+//     } else {
+//         var addr: addr = read_reg16(0b01);
+//         A_reg = read_mem(addr);
+//     };
+
+//     print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
+//     true
+// }
+
+// /* ADD instruction */
+// function clause execute (ADD(r)) = {
+//     var v: word = read_reg8(r);
+//     SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0; //if there is a carry from the 8th bit then carry flag should be 1
+//     SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0; //if there is a carry from the 4th bit then auxillary flag should be 1
+//     A_reg = add_bits(A_reg, v);
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
     
-    print_endline(concat_str("Instruction completed: ADC ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+//     print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-/* SUB instruction */
-function clause execute (SUB(r)) = {
-    var v: word = read_reg8(r);
-    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
-    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0; 
-    A_reg = sub_bits(A_reg, v);
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+// /* ADC instruction */
+// function clause execute (ADC(r)) = {
+//     var v: word = read_reg8(r);
+//     SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), add_bits(sail_zero_extend(v, 9), sail_zero_extend(SFW_reg[C], 9)))[8..8] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), add_bits(sail_zero_extend(v[3..0], 5), sail_zero_extend(SFW_reg[C], 5)))[4..4] == 0b1 then 0b1 else 0b0;
+//     A_reg = add_bits(A_reg, add_bits(v, sail_zero_extend(SFW_reg[C], 8)));
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+    
+//     print_endline(concat_str("Instruction completed: ADC ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+// /* SUB instruction */
+// function clause execute (SUB(r)) = {
+//     var v: word = read_reg8(r);
+//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
+//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0; 
+//     A_reg = sub_bits(A_reg, v);
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
 
-/* SBB instruction */
-function clause execute (SBB(r)) = {
-    var v: word = read_reg8(r);
-    var v_lower_with_carry = add_bits(v[3..0], sail_zero_extend(SFW_reg[C], 4));
-    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v_lower_with_carry) then 0b1 else 0b0;    
-    v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
-    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0; 
-    A_reg = sub_bits(A_reg, v);
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+//     print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: SBB ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+// /* SBB instruction */
+// function clause execute (SBB(r)) = {
+//     var v: word = read_reg8(r);
+//     var v_lower_with_carry = add_bits(v[3..0], sail_zero_extend(SFW_reg[C], 4));
+//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v_lower_with_carry) then 0b1 else 0b0;    
+//     v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
+//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0; 
+//     A_reg = sub_bits(A_reg, v);
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
 
-/* ANA instruction */
-function clause execute (ANA(r)) = {
-    var v: word = read_reg8(r);
-    A_reg = and_vec(A_reg, v);
-    SFW_reg[C] = 0b0;
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+//     print_endline(concat_str("Instruction completed: SBB ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+// /* ANA instruction */
+// function clause execute (ANA(r)) = {
+//     var v: word = read_reg8(r);
+//     A_reg = and_vec(A_reg, v);
+//     SFW_reg[C] = 0b0;
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
 
-/* XRA instruction */
-function clause execute (XRA(r)) = {
-    var v: word = read_reg8(r);
-    A_reg = xor_vec(A_reg, v);
-    SFW_reg[C] = 0b0;
-    SFW_reg[A] = 0b0; // unsure about this
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+//     print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+// /* XRA instruction */
+// function clause execute (XRA(r)) = {
+//     var v: word = read_reg8(r);
+//     A_reg = xor_vec(A_reg, v);
+//     SFW_reg[C] = 0b0;
+//     SFW_reg[A] = 0b0; // unsure about this
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
 
-/* ORA instruction */
-function clause execute (ORA(r)) = {
-    var v: word = read_reg8(r);
-    A_reg = or_vec(A_reg, v);
-    SFW_reg[C] = 0b0;
-    SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+//     print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
-    true
-}
+// /* ORA instruction */
+// function clause execute (ORA(r)) = {
+//     var v: word = read_reg8(r);
+//     A_reg = or_vec(A_reg, v);
+//     SFW_reg[C] = 0b0;
+//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
 
-/* CMP instruction */
-function clause execute (CMP(r)) = {
-    var v: word = read_reg8(r);
-    SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
-    SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0;
-    var res = sub_bits(A_reg, v);
-    SFW_reg[P] = if xor_reduce(res) == 0b0 then 0b1 else 0b0;
-    SFW_reg[S] = if res[7..7] == 0b1 then 0b1 else 0b0;
-    SFW_reg[Z] = if res == 0b00000000 then 0b1 else 0b0;
+//     print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
+//     true
+// }
 
-    print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
-    true
-}
+// /* CMP instruction */
+// function clause execute (CMP(r)) = {
+//     var v: word = read_reg8(r);
+//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
+//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0;
+//     var res = sub_bits(A_reg, v);
+//     SFW_reg[P] = if xor_reduce(res) == 0b0 then 0b1 else 0b0;
+//     SFW_reg[S] = if res[7..7] == 0b1 then 0b1 else 0b0;
+//     SFW_reg[Z] = if res == 0b00000000 then 0b1 else 0b0;
 
-/* RLC instruction */
-function clause execute (RLC()) = {
-    var v = A_reg;
-    var msb = v[7..7];
-    v = shiftl(v, 1);
-    v[0..0] = msb;
-    A_reg = v;
-    SFW_reg[C] = msb;
+//     print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
+//     true
+// }
 
-    print_endline("Instruction completed: RLC");
-    true
-}
+// /* RLC instruction */
+// function clause execute (RLC()) = {
+//     var v = A_reg;
+//     var msb = v[7..7];
+//     v = shiftl(v, 1);
+//     v[0..0] = msb;
+//     A_reg = v;
+//     SFW_reg[C] = msb;
 
-/* RRC instruction */
-function clause execute(RRC()) = {
-    var v = A_reg;
-    var lsb = v[0..0];
-    v = shiftr(v, 1);
-    v[7..7] = lsb;
-    A_reg = v;
-    SFW_reg[C] = lsb;
+//     print_endline("Instruction completed: RLC");
+//     true
+// }
 
-    print_endline("Instruction completed: RRC");
-    true
-}
+// /* RRC instruction */
+// function clause execute(RRC()) = {
+//     var v = A_reg;
+//     var lsb = v[0..0];
+//     v = shiftr(v, 1);
+//     v[7..7] = lsb;
+//     A_reg = v;
+//     SFW_reg[C] = lsb;
 
-/* RAL instruction */
-function clause execute(RAL()) = {
-    var v = A_reg;
-    var msb = v[7..7];
-    v = shiftl(v, 1);
-    v[0..0] = SFW_reg[C];
-    A_reg = v;
-    SFW_reg[C] = msb;
+//     print_endline("Instruction completed: RRC");
+//     true
+// }
 
-    print_endline("Instruction completed: RAL");
-    true
-}
+// /* RAL instruction */
+// function clause execute(RAL()) = {
+//     var v = A_reg;
+//     var msb = v[7..7];
+//     v = shiftl(v, 1);
+//     v[0..0] = SFW_reg[C];
+//     A_reg = v;
+//     SFW_reg[C] = msb;
 
-/* RAR instruction */
-function clause execute(RAR()) = {
-    var v = A_reg;
-    var lsb = v[0..0];
-    v = shiftr(v, 1);
-    v[7..7] = SFW_reg[C];
-    A_reg = v;
-    SFW_reg[C] = lsb;
+//     print_endline("Instruction completed: RAL");
+//     true
+// }
 
-    print_endline("Instruction completed: RAR");
-    true
-}
+// /* RAR instruction */
+// function clause execute(RAR()) = {
+//     var v = A_reg;
+//     var lsb = v[0..0];
+//     v = shiftr(v, 1);
+//     v[7..7] = SFW_reg[C];
+//     A_reg = v;
+//     SFW_reg[C] = lsb;
+
+//     print_endline("Instruction completed: RAR");
+//     true
+// }
+
+
