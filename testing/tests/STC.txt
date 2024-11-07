@@ -1,0 +1,13 @@
+TEST
+function load_program(): unit -> unit = {
+    write_mem(0x0000, 0b00110111);   
+}
+EXPECTED
+Instruction completed: STC
+PSW: 0x0001
+HL: 0x0000
+DE: 0x0000
+BC: 0x0000
+SP: 0x0000
+PC: 0x0001
+
