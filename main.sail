@@ -25,6 +25,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     increment_pc();
     var decoded = decode8(instruction);
     var loop = execute(decoded);
+    print_processor_state();
     loop
 }
 

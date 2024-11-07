@@ -180,31 +180,29 @@ function clause execute (CMC()) = {
     c_flag = if c_flag == 0b1 then 0b0 else 0b1;  
     update_c_flag(c_flag);
     print_endline("Instruction completed: CMC");
-    print_processor_state();
     false
 }
 
-// /* STC instruction */
-// function clause execute (STC()) = {
-//     SFW_reg[C] = 0b1;
+/* STC instruction */
+function clause execute (STC()) = {
+    update_c_flag(0b1);
+    print_endline("Instruction completed: STC");    
+    false
+}
 
-//     print_endline("Instruction completed: STC");
-//     true
-// }
-
-// /* INR instruction */
-// function clause execute (INR(r)) = {
-//     var v = read_reg8(r);    
-//     SFW_reg[A] = if v[3..0] == 0b1111 then 0b1 else 0b0; //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-//     v = add_bits(v, 0b00000001);
-//     write_reg8(r, v);
-//     SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //if D contains 0x80 then we need sign flag to be 1 
-//     SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-//     SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+/* INR instruction */
+function clause execute (INR(r)) = {
+    var v = read_reg8(r);    
+    update_a_flag(if v[3..0] == 0b1111 then 0b1 else 0b0); //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
+    v = add_bits(v, 0b00000001);
+    write_reg8(r, v);
+    update_s_flag(if v[7..7] == 0b1 then 0b1 else 0b0); //if D contains 0x80 then we need sign flag to be 1 
+    update_z_flag(if v == 0b00000000 then 0b1 else 0b0); //if result is 0 then zero flag should be 1
+    update_p_flag(if xor_reduce(v) == 0b0 then 0b1 else 0b0); //if number of 1s in D is even then parity flag should be 1
     
-//     print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
+    false
+}
 
 // /* DCR instruction */
 // function clause execute (DCR(r)) = {
