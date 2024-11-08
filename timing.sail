@@ -1,7 +1,13 @@
-register cycle_count : int = 0
+register clock_cycle_count : int = 0
+register machine_cycle_count : int = 0
 
-// simply incrementes cycle count
-val increment_cycle_count : int -> unit
-function increment_cycle_count(count) = {
-    cycle_count = cycle_count + count;
+val increment_clock_cycle_count : int -> unit
+function increment_clock_cycle_count(count) = {
+    clock_cycle_count = clock_cycle_count + count;
 }
+
+val increment_machine_cycle_count : int -> unit
+function increment_machine_cycle_count(count) = {
+    machine_cycle_count = machine_cycle_count + count
+}
+

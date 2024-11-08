@@ -1,11 +1,11 @@
 default Order dec
 $include <prelude.sail>
+$include "timing.sail"
 $include "types.sail"
 $include "utils.sail"
 $include "memory.sail"
 $include "instructions.sail"
 $include "program.sail"
-$include "timing.sail"
 
 
 // /* Refer to page 13 of manual on deramp for startup, SP seems to be unspecified*/

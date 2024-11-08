@@ -1,10 +1,18 @@
-- [ ] Need to adjust so we are using numbers to reference flags within the flag register
+TODO:
 
-- [ ] Adjust flag register to be low bytes and accumulator high bytes
+- Look into cycle counts, and if there is any pipelining:
+https://pastebin.com/sFANRuYr :
+Seems to just be decrementing the cycles by instruction
+https://github.com/GunshipPenguin/lib8080/blob/master/src/i8080.c
+Seems to just increment the count as is
+If it is similar to Z80 then maybe we would decrement by 2
+Page 2-20: The results of these arithmetic, logical or rotate in- structions are not moved into the accumulator (A) until state T2 of the next instruction cycle. That is, A is loaded while the next instruction is being fetched; this overlapping of operations allows for faster processing. 
 
-- [ ] Reg is called PSW (Program Status Word)
+- Write code for all the instructions
 
-- [ ] Keep stack pointer in another seperate 16 bit space
+- Write code for interrupts, I/O
 
-- [ ] Some sort of function for updating and retrieving the flag reg so we can interface it in the same way
+- Write code for defining processor state on startup
+
+
 
