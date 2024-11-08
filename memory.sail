@@ -1,5 +1,5 @@
 // 65536 bytes of memory
-register main_memory : vector(65536, bits(8)) = vector_init(65536, 0x00)
+register main_memory : vector(65536, bits(8)) = vector_init(65536, undefined)
 
 //memory read function
 val read_mem : addr -> word

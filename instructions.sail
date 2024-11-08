@@ -108,18 +108,18 @@ union clause ast = NOP : (unit)
 union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
 union clause ast = STAX : (bits(1))
 union clause ast = LDAX : (bits(1))
-// union clause ast = ADD : (reg_8bit_num)
+union clause ast = ADD : (reg_8bit_num)
 // union clause ast = ADC : (reg_8bit_num)
-// union clause ast = SUB : (reg_8bit_num)
+union clause ast = SUB : (reg_8bit_num)
 // union clause ast = SBB : (reg_8bit_num)
-// union clause ast = ANA : (reg_8bit_num)
-// union clause ast = XRA : (reg_8bit_num)
-// union clause ast = ORA : (reg_8bit_num)
-// union clause ast = CMP : (reg_8bit_num)
-// union clause ast = RLC : (unit)
-// union clause ast = RRC : (unit)
-// union clause ast = RAL : (unit)
-// union clause ast = RAR : (unit)
+union clause ast = ANA : (reg_8bit_num)
+union clause ast = XRA : (reg_8bit_num)
+union clause ast = ORA : (reg_8bit_num)
+union clause ast = CMP : (reg_8bit_num)
+union clause ast = RLC : (unit)
+union clause ast = RRC : (unit)
+union clause ast = RAL : (unit)
+union clause ast = RAR : (unit)
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -148,30 +148,30 @@ function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b0010)
     = STAX(reg_pair)
 function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
     = LDAX(reg_pair)
-// function clause decode8 (0b10000 @ r:reg_8bit_num)
-//     = ADD(r)
+function clause decode8 (0b10000 @ r:reg_8bit_num)
+    = ADD(r)
 // function clause decode8 (0b10001 @ r:reg_8bit_num)
 //     = ADC(r)
-// function clause decode8 (0b10010 @ r:reg_8bit_num)
-//     = SUB(r)
+function clause decode8 (0b10010 @ r:reg_8bit_num)
+    = SUB(r)
 // function clause decode8 (0b10011 @ r:reg_8bit_num)
 //     = SBB(r)
-// function clause decode8 (0b10100 @ r:reg_8bit_num)
-//     = ANA(r)
-// function clause decode8 (0b10101 @ r:reg_8bit_num)
-//     = XRA(r)
-// function clause decode8 (0b10110 @ r:reg_8bit_num)
-//     = ORA(r)
-// function clause decode8 (0b10111 @ r:reg_8bit_num)
-//     = CMP(r)
-// function clause decode8 (0b00000111) 
-//     = RLC()
-// function clause decode8 (0b00001111) 
-//     = RRC()
-// function clause decode8 (0b00010111)
-//     = RAL()
-// function clause decode8 (0b00011111)
-//     = RAR()
+function clause decode8 (0b10100 @ r:reg_8bit_num)
+    = ANA(r)
+function clause decode8 (0b10101 @ r:reg_8bit_num)
+    = XRA(r)
+function clause decode8 (0b10110 @ r:reg_8bit_num)
+    = ORA(r)
+function clause decode8 (0b10111 @ r:reg_8bit_num)
+    = CMP(r)
+function clause decode8 (0b00000111) 
+    = RLC()
+function clause decode8 (0b00001111) 
+    = RRC()
+function clause decode8 (0b00010111)
+    = RAL()
+function clause decode8 (0b00011111)
+    = RAR()
 
 
 /* execute function */
@@ -341,21 +341,25 @@ function clause execute (LDAX(reg_pair)) = {
     true
 }
 
-// /* ADD instruction */
-// function clause execute (ADD(r)) = {
-//     var v: word = read_reg8(r);
-//     SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0; //if there is a carry from the 8th bit then carry flag should be 1
-//     SFW_reg[A] = if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0; //if there is a carry from the 4th bit then auxillary flag should be 1
-//     A_reg = add_bits(A_reg, v);
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+/* ADD instruction */
+function clause execute (ADD(r)) = {
+    var v: word = read_reg8(r);
+    update_c_flag(if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0);
+    update_a_flag(if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0); //if there is a carry from the 4th bit then auxillary flag should be 1
+    A_reg = add_bits(A_reg, v);
+    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0); //if number of 1s is even then parity flag should be 1
+    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0); //sign flag should be set whenever the most significant bit is 1
+    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0); //if result is 0 then zero flag should be 1
     
-//     print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
+    
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
 
-// /* ADC instruction */
+    true
+}
+
+// /* ADC instruction */ Need to double check the logic of this 
 // function clause execute (ADC(r)) = {
 //     var v: word = read_reg8(r);
 //     SFW_reg[C] = if add_bits(sail_zero_extend(A_reg, 9), add_bits(sail_zero_extend(v, 9), sail_zero_extend(SFW_reg[C], 9)))[8..8] == 0b1 then 0b1 else 0b0;
@@ -370,20 +374,24 @@ function clause execute (LDAX(reg_pair)) = {
 // }
 
 // /* SUB instruction */
-// function clause execute (SUB(r)) = {
-//     var v: word = read_reg8(r);
-//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
-//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0; 
-//     A_reg = sub_bits(A_reg, v);
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0; 
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+function clause execute (SUB(r)) = {
+    var v: word = read_reg8(r);
+    update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
+    update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
+    A_reg = sub_bits(A_reg, v);
+    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
+    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
+    
+    print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
 
-//     print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
 
-// /* SBB instruction */
+    true
+}
+
+// /* SBB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
 // function clause execute (SBB(r)) = {
 //     var v: word = read_reg8(r);
 //     var v_lower_with_carry = add_bits(v[3..0], sail_zero_extend(SFW_reg[C], 4));
@@ -399,110 +407,141 @@ function clause execute (LDAX(reg_pair)) = {
 //     true
 // }
 
-// /* ANA instruction */
-// function clause execute (ANA(r)) = {
-//     var v: word = read_reg8(r);
-//     A_reg = and_vec(A_reg, v);
-//     SFW_reg[C] = 0b0;
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+/* ANA instruction */
+function clause execute (ANA(r)) = {
+    var v: word = read_reg8(r);
+    A_reg = and_vec(A_reg, v);
+    update_c_flag(0b0);
+    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
+    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
 
-//     print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
+    
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+
+    true
+}
 
 // /* XRA instruction */
-// function clause execute (XRA(r)) = {
-//     var v: word = read_reg8(r);
-//     A_reg = xor_vec(A_reg, v);
-//     SFW_reg[C] = 0b0;
-//     SFW_reg[A] = 0b0; // unsure about this
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+function clause execute (XRA(r)) = {
+    var v: word = read_reg8(r);
+    A_reg = xor_vec(A_reg, v);
+    update_c_flag(0b0);
+    update_a_flag(0b0);
+    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
+    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
 
-//     print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+
+    print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
+    true
+}
 
 // /* ORA instruction */
-// function clause execute (ORA(r)) = {
-//     var v: word = read_reg8(r);
-//     A_reg = or_vec(A_reg, v);
-//     SFW_reg[C] = 0b0;
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
+function clause execute (ORA(r)) = {
+    var v: word = read_reg8(r);
+    A_reg = or_vec(A_reg, v);
+    update_c_flag(0b0);
+    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
+    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
 
-//     print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
+
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+    
+    true
+}
 
 // /* CMP instruction */
-// function clause execute (CMP(r)) = {
-//     var v: word = read_reg8(r);
-//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0;
-//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0;
-//     var res = sub_bits(A_reg, v);
-//     SFW_reg[P] = if xor_reduce(res) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if res[7..7] == 0b1 then 0b1 else 0b0;
-//     SFW_reg[Z] = if res == 0b00000000 then 0b1 else 0b0;
+function clause execute (CMP(r)) = {
+    var v: word = read_reg8(r);
+    update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
+    update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
+    var res = sub_bits(A_reg, v);
+    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
+    update_z_flag(if res == 0b00000000 then 0b1 else 0b0);
 
-//     print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
-//     true
-// }
+    print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
+
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+    
+    true
+}
 
 // /* RLC instruction */
-// function clause execute (RLC()) = {
-//     var v = A_reg;
-//     var msb = v[7..7];
-//     v = shiftl(v, 1);
-//     v[0..0] = msb;
-//     A_reg = v;
-//     SFW_reg[C] = msb;
+function clause execute (RLC()) = {
+    var v = A_reg;
+    var msb = v[7..7];
+    v = shiftl(v, 1);
+    v[0..0] = msb;
+    A_reg = v;
+    update_c_flag(msb);
 
-//     print_endline("Instruction completed: RLC");
-//     true
-// }
+    print_endline("Instruction completed: RLC");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
 
 // /* RRC instruction */
-// function clause execute(RRC()) = {
-//     var v = A_reg;
-//     var lsb = v[0..0];
-//     v = shiftr(v, 1);
-//     v[7..7] = lsb;
-//     A_reg = v;
-//     SFW_reg[C] = lsb;
+function clause execute(RRC()) = {
+    var v = A_reg;
+    var lsb = v[0..0];
+    v = shiftr(v, 1);
+    v[7..7] = lsb;
+    A_reg = v;
+    update_c_flag(lsb);
 
-//     print_endline("Instruction completed: RRC");
-//     true
-// }
+    print_endline("Instruction completed: RRC");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
 
 // /* RAL instruction */
-// function clause execute(RAL()) = {
-//     var v = A_reg;
-//     var msb = v[7..7];
-//     v = shiftl(v, 1);
-//     v[0..0] = SFW_reg[C];
-//     A_reg = v;
-//     SFW_reg[C] = msb;
+function clause execute(RAL()) = {
+    var v = A_reg;
+    var msb = v[7..7];
+    v = shiftl(v, 1);
+    v[0..0] = read_c_flag();
+    A_reg = v;
+    update_c_flag(msb);
 
-//     print_endline("Instruction completed: RAL");
-//     true
-// }
+    print_endline("Instruction completed: RAL");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
 
 // /* RAR instruction */
-// function clause execute(RAR()) = {
-//     var v = A_reg;
-//     var lsb = v[0..0];
-//     v = shiftr(v, 1);
-//     v[7..7] = SFW_reg[C];
-//     A_reg = v;
-//     SFW_reg[C] = lsb;
+function clause execute(RAR()) = {
+    var v = A_reg;
+    var lsb = v[0..0];
+    v = shiftr(v, 1);
+    v[7..7] = read_c_flag();
+    A_reg = v;
+    update_c_flag(lsb);
 
-//     print_endline("Instruction completed: RAR");
-//     true
-// }
+    print_endline("Instruction completed: RAR");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
 
 
