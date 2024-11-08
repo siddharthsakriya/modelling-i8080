@@ -101,13 +101,13 @@ union clause ast = CMC : (unit)
 union clause ast = STC : (unit)
 union clause ast = INR : (reg_8bit_num)
 union clause ast = HLT : (unit)
-// union clause ast = DCR : (reg_8bit_num)
-// union clause ast = CMA : (unit)
+union clause ast = DCR : (reg_8bit_num)
+union clause ast = CMA : (unit)
 // union clause ast = DAA : (unit)
-// union clause ast = NOP : (unit)
-// union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
-// union clause ast = STAX : (bits(1))
-// union clause ast = LDAX : (bits(1))
+union clause ast = NOP : (unit)
+union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
+union clause ast = STAX : (bits(1))
+union clause ast = LDAX : (bits(1))
 // union clause ast = ADD : (reg_8bit_num)
 // union clause ast = ADC : (reg_8bit_num)
 // union clause ast = SUB : (reg_8bit_num)
@@ -134,20 +134,20 @@ function clause decode8 (0b00 @ r:reg_8bit_num @ 0b100)
     = INR(r)
 function clause decode8 (0b01110110)
     = HLT()
-// function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101) 
-//     = DCR(r)
-// function clause decode8 (0b00101111)
-//     = CMA()
+function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101) 
+    = DCR(r)
+function clause decode8 (0b00101111)
+    = CMA()
 // function clause decode8 (0b00100111)
 //     = DAA()
-// function clause decode8 (0b00000000)
-//     = NOP()
-// function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
-//     = MOV(dst, src)
-// function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b0010)
-//     = STAX(reg_pair)
-// function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
-//     = LDAX(reg_pair)
+function clause decode8 (0b00000000)
+    = NOP()
+function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
+    = MOV(dst, src)
+function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b0010)
+    = STAX(reg_pair)
+function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
+    = LDAX(reg_pair)
 // function clause decode8 (0b10000 @ r:reg_8bit_num)
 //     = ADD(r)
 // function clause decode8 (0b10001 @ r:reg_8bit_num)
@@ -208,9 +208,9 @@ function clause execute (INR(r)) = {
     update_a_flag(if v[3..0] == 0b1111 then 0b1 else 0b0); //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
     v = add_bits(v, 0b00000001);
     write_reg8(r, v);
-    update_s_flag(if v[7..7] == 0b1 then 0b1 else 0b0); //if D contains 0x80 then we need sign flag to be 1 
+    update_s_flag(if v[7..7] == 0b1 then 0b1 else 0b0); 
     update_z_flag(if v == 0b00000000 then 0b1 else 0b0); //if result is 0 then zero flag should be 1
-    update_p_flag(if xor_reduce(v) == 0b0 then 0b1 else 0b0); //if number of 1s in D is even then parity flag should be 1
+    update_p_flag(if xor_reduce(v) == 0b0 then 0b1 else 0b0); //if number of 1s is even then parity flag should be 1
     
     print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
     if reg8_str_map(reg8_num_map(r)) == "M" then {
@@ -230,28 +230,36 @@ function clause execute (HLT()) = {
 }
 
 // /* DCR instruction */
-// function clause execute (DCR(r)) = {
-//     var v = read_reg8(r);
-//     SFW_reg[A] = if v[3..0] == 0b0000 then 0b1 else 0b0; //set auxilliary carry 
-//     v = sub_bits(v, 0b00000001);
-//     write_reg8(r, v);
-//     SFW_reg[S] = if v[7..7] == 0b1 then 0b1 else 0b0; //sign flag should be set whenever the most significant bit is 1
-//     SFW_reg[Z] = if v == 0b00000000 then 0b1 else 0b0; //if result is 0 then zero flag should be 1
-//     SFW_reg[P] = if xor_reduce(v) == 0b0 then 0b1 else 0b0; //if number of 1s in D is even then parity flag should be 1
+function clause execute (DCR(r)) = {
+    var v = read_reg8(r);
+    update_a_flag(if v[3..0] == 0b0000 then 0b1 else 0b0); //set auxilliary carry
+    v = sub_bits(v, 0b00000001);
+    write_reg8(r, v);
+    update_s_flag(if v[7..7] == 0b1 then 0b1 else 0b0); //sign flag should be set whenever the most significant bit is 1
+    update_z_flag(if v == 0b00000000 then 0b1 else 0b0); //if result is 0 then zero flag should be 1
+    update_p_flag(if xor_reduce(v) == 0b0 then 0b1 else 0b0); //if number of 1s is even then parity flag should be 1
 
-//     print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+    print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
+
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 10 else 5);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 5 else 1);
+
+    true
+}
 
 // /* CMA instruction */
-// function clause execute (CMA()) = {
-//     var v = A_reg;
-//     v = xor_vec(v, 0b11111111);
-//     A_reg = v;
+function clause execute (CMA()) = {
+    var v = A_reg;
+    v = xor_vec(v, 0b11111111);
+    A_reg = v;
 
-//     print_endline("Instruction completed: CMA");
-//     true
-// }
+    print_endline("Instruction completed: CMA");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
 
 // /* DAA instruction */ /* STILL TO BE DONE */
 // function clause execute (DAA()) = {
@@ -272,49 +280,66 @@ function clause execute (HLT()) = {
 // }   
 
 // /* NOP instruction */
-// function clause execute (NOP()) = {
-//     /*false right no so it doesnt infinite loop in fetch_decode_execute*/
-//     print_endline("Instruction completed: NOP");
-//     false
-// }
+function clause execute (NOP()) = {
+    /*false right no so it doesnt infinite loop in fetch_decode_execute*/
+    print_endline("Instruction completed: NOP");
+    
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+    
+    false
+}
 
-// /* MOV instruction */
-// function clause execute (MOV(dst, src)) = {
-//     write_reg8(dst, read_reg8(src));
+/* MOV instruction */
+function clause execute (MOV(dst, src)) = {
+    write_reg8(dst, read_reg8(src));
 
-//     print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
-//     true 
-// }
+    print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
 
-// /* STAX instruction */
-// function clause execute (STAX(reg_pair)) = {
-//     if reg_pair == 0b0 then {
-//         var addr: addr = read_reg16(0b00);
-//         var v = A_reg;
-//         write_mem(addr, v);
-//     } else {
-//         var addr: addr = read_reg16(0b01);
-//         var v = A_reg;
-//         write_mem(addr, v);
-//     };
+    var is_memory = if reg8_str_map(reg8_num_map(dst)) == "M" | reg8_str_map(reg8_num_map(src)) == "M" then 1 else 0;
+    increment_clock_cycle_count(if is_memory == 1 then 7 else 5);
+    increment_machine_cycle_count(if is_memory == 1 then 2 else 1);
+    
+    true 
+}
 
-//     print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));   
-//     true
-// }
+/* STAX instruction */
+function clause execute (STAX(reg_pair)) = {
+    if reg_pair == 0b0 then {
+        var addr: addr = read_reg16(0b00);
+        var v = A_reg;
+        write_mem(addr, v);
+    } else {
+        var addr: addr = read_reg16(0b01);
+        var v = A_reg;
+        write_mem(addr, v);
+    };
 
-// /* LDAX instruction */
-// function clause execute (LDAX(reg_pair)) = {
-//     if reg_pair == 0b0 then {
-//         var addr: addr = read_reg16(0b00);
-//         A_reg = read_mem(addr);
-//     } else {
-//         var addr: addr = read_reg16(0b01);
-//         A_reg = read_mem(addr);
-//     };
+    print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2))))); 
 
-//     print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
-//     true
-// }
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
+
+/* LDAX instruction */
+function clause execute (LDAX(reg_pair)) = {
+    if reg_pair == 0b0 then {
+        var addr: addr = read_reg16(0b00);
+        A_reg = read_mem(addr);
+    } else {
+        var addr: addr = read_reg16(0b01);
+        A_reg = read_mem(addr);
+    };
+
+    print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
 
 // /* ADD instruction */
 // function clause execute (ADD(r)) = {

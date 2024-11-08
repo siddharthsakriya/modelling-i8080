@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-test_files = ["./tests/CMC/CMC.txt", "./tests/STC/STC.txt", "./tests/INR/INR_NOFLAG.txt"]
+test_files = ["./tests/CMC/CMC.txt", "./tests/STC/STC.txt", "./tests/INR/INR_NOFLAG.txt", "./tests/INR/INR_AFLAG.txt", "./tests/INR/INR_ZCFLAG.txt"]
 
 def test(verbose=False):
     for file in test_files:
