@@ -119,6 +119,7 @@ union clause ast = RLC : (unit)
 union clause ast = RRC : (unit)
 union clause ast = RAL : (unit)
 union clause ast = RAR : (unit)
+union clause ast = NotValid : (unit)
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
@@ -203,6 +204,8 @@ function clause execute (INR(r)) = {
     print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
     false
 }
+
+
 
 // /* DCR instruction */
 // function clause execute (DCR(r)) = {
