@@ -94,6 +94,8 @@ function print_processor_state() = {
     print_bits("BC: ", BC_reg[full]);
     print_bits("SP: ", SP_reg[full]);
     print_bits("PC: ", PC_reg[full]);
+    print_int("Clock Cycles: ",clock_cycle_count);
+    print_int("Machine Cycles: ", machine_cycle_count);
 }
 
 //sail_shiftleft 

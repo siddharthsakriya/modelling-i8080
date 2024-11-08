@@ -1,5 +1,6 @@
 default Order dec
 $include <prelude.sail>
+$include "timing.sail"
 $include "types.sail"
 $include "utils.sail"
 $include "memory.sail"
@@ -25,6 +26,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     increment_pc();
     var decoded = decode8(instruction);
     var loop = execute(decoded);
+    print_processor_state();
     loop
 }
 

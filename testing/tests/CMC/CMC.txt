@@ -1,0 +1,34 @@
+TEST
+function load_program(): unit -> unit = {
+    write_mem(0x0000, 0b00111111);  
+    write_mem(0x0001, 0b00111111);   
+    write_mem(0x0002, 0b01110110);
+}
+EXPECTED
+Instruction completed: CMC
+PSW: 0x0001
+HL: 0x0000
+DE: 0x0000
+BC: 0x0000
+SP: 0x0000
+PC: 0x0001
+Clock Cycles: 4
+Machine Cycles: 1
+Instruction completed: CMC
+PSW: 0x0000
+HL: 0x0000
+DE: 0x0000
+BC: 0x0000
+SP: 0x0000
+PC: 0x0002
+Clock Cycles: 8
+Machine Cycles: 2
+Instruction completed: HLT 
+PSW: 0x0000
+HL: 0x0000
+DE: 0x0000
+BC: 0x0000
+SP: 0x0000
+PC: 0x0003
+Clock Cycles: 8
+Machine Cycles: 2
