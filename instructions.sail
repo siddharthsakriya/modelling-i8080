@@ -290,18 +290,19 @@ function clause execute (NOP()) = {
     false
 }
 
-/* MOV instruction */
-function clause execute (MOV(dst, src)) = {
-    write_reg8(dst, read_reg8(src));
+// /* MOV instruction */
+// function clause execute (MOV(dst, src)) = {
+//     write_reg8(dst, read_reg8(src));
 
-    print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
+//     print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
 
-    var is_memory = if reg8_str_map(reg8_num_map(dst)) == "M" | reg8_str_map(reg8_num_map(src)) == "M" then 1 else 0;
-    increment_clock_cycle_count(if is_memory == 1 then 7 else 5);
-    increment_machine_cycle_count(if is_memory == 1 then 2 else 1);
+//     // pattern match on 
+//     var is_memory = if reg8_num_map(dst) == M | reg8_num_map(src) == M then 1 else 0;
+//     increment_clock_cycle_count(if is_memory == 1 then 7 else 5);
+//     increment_machine_cycle_count(if is_memory == 1 then 2 else 1);
     
-    true 
-}
+//     true 
+// }
 
 /* STAX instruction */
 function clause execute (STAX(reg_pair)) = {
@@ -344,6 +345,8 @@ function clause execute (LDAX(reg_pair)) = {
 /* ADD instruction */
 function clause execute (ADD(r)) = {
     var v: word = read_reg8(r);
+
+    //update flag to take boolean
     update_c_flag(if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0);
     update_a_flag(if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0); //if there is a carry from the 4th bit then auxillary flag should be 1
     A_reg = add_bits(A_reg, v);

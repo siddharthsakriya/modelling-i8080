@@ -1,5 +1,7 @@
 
 val xor_reduce : word -> bits(1)
+
+//TODO: might be wrong 
 function xor_reduce(v) = {
     var x: bits(1) = [v[0]];
     foreach (i from 1 to 7) {
@@ -101,7 +103,6 @@ function print_processor_state() = {
 //sail_shiftleft 
 //sail_shiftright 
 //look into overloading the shift operators 
-
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 
