@@ -1,3 +1,4 @@
+TEST
 function load_program(): unit -> unit = {
     write_reg8(0b000, 0b01110111);
     write_mem(0x0000, 0b00000101);
