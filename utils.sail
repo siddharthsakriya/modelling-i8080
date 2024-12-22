@@ -1,6 +1,20 @@
 
 val xor_reduce : word -> bits(1)
 
+val EXTZ : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
+function EXTZ(m, v) = sail_zero_extend(v, m)
+
+val EXTS : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
+function EXTS(m, v) = sail_sign_extend(v, m)
+
+infix 7 >>
+infix 7 <<
+infix 7 >>>
+
+overload operator <<  = {sail_shiftleft}
+overload operator >>  = {sail_shiftright}
+overload operator >>> = {sail_arith_shiftright}
+
 //TODO: might be wrong 
 function xor_reduce(v) = {
     var x: bits(1) = [v[0]];
@@ -99,6 +113,25 @@ function print_processor_state() = {
     print_int("Clock Cycles: ",clock_cycle_count);
     print_int("Machine Cycles: ", machine_cycle_count);
 }
+
+
+val push_stack : bits(16) -> unit
+function push_stack(data: bits(16)) = {
+    SP_reg[full] = sub_bits(SP_reg[full], 0x0001);
+    write_mem(SP_reg[full], data[15..8]);
+    SP_reg[full] = sub_bits(SP_reg[full], 0x0001);
+    write_mem(SP_reg[full], data[7..0]);
+}
+
+val pop_stack : unit -> bits(16)
+function pop_stack() = {
+    var low_bits: bits(8) = read_mem(SP_reg[full]);
+    SP_reg[full] = add_bits(SP_reg[full], 0x0001);
+    var high_bits: bits(8) = read_mem(SP_reg[full]);
+    SP_reg[full] = add_bits(SP_reg[full], 0x0001);
+    high_bits @ low_bits;
+}
+
 
 //sail_shiftleft 
 //sail_shiftright 

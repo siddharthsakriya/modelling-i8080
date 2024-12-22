@@ -38,3 +38,7 @@ Todo:
 
 
 
+mvi     c, WSTRF
+lxi     d, message
+call    BDOS
+ret

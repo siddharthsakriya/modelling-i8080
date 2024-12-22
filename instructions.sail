@@ -127,6 +127,7 @@ union clause ast = DCX : (reg_16bit_num)
 union clause ast = XCHG : (unit)
 union clause ast = XTHL : (unit)
 union clause ast = SPHL : (unit)
+union clause ast = LXI : (reg_16bit_num, bits(8), bits(8))
 union clause ast = MVI : (reg_8bit_num, bits(8))
 union clause ast = ADI : (bits(8))
 union clause ast = ACI : (bits(8))
@@ -175,11 +176,17 @@ union clause ast = IN : (bits(8))
 union clause ast = OUT: (bits(8))
 union clause ast = HLT : (unit)
 
+union clause ast = NOTFOUND8 : (bits(8))
+union clause ast = NOTFOUND16 : (bits(16))
+union clause ast = NOTFOUND24 : (bits(24))
+
 type instruction8 = bits(8)
 type instruction16 = bits(16)
+type instruction24 = bits(24)
 
 /* decode8 function: decodes 8-bit instructions */
 val decode8 : instruction8 -> ast
+
 function clause decode8 (0b00111111) 
     = CMC()
 function clause decode8 (0b00110111) 
@@ -226,12 +233,27 @@ function clause decode8 (0b00010111)
     = RAL()
 function clause decode8 (0b00011111)
     = RAR()
+function clause decode8 (0b11001001)    
+    = RET()
+function clause decode8 (this: bits(8))
+    = NOTFOUND8(this)
+    
+/* decode16 function: decodes 16-bit instructions */
+val decode16 : bits(16) -> ast
+function clause decode16 (0b00 @ r: reg_8bit_num @ 0b110 @ data: bits(8))
+    = MVI(r, data)
+function clause decode16(this: bits(16))
+    = NOTFOUND16(this)
 
-/* decode8 function: decodes 16-bit instructions */
 
-
-/* decode8 function: decodes 24-bit instructions */
-
+/* decode24 function: decodes 24-bit instructions */
+val decode24 : bits(24) -> ast
+function clause decode24(0b00 @ r: reg_16bit_num @ 0b0001 @ low_data: bits(8) @ high_data: bits(8))
+    = LXI(r, low_data, high_data)
+function clause decode24(0b11001101 @ low_data: bits(8) @ high_data: bits(8)) 
+    = CALL(low_data, high_data)
+function clause decode24(this: bits(24))
+    = NOTFOUND24(this)
 
 /* execute function */
 val execute : ast -> bool
@@ -345,23 +367,16 @@ function clause execute (NOP()) = {
     
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
-    
+    print_bits("PC Value: ", PC_reg[full]); 
     false
 }
 
 // /* MOV instruction */
-// function clause execute (MOV(dst, src)) = {
-//     write_reg8(dst, read_reg8(src));
-
-//     print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
-
-//     // pattern match on 
-//     var is_memory = if reg8_num_map(dst) == M | reg8_num_map(src) == M then 1 else 0;
-//     increment_clock_cycle_count(if is_memory == 1 then 7 else 5);
-//     increment_machine_cycle_count(if is_memory == 1 then 2 else 1);
-    
-//     true 
-// }
+function clause execute (MOV(dst, src)) = {
+    print_endline("MOV executed");
+    write_reg8(dst, read_reg8(src));
+    true 
+}
 
 /* STAX instruction */
 function clause execute (STAX(reg_pair)) = {
@@ -606,4 +621,48 @@ function clause execute(RAR()) = {
     true
 }
 
+function clause execute(CALL(low_data, high_data)) = {
+    push_stack(PC_reg[full]);
+    print_endline("CALL Executed");
+    PC_reg[full] = high_data @ low_data;
+    true
+}
+
+function clause execute(MVI(r, data)) = {
+    write_reg8(r, data);
+    print_endline("MVI Executed");
+    true
+}
+
+function clause execute(LXI(r, low_data, high_data)) = {
+    write_reg16(r, high_data @ low_data);
+    print_endline("LXI Executed");
+    true
+}
+
+function clause execute(NOTFOUND8(this)) = {
+    print_endline("not found, try 16");
+    let next_byte: bitvector(8) = read_mem(PC_reg[full]);
+    increment_pc();
+    execute(decode16(this @ next_byte));
+}
+
+function clause execute(NOTFOUND16(this)) = {
+    print_endline("not found, try 24");
+    let next_byte: bitvector(8) = read_mem(PC_reg[full]);
+    increment_pc();
+    execute(decode24(this @ next_byte))
+}
+
+function clause execute(RET()) = {
+    print_endline("RET executed");
+    PC_reg[full] = pop_stack();
+    true
+}
+
+function clause execute(NOTFOUND24(this)) = {
+    print_endline("invalid instruction");
+    print_bits("this: ", this);
+    false
+}
 
