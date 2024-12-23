@@ -1,0 +1,4 @@
+22nd - 
+Managed to get greet.com to work
+Did some minor refactoring
+23rd - 

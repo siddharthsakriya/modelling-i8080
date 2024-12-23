@@ -100,18 +100,17 @@ scattered union ast
 union clause ast = CMC : (unit)
 union clause ast = STC : (unit)
 union clause ast = INR : (reg_8bit_num)
-union clause ast = HLT : (unit)
 union clause ast = DCR : (reg_8bit_num)
 union clause ast = CMA : (unit)
-// union clause ast = DAA : (unit)
+union clause ast = DAA : (unit)
 union clause ast = NOP : (unit)
 union clause ast = MOV : (reg_8bit_num, reg_8bit_num) 
 union clause ast = STAX : (bits(1))
 union clause ast = LDAX : (bits(1))
 union clause ast = ADD : (reg_8bit_num)
-// union clause ast = ADC : (reg_8bit_num)
+union clause ast = ADC : (reg_8bit_num)
 union clause ast = SUB : (reg_8bit_num)
-// union clause ast = SBB : (reg_8bit_num)
+union clause ast = SBB : (reg_8bit_num)
 union clause ast = ANA : (reg_8bit_num)
 union clause ast = XRA : (reg_8bit_num)
 union clause ast = ORA : (reg_8bit_num)
@@ -120,12 +119,74 @@ union clause ast = RLC : (unit)
 union clause ast = RRC : (unit)
 union clause ast = RAL : (unit)
 union clause ast = RAR : (unit)
+union clause ast = PUSH : (reg_16bit_num)
+union clause ast = POP : (reg_16bit_num)
+union clause ast = DAD : (reg_16bit_num)
+union clause ast = INX : (reg_16bit_num)
+union clause ast = DCX : (reg_16bit_num)
+union clause ast = XCHG : (unit)
+union clause ast = XTHL : (unit)
+union clause ast = SPHL : (unit)
+union clause ast = LXI : (reg_16bit_num, bits(8), bits(8))
+union clause ast = MVI : (reg_8bit_num, bits(8))
+union clause ast = ADI : (bits(8))
+union clause ast = ACI : (bits(8))
+union clause ast = SUI : (bits(8))
+union clause ast = SBI : (bits(8))
+union clause ast = ANI : (bits(8))
+union clause ast = XRI : (bits(8))
+union clause ast = ORI : (bits(8))
+union clause ast = CPI : (bits(8))
+union clause ast = STA : (bits(8), bits(8))
+union clause ast = LDA : (bits(8), bits(8))
+union clause ast = SHLD : (bits(8), bits(8))
+union clause ast = LHLD : (bits(8), bits(8))
+union clause ast = PCHL : (unit)
+union clause ast = JMP : (bits(8), bits(8))
+union clause ast = JC : (bits(8), bits(8))
+union clause ast = JNC : (bits(8), bits(8))
+union clause ast = JZ : (bits(8), bits(8))
+union clause ast = JNZ : (bits(8), bits(8))
+union clause ast = JM : (bits(8), bits(8))
+union clause ast = JP : (bits(8), bits(8))
+union clause ast = JPE : (bits(8), bits(8))
+union clause ast = JPO : (bits(8), bits(8))
+union clause ast = CALL : (bits(8), bits(8))
+union clause ast = CC : (bits(8), bits(8))
+union clause ast = CNC : (bits(8), bits(8))
+union clause ast = CZ : (bits(8), bits(8))
+union clause ast = CNZ : (bits(8), bits(8))
+union clause ast = CM : (bits(8), bits(8))
+union clause ast = CP : (bits(8), bits(8))
+union clause ast = CPE : (bits(8), bits(8))
+union clause ast = CPO : (bits(8), bits(8))
+union clause ast = RET : (unit)
+union clause ast = RC : (unit)
+union clause ast = RNC : (unit)
+union clause ast = RZ : (unit)
+union clause ast = RNZ : (unit)
+union clause ast = RM : (unit)
+union clause ast = RP : (unit)
+union clause ast = RPE : (unit)
+union clause ast = RPO : (unit)
+union clause ast = RST : (bits(3))
+union clause ast = EI : (bits(1))
+union clause ast = DI : (unit)
+union clause ast = IN : (bits(8))
+union clause ast = OUT: (bits(8))
+union clause ast = HLT : (unit)
+
+union clause ast = NOTFOUND8 : (bits(8))
+union clause ast = NOTFOUND16 : (bits(16))
+union clause ast = NOTFOUND24 : (bits(24))
 
 type instruction8 = bits(8)
 type instruction16 = bits(16)
+type instruction24 = bits(24)
 
 /* decode8 function: decodes 8-bit instructions */
 val decode8 : instruction8 -> ast
+
 function clause decode8 (0b00111111) 
     = CMC()
 function clause decode8 (0b00110111) 
@@ -138,8 +199,8 @@ function clause decode8 (0b00 @ r:reg_8bit_num @ 0b101)
     = DCR(r)
 function clause decode8 (0b00101111)
     = CMA()
-// function clause decode8 (0b00100111)
-//     = DAA()
+function clause decode8 (0b00100111)
+    = DAA()
 function clause decode8 (0b00000000)
     = NOP()
 function clause decode8 (0b01 @ dst:reg_8bit_num @ src:reg_8bit_num) 
@@ -150,12 +211,12 @@ function clause decode8 (0b000 @ reg_pair: bits(1) @ 0b1010)
     = LDAX(reg_pair)
 function clause decode8 (0b10000 @ r:reg_8bit_num)
     = ADD(r)
-// function clause decode8 (0b10001 @ r:reg_8bit_num)
-//     = ADC(r)
+function clause decode8 (0b10001 @ r:reg_8bit_num)
+    = ADC(r)
 function clause decode8 (0b10010 @ r:reg_8bit_num)
     = SUB(r)
-// function clause decode8 (0b10011 @ r:reg_8bit_num)
-//     = SBB(r)
+function clause decode8 (0b10011 @ r:reg_8bit_num)
+    = SBB(r)
 function clause decode8 (0b10100 @ r:reg_8bit_num)
     = ANA(r)
 function clause decode8 (0b10101 @ r:reg_8bit_num)
@@ -172,7 +233,27 @@ function clause decode8 (0b00010111)
     = RAL()
 function clause decode8 (0b00011111)
     = RAR()
+function clause decode8 (0b11001001)    
+    = RET()
+function clause decode8 (this: bits(8))
+    = NOTFOUND8(this)
+    
+/* decode16 function: decodes 16-bit instructions */
+val decode16 : bits(16) -> ast
+function clause decode16 (0b00 @ r: reg_8bit_num @ 0b110 @ data: bits(8))
+    = MVI(r, data)
+function clause decode16(this: bits(16))
+    = NOTFOUND16(this)
 
+
+/* decode24 function: decodes 24-bit instructions */
+val decode24 : bits(24) -> ast
+function clause decode24(0b00 @ r: reg_16bit_num @ 0b0001 @ low_data: bits(8) @ high_data: bits(8))
+    = LXI(r, low_data, high_data)
+function clause decode24(0b11001101 @ low_data: bits(8) @ high_data: bits(8)) 
+    = CALL(low_data, high_data)
+function clause decode24(this: bits(24))
+    = NOTFOUND24(this)
 
 /* execute function */
 val execute : ast -> bool
@@ -181,7 +262,7 @@ scattered function execute
 /* CMC instruction */
 function clause execute (CMC()) = {
     var c_flag = read_c_flag();
-    c_flag = if c_flag == 0b1 then 0b0 else 0b1;  
+    c_flag = xor_vec(c_flag, 0b1);
     update_c_flag(c_flag);
 
     print_endline("Instruction completed: CMC");
@@ -286,20 +367,14 @@ function clause execute (NOP()) = {
     
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
-    
+    print_bits("PC Value: ", PC_reg[full]); 
     false
 }
 
-/* MOV instruction */
+// /* MOV instruction */
 function clause execute (MOV(dst, src)) = {
+    print_endline("MOV executed");
     write_reg8(dst, read_reg8(src));
-
-    print_endline(concat_str((concat_str(concat_str("Instruction completed: MOV ", reg8_str_map(reg8_num_map(dst))), " ")), reg8_str_map(reg8_num_map(src))));
-
-    var is_memory = if reg8_str_map(reg8_num_map(dst)) == "M" | reg8_str_map(reg8_num_map(src)) == "M" then 1 else 0;
-    increment_clock_cycle_count(if is_memory == 1 then 7 else 5);
-    increment_machine_cycle_count(if is_memory == 1 then 2 else 1);
-    
     true 
 }
 
@@ -344,6 +419,8 @@ function clause execute (LDAX(reg_pair)) = {
 /* ADD instruction */
 function clause execute (ADD(r)) = {
     var v: word = read_reg8(r);
+
+    //update flag to take boolean
     update_c_flag(if add_bits(sail_zero_extend(A_reg, 9), sail_zero_extend(v, 9))[8..8] == 0b1 then 0b1 else 0b0);
     update_a_flag(if add_bits(sail_zero_extend(A_reg[3..0], 5), sail_zero_extend(v[3..0], 5))[4..4] == 0b1 then 0b1 else 0b0); //if there is a carry from the 4th bit then auxillary flag should be 1
     A_reg = add_bits(A_reg, v);
@@ -544,4 +621,48 @@ function clause execute(RAR()) = {
     true
 }
 
+function clause execute(CALL(low_data, high_data)) = {
+    push_stack(PC_reg[full]);
+    print_endline("CALL Executed");
+    PC_reg[full] = high_data @ low_data;
+    true
+}
+
+function clause execute(MVI(r, data)) = {
+    write_reg8(r, data);
+    print_endline("MVI Executed");
+    true
+}
+
+function clause execute(LXI(r, low_data, high_data)) = {
+    write_reg16(r, high_data @ low_data);
+    print_endline("LXI Executed");
+    true
+}
+
+function clause execute(NOTFOUND8(this)) = {
+    print_endline("not found, try 16");
+    let next_byte: bitvector(8) = read_mem(PC_reg[full]);
+    increment_pc();
+    execute(decode16(this @ next_byte));
+}
+
+function clause execute(NOTFOUND16(this)) = {
+    print_endline("not found, try 24");
+    let next_byte: bitvector(8) = read_mem(PC_reg[full]);
+    increment_pc();
+    execute(decode24(this @ next_byte))
+}
+
+function clause execute(RET()) = {
+    print_endline("RET executed");
+    PC_reg[full] = pop_stack();
+    true
+}
+
+function clause execute(NOTFOUND24(this)) = {
+    print_endline("invalid instruction");
+    print_bits("this: ", this);
+    false
+}
 

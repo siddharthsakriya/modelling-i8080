@@ -33,7 +33,7 @@ enum reg_16bit_enum = {
 bitfield reg16 : dword = {
     full : 15..0,
     high : 15..8,
-    low : 7..0
+    low : 7..0  
 } 
 
 register A_reg : word
