@@ -259,6 +259,17 @@ function clause decode24(this: bits(24))
 val execute : ast -> bool
 scattered function execute
 
+/* STC instruction */
+function clause execute (STC()) = {
+    update_c_flag(0b1);
+
+    print_endline("Instruction completed: STC");    
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
 /* CMC instruction */
 function clause execute (CMC()) = {
     var c_flag = read_c_flag();
@@ -266,17 +277,6 @@ function clause execute (CMC()) = {
     update_c_flag(c_flag);
 
     print_endline("Instruction completed: CMC");
-    increment_clock_cycle_count(4);
-    increment_machine_cycle_count(1);
-
-    true
-}
-
-/* STC instruction */
-function clause execute (STC()) = {
-    update_c_flag(0b1);
-
-    print_endline("Instruction completed: STC");    
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
 

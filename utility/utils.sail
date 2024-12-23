@@ -126,11 +126,15 @@ val print_b_reg : unit -> unit
 
 val print_c_reg : unit -> unit
 
+
 val print_sp_reg : unit -> unit
 
 val print_pc_reg : unit -> unit
 
 val print_carry_bit : unit -> unit
+function print_carry_bit() = {
+    print_bits("CarryFlag: ", read_c_flag())
+}
 
 val print_parity_bit : unit -> unit
 

@@ -2,3 +2,6 @@ out.c
 out
 z3_problems
 ./testing/output.txt
+__pycache__/
+*.pyc
+*.pyo
