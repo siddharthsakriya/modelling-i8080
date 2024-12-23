@@ -262,7 +262,7 @@ scattered function execute
 /* CMC instruction */
 function clause execute (CMC()) = {
     var c_flag = read_c_flag();
-    c_flag = if c_flag == 0b1 then 0b0 else 0b1;  
+    c_flag = xor_vec(c_flag, 0b1);
     update_c_flag(c_flag);
 
     print_endline("Instruction completed: CMC");

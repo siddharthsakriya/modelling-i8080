@@ -1,11 +1,10 @@
 default Order dec
 $include <prelude.sail>
-$include "timing.sail"
-$include "types.sail"
-$include "memory.sail"
-$include "utils.sail"
-$include "instructions.sail"
-$include "program.sail"
+$include "./utility/timing.sail"
+$include "./mem&reg/types.sail"
+$include "./mem&reg/memory.sail"
+$include "./utility/utils.sail"
+$include "./decoder/instructions.sail"
 
 
 // /* Refer to page 13 of manual on deramp for startup, SP seems to be unspecified*/
@@ -29,27 +28,24 @@ $include "program.sail"
 //     true
 // }
 
-function startup() : unit -> unit = {
+function startup_cpm() : unit -> unit = {
     PC_reg[full] = 0x0100;
     SP_reg[full] = 0xFFEE;
-
 }
+
+function startup_test() : unit -> unit = {
+    PC_reg[full] = 0x0000;
+}
+
 
 function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
     var decoded = decode8(instruction);
     var loop = execute(decoded);
-    // print_processor_state();
-
-    
-
     loop
 }
 
 function main() : unit -> unit = {
-
-    startup();
     while (fetch_decode_execute(true)) do ();
-
 }

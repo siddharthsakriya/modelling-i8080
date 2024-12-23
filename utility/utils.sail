@@ -1,30 +1,6 @@
-
-val xor_reduce : word -> bits(1)
-
-val EXTZ : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
-function EXTZ(m, v) = sail_zero_extend(v, m)
-
-val EXTS : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
-function EXTS(m, v) = sail_sign_extend(v, m)
-
-infix 7 >>
-infix 7 <<
-infix 7 >>>
-
-overload operator <<  = {sail_shiftleft}
-overload operator >>  = {sail_shiftright}
-overload operator >>> = {sail_arith_shiftright}
-
-//TODO: might be wrong 
-function xor_reduce(v) = {
-    var x: bits(1) = [v[0]];
-    foreach (i from 1 to 7) {
-        let y : bits(1) = x;
-        let z : bits(1) = [v[i]]; 
-        x = xor_vec(y, z);
-    };
-    x
-}
+/* 
+ALL PSW HELPER FUNCTIONS
+*/
 
 val read_flag_reg : unit -> word
 function read_flag_reg() = {
@@ -97,23 +73,14 @@ function read_c_flag() = {
     flag_reg[0..0]
 }
 
+/* 
+ALL PC & STACK HELPER FUNCTIONS
+*/
+
 val increment_pc : unit -> unit
 function increment_pc() = {
     PC_reg[full] = add_bits(PC_reg[full], 0x0001)
 }
-
-val print_processor_state : unit -> unit
-function print_processor_state() = {
-    print_bits("PSW: ", AF_reg[full]);
-    print_bits("HL: ", HL_reg[full]);
-    print_bits("DE: ", DE_reg[full]);
-    print_bits("BC: ", BC_reg[full]);
-    print_bits("SP: ", SP_reg[full]);
-    print_bits("PC: ", PC_reg[full]);
-    print_int("Clock Cycles: ",clock_cycle_count);
-    print_int("Machine Cycles: ", machine_cycle_count);
-}
-
 
 val push_stack : bits(16) -> unit
 function push_stack(data: bits(16)) = {
@@ -132,10 +99,70 @@ function pop_stack() = {
     high_bits @ low_bits;
 }
 
+/* ALL PRINT STATE HELPER FUNCTIONS */
+val print_processor_state : unit -> unit
+function print_processor_state() = {
+    print_bits("PSW: ", AF_reg[full]);
+    print_bits("HL: ", HL_reg[full]);
+    print_bits("DE: ", DE_reg[full]);
+    print_bits("BC: ", BC_reg[full]);
+    print_bits("SP: ", SP_reg[full]);
+    print_bits("PC: ", PC_reg[full]);
+    print_int("Clock Cycles: ",clock_cycle_count);
+    print_int("Machine Cycles: ", machine_cycle_count);
+}
 
-//sail_shiftleft 
-//sail_shiftright 
-//look into overloading the shift operators 
+val print_h_reg : unit -> unit
+// function print_h_reg() = {
+
+// }
+val print_l_reg : unit -> unit
+
+val print_d_reg : unit -> unit
+
+val print_e_reg : unit -> unit
+
+val print_b_reg : unit -> unit
+
+val print_c_reg : unit -> unit
+
+val print_sp_reg : unit -> unit
+
+val print_pc_reg : unit -> unit
+
+val print_carry_bit : unit -> unit
+
+val print_parity_bit : unit -> unit
+
+val print_aux_carry_bit : unit -> unit
+
+val print_zero_bit : unit -> unit
+
+val print_sign_bit : unit -> unit
+
+/*
+MISC FUNCTIONS
+*/
+
+val EXTZ : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
+function EXTZ(m, v) = sail_zero_extend(v, m)
+
+val EXTS : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
+function EXTS(m, v) = sail_sign_extend(v, m)
+
+//TODO: might be wrong 
+val xor_reduce : word -> bits(1)
+function xor_reduce(v) = {
+    var x: bits(1) = [v[0]];
+    foreach (i from 1 to 7) {
+        let y : bits(1) = x;
+        let z : bits(1) = [v[i]]; 
+        x = xor_vec(y, z);
+    };
+    x
+}
+
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
+
 
