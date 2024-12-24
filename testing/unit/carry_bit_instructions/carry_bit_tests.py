@@ -57,36 +57,73 @@ def test_stc(setup_and_cleanup):
     except subprocess.CalledProcessError as e:
         pytest.fail(f"Subprocess failed with error: {e}")
 
-# def test_cmc (setup_and_cleanup):
-#     commands = retrieve_commands('cmc')
-#     commands1 = commands.extend([
-#         "write_mem(0x0002, 0x76)",
-#         ":run", 
-#         "startup_test()", 
-#         ":run", 
-#         "main()", 
-#         ":run", 
-#         "print_carry_bit()", 
-#         ":run", 
-#         ":quit"
-#     ])
+def test_cmc_1to0 (setup_and_cleanup):
+    commands = retrieve_commands('cmc')
+    commands.extend([
+        "write_mem(0x0001, 0x76)",
+        ":run", 
+        "startup_test()", 
+        ":run", 
+        "main()", 
+        ":run", 
+        "print_carry_bit()", 
+        ":run", 
+        ":quit"
+    ])
     
-#     with open(commands_file_path, 'w') as file:
-#         for command in commands1:
-#             file.write(f"{command}\n")    
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")    
     
-#     try:
-#         result = subprocess.run(
-#             ['sail', '-is', 'commands.txt', 'main.sail'],  # Use relative paths to the working directory
-#             cwd=three_dirs_back, 
-#             stdout=subprocess.PIPE, 
-#             stderr=subprocess.PIPE, 
-#             text=True,              
-#             check=True              
-#         )
-#         output = result.stdout
-#         carry_bit = re.search(r'b(\d+)$', output.split('\n')[-3]).group(1)
-#         assert carry_bit == '1' 
-#     except subprocess.CalledProcessError as e:
-#         pytest.fail(f"Subprocess failed with error: {e}")
+    try:
+        result = subprocess.run(
+            ['sail', '-is', 'commands.txt', 'main.sail'],  # Use relative paths to the working directory
+            cwd=three_dirs_back, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            text=True,              
+            check=True              
+        )
+        output = result.stdout
+        carry_bit = re.search(r'b(\d+)$', output.split('\n')[-3]).group(1)
+        assert carry_bit == '1' 
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
+
+
+def test_cmc_0to1 (setup_and_cleanup):
+    commands = retrieve_commands('cmc')
+    commands.extend([
+        "write_mem(0x0001, 0x76)",
+        ":run", 
+        "update_c_flag(0b1)",
+        ":run",
+        "startup_test()", 
+        ":run", 
+        "main()", 
+        ":run", 
+        "print_carry_bit()", 
+        ":run", 
+        ":quit"
+    ])
+    
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")    
+    
+    try:
+        result = subprocess.run(
+            ['sail', '-is', 'commands.txt', 'main.sail'],  # Use relative paths to the working directory
+            cwd=three_dirs_back, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            text=True,              
+            check=True              
+        )
+        output = result.stdout
+        print(output)
+        carry_bit = re.search(r'b(\d+)$', output.split('\n')[-3]).group(1)
+        assert carry_bit == '0' 
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
 
