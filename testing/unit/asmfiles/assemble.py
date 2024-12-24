@@ -16,7 +16,7 @@ def retrieve_commands(instruction):
 
     # Assemble the .asm file
     try:
-        subprocess.run(['asm80', 'stc.asm'], cwd=script_dir, check=True)
+        subprocess.run(['asm80', asm_file_name], cwd=script_dir, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running asm80: {e}")
         sys.exit(1)

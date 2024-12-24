@@ -1,5 +1,5 @@
-STC = 
-CMC =
+STC = DONE 
+CMC = DONE
 INR = 
 DCR = 
 CMA = 

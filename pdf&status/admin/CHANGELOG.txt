@@ -2,3 +2,4 @@
 Managed to get greet.com to work
 Did some minor refactoring
 23rd - 
+Added in 2 tests for CMC 
