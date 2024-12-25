@@ -1,4 +1,102 @@
 /* 
+REGISTER MAPPINGS
+*/
+mapping reg8_num_map : reg_8bit_enum <-> reg_8bit_num = {
+    B <-> 0b000,
+    C <-> 0b001,
+    D <-> 0b010,
+    E <-> 0b011,
+    H <-> 0b100,
+    L <-> 0b101,
+    M <-> 0b110,
+    A <-> 0b111
+}
+
+/* Mapping 16-bit register names to their binary representation */
+mapping reg16_num_map : reg_16bit_enum <-> reg_16bit_num = {
+    BC <-> 0b00,
+    DE <-> 0b01,
+    HL <-> 0b10,
+    AF <-> 0b11
+}
+
+/* string mappings for registers to asssist with printing */
+mapping reg8_str_map : reg_8bit_enum <-> string = {
+    B <-> "B",
+    C <-> "C",
+    D <-> "D",
+    E <-> "E",
+    H <-> "H",
+    L <-> "L",
+    M <-> "M",
+    A <-> "A"
+}
+
+mapping reg16_str_map : reg_16bit_enum <-> string = {
+    BC <-> "BC",
+    DE <-> "DE",
+    HL <-> "HL",
+    AF <-> "AF"
+}
+
+/* 
+ALL REGISTER HELPER FUNCTIONS
+*/
+
+/* read_reg16 function */
+val read_reg16 : reg_16bit_num -> dword
+function read_reg16(r) = {
+    match r {
+        0b00 => BC_reg[full], 
+        0b01 => DE_reg[full],
+        0b10 => HL_reg[full],
+        0b11 => AF_reg[full]
+    }
+}
+
+/* write_reg16 function */
+val write_reg16 : (reg_16bit_num, dword) -> unit
+function write_reg16(r, v) = {
+    match r {
+        0b00 => BC_reg[full] = v,
+        0b01 => DE_reg[full] = v,
+        0b10 => HL_reg[full] = v,
+        0b11 => SP_reg[full] = v
+    }
+}
+
+/* read_reg8 function */
+val read_reg8 : reg_8bit_num -> word 
+function read_reg8(r) = {
+    match r {
+        0b000 => BC_reg[high],
+        0b001 => BC_reg[low],
+        0b010 => DE_reg[high],
+        0b011 => DE_reg[low],
+        0b100 => HL_reg[high],
+        0b101 => HL_reg[low],
+        0b110 => read_mem(read_reg16(0b10)),
+        0b111 => AF_reg[high]
+    }
+}
+
+
+/* write_reg8 function */
+val write_reg8 : (reg_8bit_num, word) -> unit
+function write_reg8(r, v) = {
+    match r {
+        0b000 => BC_reg[high] = v,
+        0b001 => BC_reg[low] = v,
+        0b010 => DE_reg[high] = v,
+        0b011 => DE_reg[low] = v,
+        0b100 => HL_reg[high] = v,
+        0b101 => HL_reg[low] = v,
+        0b110 => write_mem(read_reg16(0b10), v),
+        0b111 => AF_reg[high] = v
+    }
+}
+
+/* 
 ALL PSW HELPER FUNCTIONS
 */
 
@@ -123,6 +221,9 @@ val print_d_reg : unit -> unit
 val print_e_reg : unit -> unit
 
 val print_b_reg : unit -> unit
+function print_b_reg() = {
+    print_bits("B Reg: ", read_reg8(0b000))
+}
 
 val print_c_reg : unit -> unit
 
@@ -137,12 +238,21 @@ function print_carry_bit() = {
 }
 
 val print_parity_bit : unit -> unit
+function print_parity_bit() = {
+    print_bits("ParityFlag: ", read_p_flag())
+}
 
 val print_aux_carry_bit : unit -> unit
 
 val print_zero_bit : unit -> unit
+function print_zero_bit() = {
+    print_bits("ZeroFlag: ", read_z_flag())
+}
 
 val print_sign_bit : unit -> unit
+function print_sign_bit() = {
+    print_bits("SignFlag: ", read_s_flag())
+}
 
 /*
 MISC FUNCTIONS
@@ -154,7 +264,6 @@ function EXTZ(m, v) = sail_zero_extend(v, m)
 val EXTS : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
 function EXTS(m, v) = sail_sign_extend(v, m)
 
-//TODO: might be wrong 
 val xor_reduce : word -> bits(1)
 function xor_reduce(v) = {
     var x: bits(1) = [v[0]];
@@ -164,6 +273,11 @@ function xor_reduce(v) = {
         x = xor_vec(y, z);
     };
     x
+}
+
+val bool_to_bit_converter : bool -> bits(1)
+function bool_to_bit_converter(b) = {
+    if b == true then 0b1 else 0b0;
 }
 
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)

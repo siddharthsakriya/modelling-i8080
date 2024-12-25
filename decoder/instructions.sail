@@ -1,100 +1,3 @@
-/* types for register names */
-type reg_8bit_num = bits(3)
-type reg_16bit_num = bits(2)
-
-/* Mapping 8-bit register names to their binary representation */
-mapping reg8_num_map : reg_8bit_enum <-> reg_8bit_num = {
-    B <-> 0b000,
-    C <-> 0b001,
-    D <-> 0b010,
-    E <-> 0b011,
-    H <-> 0b100,
-    L <-> 0b101,
-    M <-> 0b110,
-    A <-> 0b111
-}
-
-/* Mapping 16-bit register names to their binary representation */
-mapping reg16_num_map : reg_16bit_enum <-> reg_16bit_num = {
-    BC <-> 0b00,
-    DE <-> 0b01,
-    HL <-> 0b10,
-    AF <-> 0b11
-}
-
-
-/* read_reg16 function */
-val read_reg16 : reg_16bit_num -> dword
-function read_reg16(r) = {
-    match r {
-        0b00 => BC_reg[full], 
-        0b01 => DE_reg[full],
-        0b10 => HL_reg[full],
-        0b11 => AF_reg[full]
-    }
-}
-
-/* write_reg16 function */
-val write_reg16 : (reg_16bit_num, dword) -> unit
-function write_reg16(r, v) = {
-    match r {
-        0b00 => BC_reg[full] = v,
-        0b01 => DE_reg[full] = v,
-        0b10 => HL_reg[full] = v,
-        0b11 => SP_reg[full] = v
-    }
-}
-
-/* read_reg8 function */
-val read_reg8 : reg_8bit_num -> word 
-function read_reg8(r) = {
-    match r {
-        0b000 => BC_reg[high],
-        0b001 => BC_reg[low],
-        0b010 => DE_reg[high],
-        0b011 => DE_reg[low],
-        0b100 => HL_reg[high],
-        0b101 => HL_reg[low],
-        0b110 => read_mem(read_reg16(0b10)),
-        0b111 => AF_reg[high]
-    }
-}
-
-
-/* write_reg8 function */
-val write_reg8 : (reg_8bit_num, word) -> unit
-function write_reg8(r, v) = {
-    match r {
-        0b000 => BC_reg[high] = v,
-        0b001 => BC_reg[low] = v,
-        0b010 => DE_reg[high] = v,
-        0b011 => DE_reg[low] = v,
-        0b100 => HL_reg[high] = v,
-        0b101 => HL_reg[low] = v,
-        0b110 => write_mem(read_reg16(0b10), v),
-        0b111 => AF_reg[high] = v
-    }
-}
-
-/* string mappings for registers to asssist with printing */
-mapping reg8_str_map : reg_8bit_enum <-> string = {
-    B <-> "B",
-    C <-> "C",
-    D <-> "D",
-    E <-> "E",
-    H <-> "H",
-    L <-> "L",
-    M <-> "M",
-    A <-> "A"
-}
-
-mapping reg16_str_map : reg_16bit_enum <-> string = {
-    BC <-> "BC",
-    DE <-> "DE",
-    HL <-> "HL",
-    AF <-> "AF"
-}
-
 scattered union ast 
 
 union clause ast = CMC : (unit)
@@ -286,12 +189,13 @@ function clause execute (CMC()) = {
 /* INR instruction */
 function clause execute (INR(r)) = {
     var v = read_reg8(r);    
-    update_a_flag(if v[3..0] == 0b1111 then 0b1 else 0b0); //if lower nibble is 0xf then auxillary flag should be 1 as there is a carry from lower nibble
-    v = add_bits(v, 0b00000001);
+    //if lower nibble is 0b1111 it means when we add one theres going to be an auxillary carry
+    update_a_flag(bool_to_bit_converter(v[3..0] == 0b1111)); 
+    v = add_bits(v, 0x01);
     write_reg8(r, v);
-    update_s_flag(if v[7..7] == 0b1 then 0b1 else 0b0); 
-    update_z_flag(if v == 0b00000000 then 0b1 else 0b0); //if result is 0 then zero flag should be 1
-    update_p_flag(if xor_reduce(v) == 0b0 then 0b1 else 0b0); //if number of 1s is even then parity flag should be 1
+    update_s_flag(bool_to_bit_converter(v[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(v == 0b00000000)); //if result is 0 then zero flag should be 1
+    update_p_flag(bool_to_bit_converter(xor_reduce(v) == 0b0));//if number of 1s is even then parity flag should be 1
     
     print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
     if reg8_str_map(reg8_num_map(r)) == "M" then {

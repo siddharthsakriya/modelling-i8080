@@ -1,5 +1,8 @@
 $include <prelude.sail>
 
+type reg_8bit_num = bits(3)
+type reg_16bit_num = bits(2)
+
 type addr_size : Int = 16
 type addr = bits(addr_size)
 
