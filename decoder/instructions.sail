@@ -404,19 +404,19 @@ function clause execute(PUSH(r)) = {
     var data = read_reg16(r);
     push_stack(data);
     
-    print_endline("Instruction completed: PUSH");
+    print_endline(concat_str("Instruction completed: PUSH ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(11);
     increment_machine_cycle_count(4);
 
     true
 }
 
-/* POP instruction */
+/* POP instruction */ 
 function clause execute(POP(r)) = {
     var stack_data = pop_stack();
     write_reg16(r, stack_data);
     
-    print_endline("Instruction completed: POP");
+    print_endline(concat_str("Instruction completed: POP ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
 
@@ -424,17 +424,159 @@ function clause execute(POP(r)) = {
 }
 
 
-// need to make diff for SP
+/* DAD instruction */
 function clause execute(DAD(r)) = {
-    var v = 0b0 @ read_reg16(r);
-    var hl = 0b0 @ read_reg16(0b10);
+    var v = 0b0 @ read_reg16_sp(r);
+    var hl = 0b0 @ read_reg16_sp(0b10);
     var res = add_bits(hl, v);
-    write_reg16(0b10, res[15..0]);
+
+    write_reg16_sp(0b10, res[15..0]);
     update_c_flag(res[16..16]);
-    
+
+    print_endline(concat_str("Instruction completed: DAD ", reg16_str_map(reg16_num_map(r))));
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
     true
 }
 
+/* INX instruction */
+function clause execute(INX(r)) = {
+    var v = read_reg16_sp(r);
+    v = add_bits(v, 0x0001);
+    write_reg16_sp(r, v);
+
+    print_endline(concat_str("Instruction completed: INX ", reg16_str_map(reg16_num_map(r))));
+    increment_clock_cycle_count(5);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* DCX instruction */
+function clause execute(DCX(r)) = {
+    var v = read_reg16_sp(r);
+    v = sub_bits(v, 0x0001);
+    write_reg16_sp(r, v);
+
+    print_endline(concat_str("Instruction completed: INX ", reg16_str_map(reg16_num_map(r))));
+    increment_clock_cycle_count(5);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* XCHG instruction */
+function clause execute(XCHG()) = {
+    var de = read_reg16_sp(0b01);
+    var hl = read_reg16_sp(0b10);
+    
+    write_reg16_sp(0b01, hl);
+    write_reg16_sp(0b10, de);
+
+    print_endline("Instruction completed: XCHG");
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* XTHL instruction */
+function clause execute(XTHL()) = {
+    var sp = read_reg16_sp(0b11);
+    var hl = read_reg16_sp(0b10);
+    
+    write_reg16_sp(0b11, hl);
+    write_reg16_sp(0b10, sp);
+
+    print_endline("Instruction completed: XTHL");
+    increment_clock_cycle_count(18);
+    increment_machine_cycle_count(5);
+
+    true
+}
+
+/* SPHL instruction */
+function clause execute(SPHL()) = {
+    var hl = read_reg16_sp(0b10);
+    write_reg16_sp(0b11, hl);
+
+    print_endline("Instruction completed: SPHL");
+    increment_clock_cycle_count(5);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* LXI instruction */
+function clause execute(LXI(r, low_data, high_data)) = {
+    write_reg16_sp(r, high_data @ low_data);
+    print_endline(concat_str("Instruction completed: LXI ", reg16_str_map(reg16_num_map(r))));
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+/* MVI instruction */
+function clause execute(MVI(r, data)) = {
+    write_reg8(r, data);
+    print_endline(concat_str("Instruction completed: MVI ", reg8_str_map(reg8_num_map(r))));
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+/* ADI instruction */
+function clause execute(ADI(data)) = {
+    var v = 0b0 @ read_reg8(0b111);
+    var result = add_bits(v, 0b0 @ data);
+    var aux_carry = add_bits(0b0 @ v[3..0], 0b0 @ data[3..0])[4..4];
+    
+    write_reg8(0b111, result[7..0]);
+
+    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
+    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
+    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
+    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
+
+    print_endline("Instruction completed: ADI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
+
+/* ACI instruction */
+function clause execute(ACI(data)) = {
+    var v: bits(9) = 0b0 @ read_reg8(0b111);
+    var acc: bits(9) = 0b0 @ data;
+    var carry: bits(9) = sail_zero_extend(read_c_flag(), 9);
+
+    var result: bits(9) = add_bits(acc, add_bits(v, carry));
+    var aux_carry: bits(1) = add_bits(0b0 @ acc[3..0], add_bits(0b0 @ v[3..0], 0b0 @ carry[3..0]))[4..4];
+    
+    write_reg8(0b111, result[7..0]);
+
+    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
+    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
+    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
+    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
+
+    print_endline("Instruction completed: ACI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
 
 function clause execute(CALL(low_data, high_data)) = {
     push_stack(PC_reg[full]);
@@ -443,17 +585,6 @@ function clause execute(CALL(low_data, high_data)) = {
     true
 }
 
-function clause execute(MVI(r, data)) = {
-    write_reg8(r, data);
-    print_endline("MVI Executed");
-    true
-}
-
-function clause execute(LXI(r, low_data, high_data)) = {
-    write_reg16(r, high_data @ low_data);
-    print_endline("LXI Executed");
-    true
-}
 
 function clause execute(NOTFOUND8(this)) = {
     print_endline("not found, try 16");

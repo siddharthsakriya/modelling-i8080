@@ -54,9 +54,29 @@ function read_reg16(r) = {
     }
 }
 
+val read_reg16_sp : reg_16bit_num -> dword
+function read_reg16_sp(r) = {
+    match r {
+        0b00 => BC_reg[full], 
+        0b01 => DE_reg[full],
+        0b10 => HL_reg[full],
+        0b11 => SP_reg[full]
+    }
+}
+
 /* write_reg16 function */
 val write_reg16 : (reg_16bit_num, dword) -> unit
 function write_reg16(r, v) = {
+    match r {
+        0b00 => BC_reg[full] = v,
+        0b01 => DE_reg[full] = v,
+        0b10 => HL_reg[full] = v,
+        0b11 => AF_reg[full] = v
+    }
+}
+
+val write_reg16_sp : (reg_16bit_num, dword) -> unit
+function write_reg16_sp(r, v) = {
     match r {
         0b00 => BC_reg[full] = v,
         0b01 => DE_reg[full] = v,
