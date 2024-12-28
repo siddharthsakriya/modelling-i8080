@@ -578,6 +578,72 @@ function clause execute(ACI(data)) = {
     true
 }
 
+/* SUI instruction: TODO */
+function clause execute(SUI(data)) = {
+    false
+}
+
+/* SBI instruction: TODO */
+function clause execute(SBI(data)) = {
+    false
+}
+
+/* ANI instruction: TODO DOYBLE CHECX WORKING */
+function clause execute(ANI(data)) = {
+    var v: word = data;
+    write_reg8(0b111, and_vec(read_reg8(0b111), v));
+    update_c_flag(0b0);
+    update_a_flag(0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
+
+    print_endline("Instruction completed: ANI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
+
+/* XRI instruction */
+function clause execute(XRI(data)) = {
+    var v: word = data;
+    write_reg8(0b111, xor_vec(read_reg8(0b111), v));
+    update_c_flag(0b0);
+    update_a_flag(0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
+
+    print_endline("Instruction completed: XRI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
+
+/* ORI instruction */
+function clause execute(ORI(data)) = {
+    var v: word = data;
+    write_reg8(0b111, or_vec(read_reg8(0b111), v));
+    update_c_flag(0b0);
+    update_a_flag(0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
+
+    print_endline("Instruction completed: ORI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+}
+
+
+
 function clause execute(CALL(low_data, high_data)) = {
     push_stack(PC_reg[full]);
     print_endline("CALL Executed");
