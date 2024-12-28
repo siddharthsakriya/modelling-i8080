@@ -197,6 +197,11 @@ function pop_stack() = {
     high_bits @ low_bits;
 }
 
+val increment_stack_pointer : unit -> unit
+function increment_stack_pointer() = {
+    SP_reg[full] = add_bits(SP_reg[full], 0x0001);
+}
+
 /* ALL PRINT STATE HELPER FUNCTIONS */
 val print_processor_state : unit -> unit
 function print_processor_state() = {
