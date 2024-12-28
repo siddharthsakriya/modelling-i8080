@@ -259,11 +259,12 @@ function clause execute (ADC(r)) = {
 /* ANA instruction */
 function clause execute (ANA(r)) = {
     var v: word = read_reg8(r);
-    A_reg = and_vec(A_reg, v);
+    write_reg8(0b111, and_vec(read_reg8(0b111), v));
     update_c_flag(0b0);
-    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
-    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
+    update_a_flag(0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
     print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
     
@@ -276,28 +277,32 @@ function clause execute (ANA(r)) = {
 // /* XRA instruction */
 function clause execute (XRA(r)) = {
     var v: word = read_reg8(r);
-    A_reg = xor_vec(A_reg, v);
+    write_reg8(0b111, xor_vec(read_reg8(0b111), v));
+
     update_c_flag(0b0);
     update_a_flag(0b0);
-    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
-    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
+
+    print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
 
-    print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
     true
 }
 
 // /* ORA instruction */
 function clause execute (ORA(r)) = {
     var v: word = read_reg8(r);
-    A_reg = or_vec(A_reg, v);
+    write_reg8(0b111, or_vec(read_reg8(0b111), v));
+
     update_c_flag(0b0);
-    update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
-    update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
+    update_a_flag(0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
+    update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
     print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
 
@@ -307,31 +312,32 @@ function clause execute (ORA(r)) = {
     true
 }
 
-// /* CMP instruction */
-function clause execute (CMP(r)) = {
-    var v: word = read_reg8(r);
-    update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
-    update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
-    var res = sub_bits(A_reg, v);
-    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
-    update_z_flag(if res == 0b00000000 then 0b1 else 0b0);
+// /* CMP instruction */ NEED TO CHECK LOGIC OF THIS AND UPDATE
+// function clause execute (CMP(r)) = {
+//     var v: word = read_reg8(r);
 
-    print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
+//     update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
+//     update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
+//     var res = sub_bits(A_reg, v);
+//     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
+//     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
+//     update_z_flag(if res == 0b00000000 then 0b1 else 0b0);
 
-    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
-    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+//     print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
+
+//     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+//     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
     
-    true
-}
+//     true
+// }
 
 // /* RLC instruction */
 function clause execute (RLC()) = {
-    var v = A_reg;
+    var v = read_reg8(0b111);
     var msb = v[7..7];
     v = shiftl(v, 1);
     v[0..0] = msb;
-    A_reg = v;
+    write_reg8(0b111, v);
     update_c_flag(msb);
 
     print_endline("Instruction completed: RLC");
@@ -344,11 +350,11 @@ function clause execute (RLC()) = {
 
 // /* RRC instruction */
 function clause execute(RRC()) = {
-    var v = A_reg;
+    var v = read_reg8(0b111);
     var lsb = v[0..0];
     v = shiftr(v, 1);
     v[7..7] = lsb;
-    A_reg = v;
+    write_reg8(0b111, v);
     update_c_flag(lsb);
 
     print_endline("Instruction completed: RRC");
@@ -361,11 +367,11 @@ function clause execute(RRC()) = {
 
 // /* RAL instruction */
 function clause execute(RAL()) = {
-    var v = A_reg;
+    var v = read_reg8(0b111);
     var msb = v[7..7];
     v = shiftl(v, 1);
     v[0..0] = read_c_flag();
-    A_reg = v;
+    write_reg8(0b111, v);
     update_c_flag(msb);
 
     print_endline("Instruction completed: RAL");
@@ -378,11 +384,11 @@ function clause execute(RAL()) = {
 
 /* RAR instruction */
 function clause execute(RAR()) = {
-    var v = A_reg;
+    var v = read_reg8(0b111);
     var lsb = v[0..0];
     v = shiftr(v, 1);
     v[7..7] = read_c_flag();
-    A_reg = v;
+    write_reg8(0b111, v);
     update_c_flag(lsb);
 
     print_endline("Instruction completed: RAR");
