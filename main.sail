@@ -4,6 +4,7 @@ $include "./utility/timing.sail"
 $include "./mem&reg/types.sail"
 $include "./mem&reg/memory.sail"
 $include "./utility/utils.sail"
+$include "./decoder/decode.sail"
 $include "./decoder/instructions.sail"
 
 
