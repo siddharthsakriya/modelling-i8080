@@ -588,7 +588,7 @@ function clause execute(SBI(data)) = {
     false
 }
 
-/* ANI instruction: TODO DOYBLE CHECX WORKING */
+/* ANI instruction */
 function clause execute(ANI(data)) = {
     var v: word = data;
     write_reg8(0b111, and_vec(read_reg8(0b111), v));
@@ -638,6 +638,194 @@ function clause execute(ORI(data)) = {
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
+
+    true
+}
+
+/* CPI instruction: TODO */
+function clause execute(CPI(data)) = {
+    false
+}
+
+/* STA instruction */
+function clause execute(STA(low_data, high_data)) = {
+    var addr: addr = high_data @ low_data;
+    write_mem(addr, read_reg8(0b111));
+
+    print_endline("Instruction completed: STA");
+
+    increment_clock_cycle_count(13);
+    increment_machine_cycle_count(4);
+
+    true
+}
+
+/* LDA instruction */
+function clause execute(LDA(low_data, high_data)) = {
+    var addr: addr = high_data @ low_data;
+    write_reg8(0b111, read_mem(addr));
+
+    print_endline("Instruction completed: LDA");
+
+    increment_clock_cycle_count(13);
+    increment_machine_cycle_count(4);
+
+    true
+}
+
+/* SHLD instruction */
+function clause execute(SHLD(low_data, high_data)) = {
+    var addr: addr = high_data @ low_data;
+    write_mem(addr, read_reg8(0b101));
+    write_mem(add_bits(addr, 0x0001), read_reg8(0b100));
+
+    print_endline("Instruction completed: SHLD");
+
+    increment_clock_cycle_count(16);
+    increment_machine_cycle_count(5);
+
+    true
+}
+
+/* LHLD instruction */
+function clause execute(LHLD(low_data, high_data)) = {
+    var addr: addr = high_data @ low_data;
+    write_reg8(0b101, read_mem(addr));
+    write_reg8(0b100, read_mem(add_bits(addr, 0x0001)));
+
+    print_endline("Instruction completed: LHLD");
+
+    increment_clock_cycle_count(16);
+    increment_machine_cycle_count(5);
+
+    true
+}
+
+/* PCHL instruction */
+function clause execute(PCHL()) = {
+    PC_reg[full] = read_reg16_sp(0b10);
+
+    print_endline("Instruction completed: PCHL");
+
+    increment_clock_cycle_count(5);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* JMP instruction */
+function clause execute(JMP(low_data, high_data)) = {
+    PC_reg[full] = high_data @ low_data;
+
+    print_endline("Instruction completed: JMP");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+/* JC instruction */
+function clause execute(JC(low_data, high_data)) = {
+    if read_c_flag() == 0b1 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JC");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JNC(low_data, high_data)) = {
+    if read_c_flag() == 0b0 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JNC");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JZ(low_data, high_data)) = {
+    if read_z_flag() == 0b1 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JZ");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JNZ(low_data, high_data)) = {
+    if read_z_flag() == 0b0 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JNZ");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JM(low_data, high_data)) = {
+    if read_s_flag() == 0b1 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JM");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JP(low_data, high_data)) = {
+    if read_s_flag() == 0b0 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JP");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JPE(low_data, high_data)) = {
+    if read_p_flag() == 0b1 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JPE");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+function clause execute(JPO(low_data, high_data)) = {
+    if read_p_flag() == 0b0 then {
+        PC_reg[full] = high_data @ low_data;
+    };
+
+    print_endline("Instruction completed: JPO");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
 
     true
 }
