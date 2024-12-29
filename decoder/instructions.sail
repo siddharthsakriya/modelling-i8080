@@ -739,6 +739,7 @@ function clause execute(JC(low_data, high_data)) = {
     true
 }
 
+/* JNC instruction */
 function clause execute(JNC(low_data, high_data)) = {
     if read_c_flag() == 0b0 then {
         PC_reg[full] = high_data @ low_data;
@@ -752,6 +753,7 @@ function clause execute(JNC(low_data, high_data)) = {
     true
 }
 
+/* JZ instruction */
 function clause execute(JZ(low_data, high_data)) = {
     if read_z_flag() == 0b1 then {
         PC_reg[full] = high_data @ low_data;
@@ -765,6 +767,7 @@ function clause execute(JZ(low_data, high_data)) = {
     true
 }
 
+/* JNZ instruction */
 function clause execute(JNZ(low_data, high_data)) = {
     if read_z_flag() == 0b0 then {
         PC_reg[full] = high_data @ low_data;
@@ -778,6 +781,7 @@ function clause execute(JNZ(low_data, high_data)) = {
     true
 }
 
+/* JM instruction */
 function clause execute(JM(low_data, high_data)) = {
     if read_s_flag() == 0b1 then {
         PC_reg[full] = high_data @ low_data;
@@ -791,6 +795,7 @@ function clause execute(JM(low_data, high_data)) = {
     true
 }
 
+/* JP instruction */
 function clause execute(JP(low_data, high_data)) = {
     if read_s_flag() == 0b0 then {
         PC_reg[full] = high_data @ low_data;
@@ -804,6 +809,7 @@ function clause execute(JP(low_data, high_data)) = {
     true
 }
 
+/* JPE instruction */
 function clause execute(JPE(low_data, high_data)) = {
     if read_p_flag() == 0b1 then {
         PC_reg[full] = high_data @ low_data;
@@ -817,6 +823,7 @@ function clause execute(JPE(low_data, high_data)) = {
     true
 }
 
+/* JPO instruction */
 function clause execute(JPO(low_data, high_data)) = {
     if read_p_flag() == 0b0 then {
         PC_reg[full] = high_data @ low_data;
@@ -830,15 +837,153 @@ function clause execute(JPO(low_data, high_data)) = {
     true
 }
 
-
-
+/* CALL instruction */
 function clause execute(CALL(low_data, high_data)) = {
     push_stack(PC_reg[full]);
-    print_endline("CALL Executed");
     PC_reg[full] = high_data @ low_data;
+    print_endline("Instruction completed: CALL");
+
+    increment_clock_cycle_count(17);
+    increment_machine_cycle_count(5);
+
     true
 }
 
+/* CC instruction */
+function clause execute(CC(low_data, high_data)) = {
+    if read_c_flag() == 0b1 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CC");
+
+    true
+}
+
+/* CNC instruction */
+function clause execute(CNC(low_data, high_data)) = {
+    if read_c_flag() == 0b0 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CNC");
+
+    true
+}
+
+/* CZ instruction */
+function clause execute(CZ(low_data, high_data)) = {
+    if read_z_flag() == 0b1 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CZ");
+
+    true
+}
+
+/* CNZ instruction */
+function clause execute(CNZ(low_data, high_data)) = {
+    if read_z_flag() == 0b0 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CNZ");
+
+    true
+}
+
+/* CM instruction */
+function clause execute(CM(low_data, high_data)) = {
+    if read_s_flag() == 0b1 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CM");
+
+    true
+}
+
+/* CP instruction */
+function clause execute(CP(low_data, high_data)) = {
+    if read_s_flag() == 0b0 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CP");
+
+    true
+}
+
+/* CPE instruction */
+function clause execute(CPE(low_data, high_data)) = {
+    if read_p_flag() == 0b1 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CPE");
+
+    true
+}
+
+/* CPO instruction */
+function clause execute(CPO(low_data, high_data)) = {
+    if read_p_flag() == 0b0 then {
+        push_stack(PC_reg[full]);
+        PC_reg[full] = high_data @ low_data;
+        increment_clock_cycle_count(17);
+        increment_machine_cycle_count(5);
+    } else {
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    };
+
+    print_endline("Instruction completed: CPO");
+
+    true
+}
 
 function clause execute(NOTFOUND8(this)) = {
     print_endline("not found, try 16");
