@@ -50,3 +50,4 @@ register SP_reg : reg16
 register PC_reg : reg16
 
 register DE_addr : addr
+register INTE : bits(1)

@@ -283,6 +283,11 @@ function print_sign_bit() = {
 MISC FUNCTIONS
 */
 
+val set_interrupt_enable: bits(1) -> unit   
+function set_interrupt_enable(ie) = {
+    INTE = ie;
+}
+
 val EXTZ : forall 'n 'm, 'm >= 'n. (implicit('m), bits('n)) -> bits('m)
 function EXTZ(m, v) = sail_zero_extend(v, m)
 

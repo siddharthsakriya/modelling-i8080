@@ -292,8 +292,24 @@ function clause execute (ORA(r)) = {
 
 // /* CMP instruction */ NEED TO CHECK LOGIC OF THIS AND UPDATE
 function clause execute (CMP(r)) = {
-    print_endline("to be implemented");
-    false
+    
+    var a_value = signed(read_reg8(0b111));
+    var data_value = signed(read_reg8(r));
+    var data = read_reg8(r);
+
+    update_c_flag(if a_value < data_value then 0b1 else 0b0);
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
+    update_z_flag(if read_reg8(0b111) == data then 0b1 else 0b0);
+    var res = sub_bits(read_reg8(0b111), data);
+    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
+    
+    print_endline("Instruction completed: CMP");
+
+    if reg8_str_map(reg8_num_map(r)) == "M" then increment_clock_cycle_count(7) else increment_clock_cycle_count(4);
+    if reg8_str_map(reg8_num_map(r)) == "M" then increment_machine_cycle_count(2) else increment_machine_cycle_count(1);    
+        
+    true
 }
 
 // /* RLC instruction */
@@ -387,7 +403,6 @@ function clause execute(POP(r)) = {
 
     true
 }
-
 
 /* DAD instruction */
 function clause execute(DAD(r)) = {
@@ -609,13 +624,13 @@ function clause execute(ORI(data)) = {
     true
 }
 
-/* CPI instruction: TODO */
+/* CPI instruction */
 function clause execute(CPI(data)) = {
     var a_value = signed(read_reg8(0b111));
     var data_value = signed(data);
     
     update_c_flag(if a_value < data_value then 0b1 else 0b0);
-    
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
     update_z_flag(if read_reg8(0b111) == data then 0b1 else 0b0);
     var res = sub_bits(read_reg8(0b111), data);
     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
@@ -1119,6 +1134,61 @@ function clause execute(RST(exp)) = {
     true
 }
 
+/* EI instruction */
+function clause execute(EI()) = {
+    set_interrupt_enable(0b1);
+    print_endline("Instruction completed: EI");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* DI instruction */
+function clause execute(DI()) = {
+    set_interrupt_enable(0b0);
+    print_endline("Instruction completed: DI");
+
+    increment_clock_cycle_count(4);
+    increment_machine_cycle_count(1);
+
+    true
+}
+
+/* IN instruction */
+function clause execute(IN(port)) = {
+    
+    // Not sure about the port stuff
+    print_endline("Instruction completed: IN");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+/* OUT instruction */
+function clause execute(OUT(port)) = {
+    
+    // Not sure about the port stuff
+    print_endline("Instruction completed: OUT");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+/* HLT instruction */
+function clause execute (HLT()) = {
+    print_endline("Instruction completed: HLT ");
+    
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(1);
+    
+    false
+}
 
 function clause execute(NOTFOUND8(this)) = {
     print_endline("not found, try 16");
@@ -1140,8 +1210,3 @@ function clause execute(NOTFOUND24(this)) = {
     false
 }
 
-/* HLT instruction */
-function clause execute (HLT()) = {
-    print_endline("Instruction completed: HLT ");
-    false
-}
