@@ -3,3 +3,5 @@ Managed to get greet.com to work
 Did some minor refactoring
 23rd - 
 Added in 2 tests for CMC 
+27,28,29,30th - 
+Finished all instructions, got 3 suites working :)))

@@ -120,7 +120,7 @@ function clause execute (NOP()) = {
     
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
-    false
+    true
 }
 
 // /* MOV instruction */
@@ -719,10 +719,6 @@ function clause execute(CPI(data)) = {
     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
     
     print_endline("Instruction completed: CPI");
-
-    print_processor_state();
-    print_bits("a_value: ", read_reg8(0b111));
-    print_bits("data_value: ", data);
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);

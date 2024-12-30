@@ -26,6 +26,12 @@ function intercept_BDOS() : unit -> unit = {
         while (bdos_9(true)) do ();
     
     };
+
+    if (read_reg8(0b001) == 0x02) then {
+        if (read_reg8(0b011) != 0x00) then {
+            print_bits("value: ", read_reg8(0b011));
+        };
+    };
 }
 
 function startup_cpm() : unit -> unit = {
@@ -46,6 +52,9 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     if (PC_reg[full] == 0x0005) then {
         intercept_BDOS();
     };
+    if( PC_reg[full] == 0x0000) then {
+        loop = false;
+    }; 
     loop
 }
 
