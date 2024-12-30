@@ -224,14 +224,53 @@ function clause execute (ADC(r)) = {
 
 // /* SUB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
 function clause execute (SUB(r)) = {
-    print_endline("to be implemented");
-    false
+    
+    var a_value = read_reg8(0b111);
+    var data = read_reg8(r);
+    var res = sub_bits(a_value, data);
+    
+    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(data)));
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(res) == 0b0));
+    update_s_flag(bool_to_bit_converter(res[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(res == 0b00000000));
+
+    write_reg8(0b111, res);
+
+    print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
+
+    increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
+    increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
+
+    true
 }
 
 // /* SBB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
 function clause execute (SBB(r)) = {
-    print_endline("to be implemented");
-    false
+
+    var a_value = read_reg8(0b111); 
+    var carry = read_c_flag(); 
+    var data = read_reg8(r);
+    var effective_data = add_bits(data, sail_zero_extend(carry, 8));
+
+    var result = sub_bits(a_value, effective_data);
+
+    // Update flags
+    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(effective_data)));
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(effective_data[3..0]) then 0b1 else 0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(result) == 0b0));
+    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(result == 0b00000000));
+
+    write_reg8(0b111, result);
+
+    print_endline("Instruction completed: SBI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
+    
 }
 
 /* ANA instruction */
@@ -440,7 +479,7 @@ function clause execute(DCX(r)) = {
     v = sub_bits(v, 0x0001);
     write_reg16_sp(r, v);
 
-    print_endline(concat_str("Instruction completed: INX ", reg16_str_map(reg16_num_map(r))));
+    print_endline(concat_str("Instruction completed: DCX ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
 
@@ -467,8 +506,14 @@ function clause execute(XTHL()) = {
     var sp = read_reg16_sp(0b11);
     var hl = read_reg16_sp(0b10);
     
-    write_reg16_sp(0b11, hl);
-    write_reg16_sp(0b10, sp);
+    
+    var h = read_mem(sp);
+    var l = read_mem(sp + 0x0001);
+
+    write_mem(sp, hl[7..0]);
+    write_mem(sp + 0x0001, hl[15..8]);
+
+    write_reg16_sp(0b10, l @ h);
 
     print_endline("Instruction completed: XTHL");
     increment_clock_cycle_count(18);
@@ -560,15 +605,52 @@ function clause execute(ACI(data)) = {
 
 /* SUI instruction: TODO */
 function clause execute(SUI(data)) = {
-    print_endline("to be implemented");
-    false
+    
+    var a_value = read_reg8(0b111); // Read accumulator (A)
+    var res = sub_bits(a_value, data); // Perform subtraction
+
+
+    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(data)));
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(res) == 0b0));
+    update_s_flag(bool_to_bit_converter(res[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(res == 0b00000000));
+
+    write_reg8(0b111, res);
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    print_endline("Instruction completed: SUI");
+
+    true
 }
 
 /* SBI instruction: TODO */
 function clause execute(SBI(data)) = {
-    print_endline("to be implemented");
-    false
+    var a_value = read_reg8(0b111); 
+    var carry = read_c_flag(); 
+    var effective_data = add_bits(data, sail_zero_extend(carry, 8));
+
+    var result = sub_bits(a_value, effective_data);
+
+    // Update flags
+    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(effective_data)));
+    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(effective_data[3..0]) then 0b1 else 0b0);
+    update_p_flag(bool_to_bit_converter(xor_reduce(result) == 0b0));
+    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
+    update_z_flag(bool_to_bit_converter(result == 0b00000000));
+
+    write_reg8(0b111, result);
+
+    print_endline("Instruction completed: SBI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
 }
+
 
 /* ANI instruction */
 function clause execute(ANI(data)) = {
@@ -629,14 +711,18 @@ function clause execute(CPI(data)) = {
     var a_value = signed(read_reg8(0b111));
     var data_value = signed(data);
     
-    update_c_flag(if a_value < data_value then 0b1 else 0b0);
+    update_c_flag(if unsigned(read_reg8(0b111)) < unsigned(data) then 0b1 else 0b0);
     update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
-    update_z_flag(if read_reg8(0b111) == data then 0b1 else 0b0);
+    update_z_flag(if sub_bits(read_reg8(0b111), data) == 0b00000000 then 0b1 else 0b0);
     var res = sub_bits(read_reg8(0b111), data);
     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
     
     print_endline("Instruction completed: CPI");
+
+    print_processor_state();
+    print_bits("a_value: ", read_reg8(0b111));
+    print_bits("data_value: ", data);
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
