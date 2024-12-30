@@ -15,19 +15,18 @@ $include "./decoder/instructions.sail"
 // }
 //undefined keyword for SP
 
-// function intercept_BDOS() : unit -> unit = {
-//     if (read_reg8(0b001) == 0x09) then {
-//         var start_addr = read_reg16(0b01);
-//         while (read_mem(start_addr) != 0x24) do (
-//             print_bits(read_mem(start_addr));
-//             start_addr = add_bits(start_addr, 0x0001);
-//         );
-//     };
-// }
+function bdos_9(value) : bool -> bool = {
+    var looped = if (read_mem(DE_addr) == 0x24) then { false } else { print_bits("value: ", read_mem(DE_addr)); DE_addr = DE_addr + 1; true;}; 
+    looped
+}
 
-// function read(prev, address) : bool, bits(16) -> unit = {
-//     true
-// }
+function intercept_BDOS() : unit -> unit = {
+    if (read_reg8(0b001) == 0x09) then {
+        DE_addr = read_reg16(0b01);
+        while (bdos_9(true)) do ();
+    
+    };
+}
 
 function startup_cpm() : unit -> unit = {
     PC_reg[full] = 0x0100;
@@ -44,9 +43,13 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     increment_pc();
     var decoded = decode8(instruction);
     var loop = execute(decoded);
+    if (PC_reg[full] == 0x0005) then {
+        intercept_BDOS();
+    };
     loop
 }
 
 function main() : unit -> unit = {
+    startup_cpm();
     while (fetch_decode_execute(true)) do ();
 }

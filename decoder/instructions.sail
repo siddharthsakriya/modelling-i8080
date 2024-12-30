@@ -120,7 +120,7 @@ function clause execute (NOP()) = {
     
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
-    true
+    false
 }
 
 // /* MOV instruction */
@@ -223,38 +223,16 @@ function clause execute (ADC(r)) = {
 }
 
 // /* SUB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
-// function clause execute (SUB(r)) = {
-//     var v: word = read_reg8(r);
-//     update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
-//     update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
-//     A_reg = sub_bits(A_reg, v);
-//     update_p_flag(if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0);
-//     update_s_flag(if A_reg[7..7] == 0b1 then 0b1 else 0b0);
-//     update_z_flag(if A_reg == 0b00000000 then 0b1 else 0b0);
-    
-//     print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
-
-//     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
-//     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
-
-//     true
-// }
+function clause execute (SUB(r)) = {
+    print_endline("to be implemented");
+    false
+}
 
 // /* SBB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
-// function clause execute (SBB(r)) = {
-//     var v: word = read_reg8(r);
-//     var v_lower_with_carry = add_bits(v[3..0], sail_zero_extend(SFW_reg[C], 4));
-//     SFW_reg[A] = if signed(A_reg[3..0]) < signed(v_lower_with_carry) then 0b1 else 0b0;    
-//     v = add_bits(v, sail_zero_extend(SFW_reg[C], 8));
-//     SFW_reg[C] = if signed(A_reg) < signed(v) then 0b1 else 0b0; 
-//     A_reg = sub_bits(A_reg, v);
-//     SFW_reg[P] = if xor_reduce(A_reg) == 0b0 then 0b1 else 0b0;
-//     SFW_reg[S] = if A_reg[7..7] == 0b1 then 0b1 else 0b0;
-//     SFW_reg[Z] = if A_reg == 0b00000000 then 0b1 else 0b0;
-
-//     print_endline(concat_str("Instruction completed: SBB ", reg8_str_map(reg8_num_map(r))));
-//     true
-// }
+function clause execute (SBB(r)) = {
+    print_endline("to be implemented");
+    false
+}
 
 /* ANA instruction */
 function clause execute (ANA(r)) = {
@@ -313,23 +291,10 @@ function clause execute (ORA(r)) = {
 }
 
 // /* CMP instruction */ NEED TO CHECK LOGIC OF THIS AND UPDATE
-// function clause execute (CMP(r)) = {
-//     var v: word = read_reg8(r);
-
-//     update_c_flag(if signed(A_reg) < signed(v) then 0b1 else 0b0);
-//     update_a_flag(if signed(A_reg[3..0]) < signed(v[3..0]) then 0b1 else 0b0);
-//     var res = sub_bits(A_reg, v);
-//     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
-//     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
-//     update_z_flag(if res == 0b00000000 then 0b1 else 0b0);
-
-//     print_endline(concat_str("Instruction completed: CMP ", reg8_str_map(reg8_num_map(r))));    
-
-//     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
-//     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
-    
-//     true
-// }
+function clause execute (CMP(r)) = {
+    print_endline("to be implemented");
+    false
+}
 
 // /* RLC instruction */
 function clause execute (RLC()) = {
@@ -580,11 +545,13 @@ function clause execute(ACI(data)) = {
 
 /* SUI instruction: TODO */
 function clause execute(SUI(data)) = {
+    print_endline("to be implemented");
     false
 }
 
 /* SBI instruction: TODO */
 function clause execute(SBI(data)) = {
+    print_endline("to be implemented");
     false
 }
 
@@ -644,7 +611,22 @@ function clause execute(ORI(data)) = {
 
 /* CPI instruction: TODO */
 function clause execute(CPI(data)) = {
-    false
+    var a_value = signed(read_reg8(0b111));
+    var data_value = signed(data);
+    
+    update_c_flag(if a_value < data_value then 0b1 else 0b0);
+    
+    update_z_flag(if read_reg8(0b111) == data then 0b1 else 0b0);
+    var res = sub_bits(read_reg8(0b111), data);
+    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
+    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
+    
+    print_endline("Instruction completed: CPI");
+
+    increment_clock_cycle_count(7);
+    increment_machine_cycle_count(2);
+
+    true
 }
 
 /* STA instruction */
@@ -985,6 +967,159 @@ function clause execute(CPO(low_data, high_data)) = {
     true
 }
 
+/* RET instruction */
+function clause execute(RET()) = {
+    PC_reg[full] = pop_stack();
+
+    print_endline("Instruction completed: RET");
+
+    increment_clock_cycle_count(10);
+    increment_machine_cycle_count(3);
+    true
+}
+
+/* RC instruction */
+function clause execute(RC()) = {
+    if read_c_flag() == 0b1 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RC");
+
+    true
+}
+
+/* RNC instruction */
+function clause execute(RNC()) = {
+    if read_c_flag() == 0b0 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RNC");
+
+    true
+}
+
+/* RZ instruction */
+function clause execute(RZ()) = {
+    if read_z_flag() == 0b1 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RZ");
+
+    true
+}
+
+/* RNZ instruction */
+function clause execute(RNZ()) = {
+    if read_z_flag() == 0b0 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RNZ");
+
+    true
+}
+
+/* RM instruction */
+function clause execute(RM()) = {
+    if read_s_flag() == 0b1 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RM");
+
+    true
+}
+
+/* RP instruction */
+function clause execute(RP()) = {
+    if read_s_flag() == 0b0 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RP");
+
+    true
+}
+
+/* RPE instruction */   
+function clause execute(RPE()) = {
+    if read_p_flag() == 0b1 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RPE");
+
+    true
+}
+
+/* RPO instruction */
+function clause execute(RPO()) = {
+    if read_p_flag() == 0b0 then {
+        PC_reg[full] = pop_stack();
+        increment_clock_cycle_count(11);
+        increment_machine_cycle_count(3);
+    } else {
+        increment_clock_cycle_count(5);
+        increment_machine_cycle_count(1);
+    };
+
+    print_endline("Instruction completed: RPO");
+
+    true
+}
+
+/* RST instruction */
+function clause execute(RST(exp)) = {
+    push_stack(PC_reg[full]);
+    PC_reg[full] = 0b0000000000 @ exp @ 0b000;
+
+    print_endline("Instruction completed: RST");
+
+    increment_clock_cycle_count(11);
+    increment_machine_cycle_count(3);
+
+    true
+}
+
+
 function clause execute(NOTFOUND8(this)) = {
     print_endline("not found, try 16");
     let next_byte: bitvector(8) = read_mem(PC_reg[full]);
@@ -997,12 +1132,6 @@ function clause execute(NOTFOUND16(this)) = {
     let next_byte: bitvector(8) = read_mem(PC_reg[full]);
     increment_pc();
     execute(decode24(this @ next_byte))
-}
-
-function clause execute(RET()) = {
-    print_endline("RET executed");
-    PC_reg[full] = pop_stack();
-    true
 }
 
 function clause execute(NOTFOUND24(this)) = {

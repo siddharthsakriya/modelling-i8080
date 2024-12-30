@@ -3,8 +3,10 @@ import subprocess
 import sys
 
 commands = []
+
+# inject ret address for BDOS call
 commands.append("write_mem(0x0005, 0b11001001)")
-commands.append(":run")  
+commands.append(":run") 
 def read_com_file(file_path):
     counter = 256
     try:
@@ -28,7 +30,7 @@ def read_com_file(file_path):
         print(f"An error occurred: {e}")
 
 
-file_path = 'TEST.COM'
+file_path = '8080EXM.COM'
 read_com_file(file_path)
 commands.append("main()")
 commands.append(":run")
