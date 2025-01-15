@@ -7,7 +7,7 @@ scattered function execute
 function clause execute (STC()) = {
     update_c_flag(0b1);
 
-    print_endline("Instruction completed: STC");    
+    // print_endline("Instruction completed: STC");    
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
 
@@ -20,7 +20,7 @@ function clause execute (CMC()) = {
     c_flag = xor_vec(c_flag, 0b1);
     update_c_flag(c_flag);
 
-    print_endline("Instruction completed: CMC");
+    // print_endline("Instruction completed: CMC");
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
 
@@ -38,7 +38,7 @@ function clause execute (INR(r)) = {
     update_z_flag(bool_to_bit_converter(v == 0b00000000)); //if result is 0 then zero flag should be 1
     update_p_flag(bool_to_bit_converter(xor_reduce(v) == 0b0));//if number of 1s is even then parity flag should be 1
     
-    print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: INR ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 10 else 5);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 5 else 1);
@@ -49,14 +49,14 @@ function clause execute (INR(r)) = {
 // /* DCR instruction */
 function clause execute (DCR(r)) = {
     var v = read_reg8(r);
-    update_a_flag(bool_to_bit_converter(v[3..0] == 0b0000));
+    update_a_flag(bool_to_bit_converter(v[3..0] != 0b0000));
     v = sub_bits(v, 0b00000001);
     write_reg8(r, v);
     update_s_flag(bool_to_bit_converter(v[7..7] == 0b1)); 
     update_z_flag(bool_to_bit_converter(v == 0b00000000)); 
     update_p_flag(bool_to_bit_converter(xor_reduce(v) == 0b0));
 
-    print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: DCR ", reg8_str_map(reg8_num_map(r))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 10 else 5);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 5 else 1);
@@ -70,7 +70,7 @@ function clause execute (CMA()) = {
     v = xor_vec(v, 0b11111111);
     write_reg8(0b111, v);
 
-    print_endline("Instruction completed: CMA");
+    // print_endline("Instruction completed: CMA");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -94,7 +94,6 @@ function clause execute (DAA()) = {
         upper_nibble = add_bits(upper_nibble, 0b00110);
     };
 
-    print_bits("upper_nibble: ", upper_nibble);
 
     final_value = upper_nibble[3..0] @ v[3..0];
     write_reg8(0b111, final_value);
@@ -106,7 +105,7 @@ function clause execute (DAA()) = {
     update_z_flag(bool_to_bit_converter(final_value == 0b00000000));
     update_p_flag(bool_to_bit_converter(xor_reduce(final_value) == 0b0));
     
-    print_endline("Instruction completed: DAA");
+    // print_endline("Instruction completed: DAA");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -116,7 +115,7 @@ function clause execute (DAA()) = {
 
 // /* NOP instruction */
 function clause execute (NOP()) = {
-    print_endline("Instruction completed: NOP");
+    // print_endline("Instruction completed: NOP");
     
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -127,7 +126,7 @@ function clause execute (NOP()) = {
 function clause execute (MOV(dst, src)) = {
     write_reg8(dst, read_reg8(src));
 
-    print_endline(concat_str("Instruction completed: MOV ", concat_str(reg8_str_map(reg8_num_map(dst)), concat_str(" ", reg8_str_map(reg8_num_map(src))))));
+    // print_endline(concat_str("Instruction completed: MOV ", concat_str(reg8_str_map(reg8_num_map(dst)), concat_str(" ", reg8_str_map(reg8_num_map(src))))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(dst)) == "M" | reg8_str_map(reg8_num_map(src)) == "M" then 7 else 5);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(dst)) == "M" | reg8_str_map(reg8_num_map(src)) == "M" then 2 else 1);
@@ -148,7 +147,7 @@ function clause execute (STAX(reg_pair)) = {
         write_mem(addr, v);
     };
 
-    print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2))))); 
+    // print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2))))); 
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -166,7 +165,7 @@ function clause execute (LDAX(reg_pair)) = {
         write_reg8(0b111, read_mem(addr));
     };
 
-    print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
+    // print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -189,7 +188,7 @@ function clause execute (ADD(r)) = {
     update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
     
-    print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -214,7 +213,7 @@ function clause execute (ADC(r)) = {
     update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
     
-    print_endline(concat_str("Instruction completed: ADC ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: ADC ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -226,18 +225,24 @@ function clause execute (ADC(r)) = {
 function clause execute (SUB(r)) = {
     
     var a_value = read_reg8(0b111);
+    
     var data = read_reg8(r);
+
     var res = sub_bits(a_value, data);
+
     
     update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(data)));
+
     update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
+    
+
     update_p_flag(bool_to_bit_converter(xor_reduce(res) == 0b0));
     update_s_flag(bool_to_bit_converter(res[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(res == 0b00000000));
 
     write_reg8(0b111, res);
 
-    print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: SUB ", reg8_str_map(reg8_num_map(r))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -264,7 +269,7 @@ function clause execute (SBB(r)) = {
 
     write_reg8(0b111, result);
 
-    print_endline("Instruction completed: SBI");
+    //print_endline("Instruction completed: SBI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -283,7 +288,7 @@ function clause execute (ANA(r)) = {
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: ANA ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -302,7 +307,7 @@ function clause execute (XRA(r)) = {
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: XRA ", reg8_str_map(reg8_num_map(r))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -321,7 +326,7 @@ function clause execute (ORA(r)) = {
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: ORA ", reg8_str_map(reg8_num_map(r))));
 
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
     increment_machine_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 2 else 1);
@@ -343,7 +348,7 @@ function clause execute (CMP(r)) = {
     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
     
-    print_endline("Instruction completed: CMP");
+    // print_endline("Instruction completed: CMP");
 
     if reg8_str_map(reg8_num_map(r)) == "M" then increment_clock_cycle_count(7) else increment_clock_cycle_count(4);
     if reg8_str_map(reg8_num_map(r)) == "M" then increment_machine_cycle_count(2) else increment_machine_cycle_count(1);    
@@ -360,7 +365,7 @@ function clause execute (RLC()) = {
     write_reg8(0b111, v);
     update_c_flag(msb);
 
-    print_endline("Instruction completed: RLC");
+    // print_endline("Instruction completed: RLC");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -377,7 +382,7 @@ function clause execute(RRC()) = {
     write_reg8(0b111, v);
     update_c_flag(lsb);
 
-    print_endline("Instruction completed: RRC");
+    // print_endline("Instruction completed: RRC");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -394,7 +399,7 @@ function clause execute(RAL()) = {
     write_reg8(0b111, v);
     update_c_flag(msb);
 
-    print_endline("Instruction completed: RAL");
+    // print_endline("Instruction completed: RAL");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -411,7 +416,7 @@ function clause execute(RAR()) = {
     write_reg8(0b111, v);
     update_c_flag(lsb);
 
-    print_endline("Instruction completed: RAR");
+    // print_endline("Instruction completed: RAR");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -424,7 +429,7 @@ function clause execute(PUSH(r)) = {
     var data = read_reg16(r);
     push_stack(data);
     
-    print_endline(concat_str("Instruction completed: PUSH ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: PUSH ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(11);
     increment_machine_cycle_count(4);
 
@@ -436,7 +441,7 @@ function clause execute(POP(r)) = {
     var stack_data = pop_stack();
     write_reg16(r, stack_data);
     
-    print_endline(concat_str("Instruction completed: POP ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: POP ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
 
@@ -452,7 +457,7 @@ function clause execute(DAD(r)) = {
     write_reg16_sp(0b10, res[15..0]);
     update_c_flag(res[16..16]);
 
-    print_endline(concat_str("Instruction completed: DAD ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: DAD ", reg16_str_map(reg16_num_map(r))));
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -466,7 +471,7 @@ function clause execute(INX(r)) = {
     v = add_bits(v, 0x0001);
     write_reg16_sp(r, v);
 
-    print_endline(concat_str("Instruction completed: INX ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: INX ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
 
@@ -479,7 +484,7 @@ function clause execute(DCX(r)) = {
     v = sub_bits(v, 0x0001);
     write_reg16_sp(r, v);
 
-    print_endline(concat_str("Instruction completed: DCX ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: DCX ", reg16_str_map(reg16_num_map(r))));
     increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
 
@@ -494,7 +499,7 @@ function clause execute(XCHG()) = {
     write_reg16_sp(0b01, hl);
     write_reg16_sp(0b10, de);
 
-    print_endline("Instruction completed: XCHG");
+    // print_endline("Instruction completed: XCHG");
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
 
@@ -515,7 +520,7 @@ function clause execute(XTHL()) = {
 
     write_reg16_sp(0b10, l @ h);
 
-    print_endline("Instruction completed: XTHL");
+    // print_endline("Instruction completed: XTHL");
     increment_clock_cycle_count(18);
     increment_machine_cycle_count(5);
 
@@ -527,7 +532,7 @@ function clause execute(SPHL()) = {
     var hl = read_reg16_sp(0b10);
     write_reg16_sp(0b11, hl);
 
-    print_endline("Instruction completed: SPHL");
+    // print_endline("Instruction completed: SPHL");
     increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
 
@@ -537,7 +542,7 @@ function clause execute(SPHL()) = {
 /* LXI instruction */
 function clause execute(LXI(r, low_data, high_data)) = {
     write_reg16_sp(r, high_data @ low_data);
-    print_endline(concat_str("Instruction completed: LXI ", reg16_str_map(reg16_num_map(r))));
+    // print_endline(concat_str("Instruction completed: LXI ", reg16_str_map(reg16_num_map(r))));
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -548,10 +553,9 @@ function clause execute(LXI(r, low_data, high_data)) = {
 /* MVI instruction */
 function clause execute(MVI(r, data)) = {
     write_reg8(r, data);
-    print_endline(concat_str("Instruction completed: MVI ", reg8_str_map(reg8_num_map(r))));
+    // print_endline(concat_str("Instruction completed: MVI ", reg8_str_map(reg8_num_map(r))));
 
-    increment_clock_cycle_count(10);
-    increment_machine_cycle_count(3);
+    if reg8_str_map(reg8_num_map(r)) == "M" then increment_clock_cycle_count(10) else increment_clock_cycle_count(7);
 
     true
 }
@@ -570,7 +574,7 @@ function clause execute(ADI(data)) = {
     update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
 
-    print_endline("Instruction completed: ADI");
+    // print_endline("Instruction completed: ADI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -595,7 +599,7 @@ function clause execute(ACI(data)) = {
     update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
 
-    print_endline("Instruction completed: ACI");
+    // print_endline("Instruction completed: ACI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -621,7 +625,7 @@ function clause execute(SUI(data)) = {
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
 
-    print_endline("Instruction completed: SUI");
+    // print_endline("Instruction completed: SUI");
 
     true
 }
@@ -643,7 +647,7 @@ function clause execute(SBI(data)) = {
 
     write_reg8(0b111, result);
 
-    print_endline("Instruction completed: SBI");
+    // print_endline("Instruction completed: SBI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -657,12 +661,12 @@ function clause execute(ANI(data)) = {
     var v: word = data;
     write_reg8(0b111, and_vec(read_reg8(0b111), v));
     update_c_flag(0b0);
-    update_a_flag(0b0);
+    
     update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline("Instruction completed: ANI");
+    // print_endline("Instruction completed: ANI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -680,7 +684,7 @@ function clause execute(XRI(data)) = {
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline("Instruction completed: XRI");
+    // print_endline("Instruction completed: XRI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -698,7 +702,7 @@ function clause execute(ORI(data)) = {
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
 
-    print_endline("Instruction completed: ORI");
+    // print_endline("Instruction completed: ORI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -708,9 +712,6 @@ function clause execute(ORI(data)) = {
 
 /* CPI instruction */
 function clause execute(CPI(data)) = {
-    var a_value = signed(read_reg8(0b111));
-    var data_value = signed(data);
-    
     update_c_flag(if unsigned(read_reg8(0b111)) < unsigned(data) then 0b1 else 0b0);
     update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
     update_z_flag(if sub_bits(read_reg8(0b111), data) == 0b00000000 then 0b1 else 0b0);
@@ -718,7 +719,7 @@ function clause execute(CPI(data)) = {
     update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
     update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
     
-    print_endline("Instruction completed: CPI");
+    // print_endline("Instruction completed: CPI");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
@@ -731,7 +732,7 @@ function clause execute(STA(low_data, high_data)) = {
     var addr: addr = high_data @ low_data;
     write_mem(addr, read_reg8(0b111));
 
-    print_endline("Instruction completed: STA");
+    // print_endline("Instruction completed: STA");
 
     increment_clock_cycle_count(13);
     increment_machine_cycle_count(4);
@@ -744,7 +745,7 @@ function clause execute(LDA(low_data, high_data)) = {
     var addr: addr = high_data @ low_data;
     write_reg8(0b111, read_mem(addr));
 
-    print_endline("Instruction completed: LDA");
+    // print_endline("Instruction completed: LDA");
 
     increment_clock_cycle_count(13);
     increment_machine_cycle_count(4);
@@ -758,7 +759,7 @@ function clause execute(SHLD(low_data, high_data)) = {
     write_mem(addr, read_reg8(0b101));
     write_mem(add_bits(addr, 0x0001), read_reg8(0b100));
 
-    print_endline("Instruction completed: SHLD");
+    // print_endline("Instruction completed: SHLD");
 
     increment_clock_cycle_count(16);
     increment_machine_cycle_count(5);
@@ -772,7 +773,7 @@ function clause execute(LHLD(low_data, high_data)) = {
     write_reg8(0b101, read_mem(addr));
     write_reg8(0b100, read_mem(add_bits(addr, 0x0001)));
 
-    print_endline("Instruction completed: LHLD");
+    // print_endline("Instruction completed: LHLD");
 
     increment_clock_cycle_count(16);
     increment_machine_cycle_count(5);
@@ -784,7 +785,7 @@ function clause execute(LHLD(low_data, high_data)) = {
 function clause execute(PCHL()) = {
     PC_reg[full] = read_reg16_sp(0b10);
 
-    print_endline("Instruction completed: PCHL");
+    // print_endline("Instruction completed: PCHL");
 
     increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
@@ -796,7 +797,7 @@ function clause execute(PCHL()) = {
 function clause execute(JMP(low_data, high_data)) = {
     PC_reg[full] = high_data @ low_data;
 
-    print_endline("Instruction completed: JMP");
+    // print_endline("Instruction completed: JMP");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -810,7 +811,7 @@ function clause execute(JC(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JC");
+    // print_endline("Instruction completed: JC");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -824,7 +825,7 @@ function clause execute(JNC(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JNC");
+    // print_endline("Instruction completed: JNC");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -838,7 +839,7 @@ function clause execute(JZ(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JZ");
+    // print_endline("Instruction completed: JZ");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -852,7 +853,7 @@ function clause execute(JNZ(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JNZ");
+    // print_endline("Instruction completed: JNZ");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -866,7 +867,7 @@ function clause execute(JM(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JM");
+    // print_endline("Instruction completed: JM");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -880,7 +881,7 @@ function clause execute(JP(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JP");
+    // print_endline("Instruction completed: JP");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -894,7 +895,7 @@ function clause execute(JPE(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JPE");
+    // print_endline("Instruction completed: JPE");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -908,7 +909,7 @@ function clause execute(JPO(low_data, high_data)) = {
         PC_reg[full] = high_data @ low_data;
     };
 
-    print_endline("Instruction completed: JPO");
+    // print_endline("Instruction completed: JPO");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -920,7 +921,7 @@ function clause execute(JPO(low_data, high_data)) = {
 function clause execute(CALL(low_data, high_data)) = {
     push_stack(PC_reg[full]);
     PC_reg[full] = high_data @ low_data;
-    print_endline("Instruction completed: CALL");
+    // print_endline("Instruction completed: CALL");
 
     increment_clock_cycle_count(17);
     increment_machine_cycle_count(5);
@@ -940,7 +941,7 @@ function clause execute(CC(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CC");
+    // print_endline("Instruction completed: CC");
 
     true
 }
@@ -957,7 +958,7 @@ function clause execute(CNC(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CNC");
+    // print_endline("Instruction completed: CNC");
 
     true
 }
@@ -974,7 +975,7 @@ function clause execute(CZ(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CZ");
+    // print_endline("Instruction completed: CZ");
 
     true
 }
@@ -991,7 +992,7 @@ function clause execute(CNZ(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CNZ");
+    // print_endline("Instruction completed: CNZ");
 
     true
 }
@@ -1008,7 +1009,7 @@ function clause execute(CM(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CM");
+    // print_endline("Instruction completed: CM");
 
     true
 }
@@ -1025,7 +1026,7 @@ function clause execute(CP(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CP");
+    // print_endline("Instruction completed: CP");
 
     true
 }
@@ -1042,7 +1043,7 @@ function clause execute(CPE(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CPE");
+    // print_endline("Instruction completed: CPE");
 
     true
 }
@@ -1059,7 +1060,7 @@ function clause execute(CPO(low_data, high_data)) = {
         increment_machine_cycle_count(3);
     };
 
-    print_endline("Instruction completed: CPO");
+    // print_endline("Instruction completed: CPO");
 
     true
 }
@@ -1068,7 +1069,7 @@ function clause execute(CPO(low_data, high_data)) = {
 function clause execute(RET()) = {
     PC_reg[full] = pop_stack();
 
-    print_endline("Instruction completed: RET");
+    // print_endline("Instruction completed: RET");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -1086,7 +1087,7 @@ function clause execute(RC()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RC");
+    // print_endline("Instruction completed: RC");
 
     true
 }
@@ -1102,7 +1103,7 @@ function clause execute(RNC()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RNC");
+    // print_endline("Instruction completed: RNC");
 
     true
 }
@@ -1118,7 +1119,7 @@ function clause execute(RZ()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RZ");
+    // print_endline("Instruction completed: RZ");
 
     true
 }
@@ -1134,7 +1135,7 @@ function clause execute(RNZ()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RNZ");
+    // print_endline("Instruction completed: RNZ");
 
     true
 }
@@ -1150,7 +1151,7 @@ function clause execute(RM()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RM");
+    // print_endline("Instruction completed: RM");
 
     true
 }
@@ -1166,7 +1167,7 @@ function clause execute(RP()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RP");
+    // print_endline("Instruction completed: RP");
 
     true
 }
@@ -1182,7 +1183,7 @@ function clause execute(RPE()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RPE");
+    // print_endline("Instruction completed: RPE");
 
     true
 }
@@ -1198,7 +1199,7 @@ function clause execute(RPO()) = {
         increment_machine_cycle_count(1);
     };
 
-    print_endline("Instruction completed: RPO");
+    // print_endline("Instruction completed: RPO");
 
     true
 }
@@ -1208,7 +1209,7 @@ function clause execute(RST(exp)) = {
     push_stack(PC_reg[full]);
     PC_reg[full] = 0b0000000000 @ exp @ 0b000;
 
-    print_endline("Instruction completed: RST");
+    // print_endline("Instruction completed: RST");
 
     increment_clock_cycle_count(11);
     increment_machine_cycle_count(3);
@@ -1219,7 +1220,7 @@ function clause execute(RST(exp)) = {
 /* EI instruction */
 function clause execute(EI()) = {
     set_interrupt_enable(0b1);
-    print_endline("Instruction completed: EI");
+    // print_endline("Instruction completed: EI");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -1230,7 +1231,7 @@ function clause execute(EI()) = {
 /* DI instruction */
 function clause execute(DI()) = {
     set_interrupt_enable(0b0);
-    print_endline("Instruction completed: DI");
+    // print_endline("Instruction completed: DI");
 
     increment_clock_cycle_count(4);
     increment_machine_cycle_count(1);
@@ -1242,7 +1243,7 @@ function clause execute(DI()) = {
 function clause execute(IN(port)) = {
     
     // Not sure about the port stuff
-    print_endline("Instruction completed: IN");
+    // print_endline("Instruction completed: IN");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -1254,7 +1255,7 @@ function clause execute(IN(port)) = {
 function clause execute(OUT(port)) = {
     
     // Not sure about the port stuff
-    print_endline("Instruction completed: OUT");
+    // print_endline("Instruction completed: OUT");
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);
@@ -1264,7 +1265,7 @@ function clause execute(OUT(port)) = {
 
 /* HLT instruction */
 function clause execute (HLT()) = {
-    print_endline("Instruction completed: HLT ");
+    // print_endline("Instruction completed: HLT ");
     
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(1);
@@ -1273,14 +1274,14 @@ function clause execute (HLT()) = {
 }
 
 function clause execute(NOTFOUND8(this)) = {
-    print_endline("not found, try 16");
+    // print_endline("not found, try 16");
     let next_byte: bitvector(8) = read_mem(PC_reg[full]);
     increment_pc();
     execute(decode16(this @ next_byte));
 }
 
 function clause execute(NOTFOUND16(this)) = {
-    print_endline("not found, try 24");
+    // print_endline("not found, try 24");
     let next_byte: bitvector(8) = read_mem(PC_reg[full]);
     increment_pc();
     execute(decode24(this @ next_byte))

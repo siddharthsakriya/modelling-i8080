@@ -313,4 +313,3 @@ function bool_to_bit_converter(b) = {
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 
-
