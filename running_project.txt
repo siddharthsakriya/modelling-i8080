@@ -1,0 +1,2 @@
+- Remove startup_cpm from main when running tests
+- Add startup_cpm when running an assembly file
