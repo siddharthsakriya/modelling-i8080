@@ -90,6 +90,7 @@ function clause execute (DAA()) = {
 
     upper_nibble: bits(5) = 0b0 @ v[7..4];
     var upper_value = signed(upper_nibble);
+    
     if upper_value > 9 | read_c_flag() == 0b1 then {
         upper_nibble = add_bits(upper_nibble, 0b00110);
     };
@@ -143,7 +144,6 @@ function clause execute (STAX(reg_pair)) = {
     } else {
         var addr: addr = read_reg16(0b01);
         var v = read_reg8(0b111);
-        print_bits("v: ", v);
         write_mem(addr, v);
     };
 
@@ -225,20 +225,9 @@ function clause execute (ADC(r)) = {
 function clause execute (SUB(r)) = {
     
     var a_value = read_reg8(0b111);
-    
     var data = read_reg8(r);
 
-    var res = sub_bits(a_value, data);
-
-    
-    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(data)));
-
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
-    
-
-    update_p_flag(bool_to_bit_converter(xor_reduce(res) == 0b0));
-    update_s_flag(bool_to_bit_converter(res[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(res == 0b00000000));
+    var res = perform_sub(a_value, data, 0b0);
 
     write_reg8(0b111, res);
 
@@ -254,36 +243,39 @@ function clause execute (SUB(r)) = {
 function clause execute (SBB(r)) = {
 
     var a_value = read_reg8(0b111); 
-    var carry = read_c_flag(); 
     var data = read_reg8(r);
-    var effective_data = add_bits(data, sail_zero_extend(carry, 8));
+    var carry = read_c_flag(); 
 
-    var result = sub_bits(a_value, effective_data);
-
-    // Update flags
-    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(effective_data)));
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(effective_data[3..0]) then 0b1 else 0b0);
-    update_p_flag(bool_to_bit_converter(xor_reduce(result) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result == 0b00000000));
-
+    var result = perform_sub(a_value, data, carry);
+    
     write_reg8(0b111, result);
 
-    //print_endline("Instruction completed: SBI");
+    //print_endline("Instruction completed: SBB");
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
 
     true
-    
 }
 
 /* ANA instruction */
 function clause execute (ANA(r)) = {
+    // M reg: 1
+    // A: 221
+    // Cycles: 254980647
+    // CPU TESTS OK
+    print_endline("here");
     var v: word = read_reg8(r);
+
+    if (reg8_str_map(reg8_num_map(r)) == "M") then {
+        print_bits("A: ", read_reg8(0b111));
+        print_bits("M: ", read_reg8(r));
+    };
+
     write_reg8(0b111, and_vec(read_reg8(0b111), v));
+
     update_c_flag(0b0);
-    update_a_flag(0b0);
+    update_a_flag(or_vec(read_reg8(0b111)[3..3], v[3..3]));
     update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
@@ -337,17 +329,12 @@ function clause execute (ORA(r)) = {
 // /* CMP instruction */ NEED TO CHECK LOGIC OF THIS AND UPDATE
 function clause execute (CMP(r)) = {
     
-    var a_value = signed(read_reg8(0b111));
-    var data_value = signed(read_reg8(r));
+    var a_value = read_reg8(0b111);
+    var data_value = read_reg8(r);
     var data = read_reg8(r);
 
-    update_c_flag(if a_value < data_value then 0b1 else 0b0);
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
-    update_z_flag(if read_reg8(0b111) == data then 0b1 else 0b0);
-    var res = sub_bits(read_reg8(0b111), data);
-    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
-    
+    var res = perform_sub(a_value, data_value, 0b0);
+
     // print_endline("Instruction completed: CMP");
 
     if reg8_str_map(reg8_num_map(r)) == "M" then increment_clock_cycle_count(7) else increment_clock_cycle_count(4);
@@ -611,14 +598,7 @@ function clause execute(ACI(data)) = {
 function clause execute(SUI(data)) = {
     
     var a_value = read_reg8(0b111); // Read accumulator (A)
-    var res = sub_bits(a_value, data); // Perform subtraction
-
-
-    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(data)));
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
-    update_p_flag(bool_to_bit_converter(xor_reduce(res) == 0b0));
-    update_s_flag(bool_to_bit_converter(res[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(res == 0b00000000));
+    var res = perform_sub(a_value, data, 0b0); // Perform subtraction
 
     write_reg8(0b111, res);
 
@@ -634,16 +614,9 @@ function clause execute(SUI(data)) = {
 function clause execute(SBI(data)) = {
     var a_value = read_reg8(0b111); 
     var carry = read_c_flag(); 
-    var effective_data = add_bits(data, sail_zero_extend(carry, 8));
+    
 
-    var result = sub_bits(a_value, effective_data);
-
-    // Update flags
-    update_c_flag(bool_to_bit_converter(unsigned(a_value) < unsigned(effective_data)));
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(effective_data[3..0]) then 0b1 else 0b0);
-    update_p_flag(bool_to_bit_converter(xor_reduce(result) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result == 0b00000000));
+    var result = perform_sub(a_value, data, carry);
 
     write_reg8(0b111, result);
 
@@ -660,8 +633,9 @@ function clause execute(SBI(data)) = {
 function clause execute(ANI(data)) = {
     var v: word = data;
     write_reg8(0b111, and_vec(read_reg8(0b111), v));
+
     update_c_flag(0b0);
-    
+    update_a_flag(or_vec(read_reg8(0b111)[3..3], v[3..3]));
     update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));
@@ -712,12 +686,8 @@ function clause execute(ORI(data)) = {
 
 /* CPI instruction */
 function clause execute(CPI(data)) = {
-    update_c_flag(if unsigned(read_reg8(0b111)) < unsigned(data) then 0b1 else 0b0);
-    update_a_flag(if unsigned(read_reg8(0b111)[3..0]) < unsigned(data[3..0]) then 0b1 else 0b0);
-    update_z_flag(if sub_bits(read_reg8(0b111), data) == 0b00000000 then 0b1 else 0b0);
-    var res = sub_bits(read_reg8(0b111), data);
-    update_p_flag(if xor_reduce(res) == 0b0 then 0b1 else 0b0);
-    update_s_flag(if res[7..7] == 0b1 then 0b1 else 0b0);
+
+    var result = perform_sub(read_reg8(0b111), data, 0b0);
     
     // print_endline("Instruction completed: CPI");
 
@@ -1070,6 +1040,7 @@ function clause execute(RET()) = {
     PC_reg[full] = pop_stack();
 
     // print_endline("Instruction completed: RET");
+
 
     increment_clock_cycle_count(10);
     increment_machine_cycle_count(3);

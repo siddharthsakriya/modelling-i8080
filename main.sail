@@ -19247,6 +19247,7 @@ function startup_test() : unit -> unit = {
 function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
+
     var decoded = decode8(instruction);
     var loop = execute(decoded);
     if (PC_reg[full] == 0x0005) then {
@@ -19255,11 +19256,55 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     if( PC_reg[full] == 0x0000) then {
         loop = false;
     };
+
+    // print_int("cycles: ", clock_cycle_count);
+    
+    // if (fdiv_int(clock_cycle_count, 1000000) == 0) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 1) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 10) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 30) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 70) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 100) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 150) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 180) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 220) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 1000000) == 250) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
     loop
 }
 
 function main() : unit -> unit = {
-    load_program();
+    // load_program();
     startup_cpm();
     while (fetch_decode_execute(true)) do ();
+    
 }

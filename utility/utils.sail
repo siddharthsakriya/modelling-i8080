@@ -236,14 +236,23 @@ function print_processor_state() = {
 }
 
 val print_h_reg : unit -> unit
-// function print_h_reg() = {
-
-// }
+function print_h_reg() = {
+    print_bits("H Reg: ", read_reg8(0b100))
+}
 val print_l_reg : unit -> unit
+function print_l_reg() = {
+    print_bits("L Reg: ", read_reg8(0b101))
+}
 
 val print_d_reg : unit -> unit
+function print_d_reg() = {
+    print_bits("D Reg: ", read_reg8(0b010))
+}
 
 val print_e_reg : unit -> unit
+function print_e_reg() = {
+    print_bits("E Reg: ", read_reg8(0b011))
+}
 
 val print_b_reg : unit -> unit
 function print_b_reg() = {
@@ -251,11 +260,24 @@ function print_b_reg() = {
 }
 
 val print_c_reg : unit -> unit
+function print_c_reg() = {
+    print_bits("C Reg: ", read_reg8(0b001))
+}
 
+val print_a_reg : unit -> unit
+function print_a_reg() = {
+    print_bits("A Reg: ", read_reg8(0b111))
+}
 
 val print_sp_reg : unit -> unit
+function print_sp_reg() = {
+    print_bits("SP Reg: ", SP_reg[full])
+}
 
 val print_pc_reg : unit -> unit
+function print_pc_reg() = {
+    print_bits("PC Reg: ", PC_reg[full])
+}
 
 val print_carry_bit : unit -> unit
 function print_carry_bit() = {
@@ -268,6 +290,9 @@ function print_parity_bit() = {
 }
 
 val print_aux_carry_bit : unit -> unit
+function print_aux_carry_bit() = {
+    print_bits("AuxCarryFlag: ", read_a_flag())
+}
 
 val print_zero_bit : unit -> unit
 function print_zero_bit() = {
@@ -310,6 +335,43 @@ function bool_to_bit_converter(b) = {
     if b == true then 0b1 else 0b0;
 }
 
+val perform_sub : (bits(8), bits(8), bits(1)) -> bits(8)
+function perform_sub(minuend, subtrahend, carry) = {
+    var ones_comp_sub = xor_vec(subtrahend, 0b11111111);
+    
+    var carry_extended = if carry == 0b1 then 0b00000000 else 0b00000001;
+    
+    var result: bits(9) = add_bits(0b0 @ minuend, add_bits(0b0 @ ones_comp_sub, 0b0 @ carry_extended)); 
+    var carry_out = result[8..8];
+    var result_8bit = result[7..0];
+    
+    update_c_flag(if (carry_out == 0b1) then 0b0 else 0b1);
+    update_s_flag(result_8bit[7..7]);
+    update_z_flag(bool_to_bit_converter(result_8bit == 0b00000000));
+    update_p_flag(bool_to_bit_converter(xor_reduce(result_8bit) == 0b0));
+    update_a_flag(add_bits(0b0 @ minuend[3..0], add_bits(0b0 @ ones_comp_sub[3..0], carry_extended[4..0]))[4..4]);     
+
+    result_8bit
+}
+
+val print_test : unit -> unit
+function print_test() = {
+    print_b_reg();
+    print_c_reg();
+    print_d_reg();
+    print_e_reg();
+    print_h_reg();
+    print_l_reg();
+    print_a_reg();
+    print_carry_bit();
+    print_parity_bit();
+    print_aux_carry_bit();
+    print_zero_bit();
+    print_sign_bit();
+}
+
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
+val "putchar" : int -> unit
+
 

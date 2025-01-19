@@ -23,6 +23,7 @@ def cleanup():
     if os.path.exists(commands_file_path):
         os.remove(commands_file_path)
 
+### INR ###
 def test_inr_basic(setup_and_cleanup):
     commands = retrieve_commands('inr')
     commands.extend([
