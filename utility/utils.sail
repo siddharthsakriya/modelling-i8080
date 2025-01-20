@@ -359,10 +359,24 @@ function perform_sub(minuend, subtrahend, carry) = {
     result_8bit
 }
 
-// val perform_add : (bits(8), bits(8), bits(1)) -> bits(8)
-// function perform_add(a, b, carry) = {
-//     var result: bits(9) = 
-// }
+val perform_add : (bits(8), bits(8), bits(1)) -> bits(8)
+function perform_add(a, b, carry) = {
+    var carry_extended = if carry == 0b1 then 0b00000001 else 0b00000000;
+    
+    var results: bits(9) = add_bits(0b0 @ a, add_bits(0b0 @ b, 0b0 @ carry_extended));
+    var carry_out = results[8..8];
+    var result_8bit = results[7..0];
+
+    var half_carry = add_bits(0b0 @ a[3..0], add_bits(0b0 @ b[3..0], carry_extended[4..0]))[4..4];
+
+    update_c_flag(if (carry_out == 0b1) then 0b1 else 0b0);
+    update_s_flag(result_8bit[7..7]);
+    update_z_flag(bool_to_bit_converter(result_8bit == 0b00000000));
+    update_p_flag(bool_to_bit_converter(xor_reduce(result_8bit) == 0b0));
+    update_a_flag(half_carry);
+
+    result_8bit
+}
 
 val print_test : unit -> unit
 function print_test() = {

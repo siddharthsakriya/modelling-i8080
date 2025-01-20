@@ -1,2 +1,4 @@
 - Remove startup_cpm from main when running tests
 - Add startup_cpm when running an assembly file
+
+- found issue with ana and also found issue with opcode for hlt

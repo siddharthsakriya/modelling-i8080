@@ -163,19 +163,12 @@ function clause execute (LDAX(reg_pair)) = {
 
 /* ADD instruction */
 function clause execute (ADD(r)) = {
-    var v: word = read_reg8(r);
+    var a: word = read_reg8(0b111);
+    var b: word = read_reg8(r);
 
-    var result: bits(9) = add_bits(0b0 @ read_reg8(0b111), 0b0 @ v);
-    var aux_carry: bits(1) = add_bits(0b0 @ read_reg8(0b111)[3..0], 0b0 @ v[3..0])[4..4];
+    result = perform_add(a, b, 0b0);
 
-    write_reg8(0b111, result[7..0]);
-
-    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
-    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
-    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
-    
+    write_reg8(0b111, result);
     // print_endline(concat_str("Instruction completed: ADD ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
@@ -186,21 +179,13 @@ function clause execute (ADD(r)) = {
 
 /* ADC instruction */
 function clause execute (ADC(r)) = {
-    var v: bits(9) = 0b0 @ read_reg8(r);
-    var acc: bits(9) = 0b0 @ read_reg8(0b111);
-    var carry: bits(9) = sail_zero_extend(read_c_flag(), 9);
+    var v: bits(8) = read_reg8(r);
+    var acc: bits(8) = read_reg8(0b111);
 
-    var result: bits(9) = add_bits(acc, add_bits(v, carry));
-    var aux_carry: bits(1) = add_bits(0b0 @ acc[3..0], add_bits(0b0 @ v[3..0], 0b0 @ carry[3..0]))[4..4];
+    var result: bits(8) = perform_add(acc, v, read_c_flag());
     
-    write_reg8(0b111, result[7..0]);
+    write_reg8(0b111, result);
 
-    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
-    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
-    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
-    
     // print_endline(concat_str("Instruction completed: ADC ", reg8_str_map(reg8_num_map(r))));
     
     increment_clock_cycle_count(if reg8_str_map(reg8_num_map(r)) == "M" then 7 else 4);
@@ -209,7 +194,7 @@ function clause execute (ADC(r)) = {
     true
 }
 
-// /* SUB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
+// /* SUB instruction
 function clause execute (SUB(r)) = {
     
     var a_value = read_reg8(0b111);
@@ -227,7 +212,7 @@ function clause execute (SUB(r)) = {
     true
 }
 
-// /* SBB instruction */ NEED TO DOUBLE CHECK THE LOGIC OF THIS
+// /* SBB instruction 
 function clause execute (SBB(r)) = {
 
     var a_value = read_reg8(0b111); 
@@ -248,22 +233,12 @@ function clause execute (SBB(r)) = {
 
 /* ANA instruction */
 function clause execute (ANA(r)) = {
-    // M reg: 1
-    // A: 221
-    // Cycles: 254980647
-    // CPU TESTS OK
-    print_endline("here");
     var v: word = read_reg8(r);
-
-    if (reg8_str_map(reg8_num_map(r)) == "M") then {
-        print_bits("A: ", read_reg8(0b111));
-        print_bits("M: ", read_reg8(r));
-    };
+    update_a_flag(or_vec(read_reg8(0b111)[3..3], v[3..3]));
 
     write_reg8(0b111, and_vec(read_reg8(0b111), v));
-
+    
     update_c_flag(0b0);
-    update_a_flag(or_vec(read_reg8(0b111)[3..3], v[3..3]));
     update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));

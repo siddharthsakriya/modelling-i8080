@@ -222,12 +222,12 @@ value: 0x57
 value: 0x41
 value: 0x53
 value: 0x20
-value: 0x41
-value: 0x36
+value: 0x44
+value: 0x35
+value: 0x46
+value: 0x31
 value: 0x37
-value: 0x30
-value: 0x34
-value: 0x30
+value: 0x46
 value: 0x48
 value: 0x0D
 value: 0x0A
@@ -251,8 +251,8 @@ value: 0x49
 value: 0x4E
 value: 0x53
 value: 0x20
-value: 0x30
-value: 0x32
+value: 0x46
+value: 0x46
 value: 0x48
 value: 0x0D
 value: 0x0A
@@ -275,8 +275,8 @@ value: 0x41
 value: 0x49
 value: 0x4E
 value: 0x20
-value: 0x31
-value: 0x32
+value: 0x44
+value: 0x37
 value: 0x48
 value: 0x0D
 value: 0x0A
@@ -327,7 +327,7 @@ value: 0x57
 value: 0x41
 value: 0x53
 value: 0x20
-value: 0x39
+value: 0x35
 value: 0x36
 value: 0x48
 value: 0x0D
@@ -346,9 +346,9 @@ value: 0x52
 value: 0x20
 value: 0x20
 value: 0x30
-value: 0x32
-value: 0x46
 value: 0x33
+value: 0x31
+value: 0x42
 value: 0x48
 value: 0x0D
 value: 0x0A
@@ -367,10 +367,10 @@ BEGIN TIMING TEST
 CPU FAILED: 
 ERROR COUNT 0001H
 
-INSTRUCTION SEQUENCE WAS A67040H
-REGISTER f CONTAINS 02H
-BUT SHOULD CONTAIN 12H
-REGISTER VALUE BEFORE INSTRUCTION SEQUENCE WAS 96H
-TEST NUMBER  02F3H
+INSTRUCTION SEQUENCE WAS D5F17FH
+REGISTER f CONTAINS FFH
+BUT SHOULD CONTAIN D7H
+REGISTER VALUE BEFORE INSTRUCTION SEQUENCE WAS 56H
+TEST NUMBER  031BH
 
 

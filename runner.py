@@ -6,7 +6,7 @@ commands = []
 
 # inject ret address for BDOS call
 commands.append("write_mem(0x0005, 0b11001001)")
-commands.append(":run") 
+# commands.append(":run") 
 def read_com_file(file_path):
     counter = 256
     try:
@@ -17,8 +17,8 @@ def read_com_file(file_path):
 
             while byte:
                 # Format counter as 4-digit hex with leading zeros
-                commands.append(f"write_mem(0x{counter:04X}, 0x{int.from_bytes(byte, 'little'):02X})") 
-                commands.append(":run")       
+                commands.append(f"write_mem(0x{counter:04X}, 0x{int.from_bytes(byte, 'little'):02X});") 
+                # commands.append(":run")       
                 print(commands[byte_count])
                 byte = file.read(1)  # Read the next byte
                 byte_count += 1
@@ -30,21 +30,21 @@ def read_com_file(file_path):
         print(f"An error occurred: {e}")
 
 
-file_path = 'TEST.COM'
+file_path = 'CPUTEST.COM'
 read_com_file(file_path)
-commands.append("main()")
-commands.append(":run")
-commands.append(":quit")
+# commands.append("main()")
+# commands.append(":run")
+# commands.append(":quit")
 
 # Write the commands to the file
 with open('commands.txt', 'w') as file:
     file.write('\n'.join(commands))
 
-# Fix subprocess.run by passing a list of arguments
-result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], capture_output=True)
+# # Fix subprocess.run by passing a list of arguments
+# result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], capture_output=True)
 
-# # Check and print the output or error
-if result.returncode == 0:
-    print(result.stdout.decode())  # Print the standard output
-else:
-    print(result.stderr.decode())  # Print the error output
+# # # Check and print the output or error
+# if result.returncode == 0:
+#     print(result.stdout.decode())  # Print the standard output
+# else:
+#     print(result.stderr.decode())  # Print the error output
