@@ -389,6 +389,13 @@ function clause execute(PUSH(r)) = {
 /* POP instruction */ 
 function clause execute(POP(r)) = {
     var stack_data = pop_stack();
+    
+    if reg16_str_map(reg16_num_map(r)) == "AF" then {
+        stack_data[5..5] = 0b0;
+        stack_data[3..3] = 0b0;
+        stack_data[1..1] = 0b1;
+    };
+    
     write_reg16(r, stack_data);
     
     // print_endline(concat_str("Instruction completed: POP ", reg16_str_map(reg16_num_map(r))));
