@@ -44,19 +44,17 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
 
-    print_bits("instruction: ", instruction);
-
     var decoded = decode8(instruction);
 
     var loop = execute(decoded);
     if (PC_reg[full] == 0x0005) then {
         intercept_BDOS();
     };
-    // if( PC_reg[full] == 0x0000) then {
-    //     loop = false;
-    // };
+    if( PC_reg[full] == 0x0000) then {
+        loop = false;
+    };
 
-    // print_int("cycles: ", clock_cycle_count);
+    print_int("cycles: ", clock_cycle_count);
     
     // if (fdiv_int(clock_cycle_count, 1000000) == 0) then {
     //     print_int("cycles: ", clock_cycle_count);
@@ -102,6 +100,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 }
 
 function main() : unit -> unit = {
+    startup_cpm();
     while (fetch_decode_execute(true)) do ();
     
 }

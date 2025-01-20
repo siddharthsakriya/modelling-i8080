@@ -359,6 +359,11 @@ function perform_sub(minuend, subtrahend, carry) = {
     result_8bit
 }
 
+// val perform_add : (bits(8), bits(8), bits(1)) -> bits(8)
+// function perform_add(a, b, carry) = {
+//     var result: bits(9) = 
+// }
+
 val print_test : unit -> unit
 function print_test() = {
     print_m_reg();

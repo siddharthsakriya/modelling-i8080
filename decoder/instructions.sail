@@ -137,15 +137,9 @@ function clause execute (MOV(dst, src)) = {
 
 /* STAX instruction */
 function clause execute (STAX(reg_pair)) = {
-    if reg_pair == 0b0 then {
-        var addr: addr = read_reg16(0b00);
-        var v = read_reg8(0b111);
-        write_mem(addr, v);
-    } else {
-        var addr: addr = read_reg16(0b01);
-        var v = read_reg8(0b111);
-        write_mem(addr, v);
-    };
+    var addr: addr = read_reg16(0b0 @ reg_pair);
+    var v = read_reg8(0b111);
+    write_mem(addr, v);
 
     // print_endline(concat_str("Instruction completed: STAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2))))); 
 
@@ -157,15 +151,9 @@ function clause execute (STAX(reg_pair)) = {
 
 /* LDAX instruction */
 function clause execute (LDAX(reg_pair)) = {
-    if reg_pair == 0b0 then {
-        var addr: addr = read_reg16(0b00);
-        write_reg8(0b111, read_mem(addr));
-    } else {
-        var addr: addr = read_reg16(0b01);
-        write_reg8(0b111, read_mem(addr));
-    };
+    write_reg8(0b111, read_mem(read_reg16(0b0 @ reg_pair)));
 
-    print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
+    // print_endline(concat_str("Instruction completed: LDAX ", reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair, 2)))));
 
     increment_clock_cycle_count(7);
     increment_machine_cycle_count(2);
