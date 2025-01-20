@@ -304,6 +304,11 @@ function print_sign_bit() = {
     print_bits("SignFlag: ", read_s_flag())
 }
 
+val print_m_reg : unit -> unit
+function print_m_reg() = {
+    print_bits("M Reg: ", read_reg8(0b110))
+}
+
 /*
 MISC FUNCTIONS
 */
@@ -356,6 +361,7 @@ function perform_sub(minuend, subtrahend, carry) = {
 
 val print_test : unit -> unit
 function print_test() = {
+    print_m_reg();
     print_b_reg();
     print_c_reg();
     print_d_reg();
@@ -368,6 +374,7 @@ function print_test() = {
     print_aux_carry_bit();
     print_zero_bit();
     print_sign_bit();
+    
 }
 
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)

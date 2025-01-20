@@ -44,6 +44,8 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
 
+    print_bits("instruction: ", instruction);
+
     var decoded = decode8(instruction);
 
     var loop = execute(decoded);
