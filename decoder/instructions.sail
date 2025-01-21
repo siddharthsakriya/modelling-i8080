@@ -519,17 +519,9 @@ function clause execute(MVI(r, data)) = {
 
 /* ADI instruction */
 function clause execute(ADI(data)) = {
-    var v = 0b0 @ read_reg8(0b111);
-    var result = add_bits(v, 0b0 @ data);
-    var aux_carry = add_bits(0b0 @ v[3..0], 0b0 @ data[3..0])[4..4];
-    
-    write_reg8(0b111, result[7..0]);
-
-    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
-    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
-    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
+    var v = read_reg8(0b111);
+    var result = perform_add(v, data, 0b0);
+    write_reg8(0b111, result);
 
     // print_endline("Instruction completed: ADI");
 
@@ -541,21 +533,10 @@ function clause execute(ADI(data)) = {
 
 /* ACI instruction */
 function clause execute(ACI(data)) = {
-    var v: bits(9) = 0b0 @ read_reg8(0b111);
-    var acc: bits(9) = 0b0 @ data;
-    var carry: bits(9) = sail_zero_extend(read_c_flag(), 9);
+    var acc: bits(8) = read_reg8(0b111);
+    var result: bits(8) = perform_add(acc, data, read_c_flag());
 
-    var result: bits(9) = add_bits(acc, add_bits(v, carry));
-    var aux_carry: bits(1) = add_bits(0b0 @ acc[3..0], add_bits(0b0 @ v[3..0], 0b0 @ carry[3..0]))[4..4];
-    
-    write_reg8(0b111, result[7..0]);
-
-    update_c_flag(bool_to_bit_converter(result[8..8] == 0b1));
-    update_a_flag(bool_to_bit_converter(aux_carry == 0b1));
-    update_p_flag(bool_to_bit_converter(xor_reduce(result[7..0]) == 0b0));
-    update_s_flag(bool_to_bit_converter(result[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(result[7..0] == 0b00000000));
-
+    write_reg8(0b111, result);
     // print_endline("Instruction completed: ACI");
 
     increment_clock_cycle_count(7);

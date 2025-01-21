@@ -19242,7 +19242,6 @@ function startup_test() : unit -> unit = {
     PC_reg[full] = 0x0000;
 }
 
-
 function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
@@ -19256,9 +19255,8 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     if( PC_reg[full] == 0x0000) then {
         loop = false;
     };
-
-    // print_int("cycles: ", clock_cycle_count);
     
+
     if (fdiv_int(clock_cycle_count, 1000000) == 0) then {
         print_int("cycles: ", clock_cycle_count);
     };
@@ -19303,8 +19301,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 }
 
 function main() : unit -> unit = {
-    load_program(); 
+    // load_program(); 
     startup_cpm();
-    
     while (fetch_decode_execute(true)) do ();
 }
