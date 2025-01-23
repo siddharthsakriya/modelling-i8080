@@ -55,3 +55,8 @@ TBC
 - Was calculating Auxillary flag in the wrong place in ANA
 - Remove startup_cpm from main when running tests
 - Add startup_cpm when running an assembly file
+- Pydrofoil compiler
+- Presentation: 
+    - Spend more time time discussing SAIL.
+    - c_include filename.c
+    - can run interrupt from 
