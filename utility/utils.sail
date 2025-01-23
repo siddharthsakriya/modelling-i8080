@@ -313,6 +313,16 @@ function print_m_reg() = {
 MISC FUNCTIONS
 */
 
+val write_devacc : bits(8) -> unit 
+function write_devacc(port) = {
+    input_output[unsigned(port)] = read_reg8(0b111);
+}
+
+val read_devacc : bits(8) -> unit
+function read_devacc(port) = {
+    write_reg8(0b111, input_output[unsigned(port)]);
+}
+
 val set_interrupt_enable: bits(1) -> unit   
 function set_interrupt_enable(ie) = {
     INTE = ie;
@@ -399,5 +409,6 @@ function print_test() = {
 val "shiftl" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "putchar" : int -> unit
+
 
 

@@ -27,3 +27,6 @@ clean:
 
 write:
 	./out| tee ./testing/output.txt
+
+
+

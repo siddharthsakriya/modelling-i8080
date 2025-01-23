@@ -1164,7 +1164,7 @@ function clause execute(DI()) = {
 /* IN instruction */
 function clause execute(IN(port)) = {
     
-    // Not sure about the port stuff
+    read_devacc(port);
     // print_endline("Instruction completed: IN");
 
     increment_clock_cycle_count(10);
@@ -1176,7 +1176,7 @@ function clause execute(IN(port)) = {
 /* OUT instruction */
 function clause execute(OUT(port)) = {
     
-    // Not sure about the port stuff
+    write_devacc(port);
     // print_endline("Instruction completed: OUT");
 
     increment_clock_cycle_count(10);

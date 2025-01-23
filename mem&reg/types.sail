@@ -51,3 +51,5 @@ register PC_reg : reg16
 
 register DE_addr : addr
 register INTE : bits(1)
+
+register input_output : vector(256, bits(8)) = vector_init(256, undefined)
