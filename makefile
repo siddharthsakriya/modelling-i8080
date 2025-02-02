@@ -15,7 +15,7 @@ all: $(SAIL_OUT)
 
 # Compile Sail source and C code
 $(SAIL_OUT): $(SAIL_SRC)
-	$(SAIL) -c $(SAIL_SRC) -o out
+	$(SAIL) -c $(SAIL_SRC) -o out -O
 	$(GCC) out.c $(LIB_PATH) $(CFLAGS) -o $(SAIL_OUT)
 
 

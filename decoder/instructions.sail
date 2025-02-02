@@ -78,34 +78,27 @@ function clause execute (CMA()) = {
     true
 }
 
-// /* DAA instruction */ /* STILL TO BE DONE */
+// /* DAA instruction */
 function clause execute (DAA()) = {
-    var v = read_reg8(0b111);
-    var lower_nibble: bits(4) = v[3..0];
-    var lower_value = unsigned(lower_nibble);
+    var v : word = read_reg8(0b111);
+    var correction : word = 0x00;
+    var cy : bits(1) = read_c_flag();
 
-    if lower_value > 9 | read_a_flag() == 0b1 then {
-        v = add_bits(v, 0b00000110); //increment accumulator by 6
+    var msb : bits(4) = v[7..4];
+    var lsb : bits(4) = v[3..0];
+
+    if (read_a_flag() == 0b1 | unsigned(lsb) > 9) then {
+        correction = add_bits(correction, 0x06);
     };
 
-    upper_nibble: bits(5) = 0b0 @ v[7..4];
-    var upper_value = signed(upper_nibble);
-    
-    if upper_value > 9 | read_c_flag() == 0b1 then {
-        upper_nibble = add_bits(upper_nibble, 0b00110);
+    if (read_c_flag() == 0b1 | unsigned(msb) > 9 | (unsigned(msb) >= 9 & unsigned(lsb) > 9)) then {
+        correction = add_bits(correction, 0x60);
+        cy = 0b1;
     };
 
+    write_reg8(0b111, perform_add(v, correction, 0b0));
+    update_c_flag(cy);
 
-    final_value = upper_nibble[3..0] @ v[3..0];
-    write_reg8(0b111, final_value);
-
-    //flag setting 
-    update_a_flag(bool_to_bit_converter(add_bits(0b0 @ lower_nibble, 0b00110)[4..4] == 0b1)); 
-    update_c_flag(bool_to_bit_converter(upper_nibble[4..4] == 0b1));
-    update_s_flag(bool_to_bit_converter(final_value[7..7] == 0b1));
-    update_z_flag(bool_to_bit_converter(final_value == 0b00000000));
-    update_p_flag(bool_to_bit_converter(xor_reduce(final_value) == 0b0));
-    
     // print_endline("Instruction completed: DAA");
 
     increment_clock_cycle_count(4);
@@ -583,10 +576,9 @@ function clause execute(SBI(data)) = {
 /* ANI instruction */
 function clause execute(ANI(data)) = {
     var v: word = data;
-    write_reg8(0b111, and_vec(read_reg8(0b111), v));
-
-    update_c_flag(0b0);
     update_a_flag(or_vec(read_reg8(0b111)[3..3], v[3..3]));
+    write_reg8(0b111, and_vec(read_reg8(0b111), v));
+    update_c_flag(0b0);
     update_p_flag(bool_to_bit_converter(xor_reduce(read_reg8(0b111)) == 0b0));
     update_s_flag(bool_to_bit_converter(read_reg8(0b111)[7..7] == 0b1));
     update_z_flag(bool_to_bit_converter(read_reg8(0b111) == 0b00000000));

@@ -1,6 +1,6 @@
 # Define the input and output file paths
 input_file = "res2.txt"  # Replace with the path to your input file
-output_file = "out3.txt"  # Replace with the path to your output file
+output_file = "out5.txt"  # Replace with the path to your output file
 
 try:
     # Open the input and output files

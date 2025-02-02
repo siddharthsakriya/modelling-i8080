@@ -30,7 +30,7 @@ def read_com_file(file_path):
         print(f"An error occurred: {e}")
 
 
-file_path = 'CPUTEST.COM'
+file_path = '8080EXM.COM'
 read_com_file(file_path)
 # commands.append("main()")
 # commands.append(":run")
