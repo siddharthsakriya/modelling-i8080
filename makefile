@@ -24,6 +24,7 @@ clean:
 	rm -f out.c $(SAIL_OUT)
 	rm -f z3_problems
 	rm -f ./testing/output.txt
+	rm -f commands.txt
 
 write:
 	./out| tee ./testing/output.txt
