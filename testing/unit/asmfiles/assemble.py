@@ -11,7 +11,7 @@ def retrieve_commands(instruction):
     # Ensure the stc.asm file exists in the script directory
     asm_file_path = os.path.join(script_dir, asm_file_name)
     if not os.path.exists(asm_file_path):
-        print(f"Error: 'stc.asm' file does not exist in {script_dir}")
+        print(f"Error: the file does not exist in {script_dir}")
         sys.exit(1)
 
     # Assemble the .asm file

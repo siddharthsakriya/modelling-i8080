@@ -43,47 +43,47 @@ function startup_test() : unit -> unit = {
 function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
-
     
-    if (fdiv_int(clock_cycle_count, 10000000) == 1) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 1) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 10000000) == 1) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 10) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 1) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 30) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 10) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 50) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 30) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 80) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 50) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 100) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 80) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 130) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 100) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 170) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 130) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
-    if (fdiv_int(clock_cycle_count, 100000000) == 230) then {
-        print_int("cycles: ", clock_cycle_count);
-    };
+    // if (fdiv_int(clock_cycle_count, 100000000) == 170) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
+
+    // if (fdiv_int(clock_cycle_count, 100000000) == 230) then {
+    //     print_int("cycles: ", clock_cycle_count);
+    // };
 
     var decoded = decode8(instruction);
 
@@ -95,11 +95,13 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
         loop = false;
     };
 
+    print_int("cycles: ", clock_cycle_count);
+
     loop
 }
 
 function main() : unit -> unit = {
-    load_program();
-    startup_cpm();
+    // load_program();
+    // startup_cpm();
     while (fetch_decode_execute(true)) do ();
 }

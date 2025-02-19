@@ -33,11 +33,90 @@ def extract_results(output):
     return register_dict
 
 """ ADD TESTS """
+def test_add_reg_to_acc(setup_and_cleanup):
+    commands = retrieve_commands('add_r')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x6C)", ":run", "write_reg8(0b010, 0x2E)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")    
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+        
+        assert results['A'] == '0x9A'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b1'
+        assert results['ParityFlag'] == '0b1'
+
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
+
+def test_add_mem_to_acc(setup_and_cleanup):
+    commands = retrieve_commands('add_m')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_mem(0x0002, 0x2E)", ":run", "write_reg8(0b111, 0x6C)", ":run", "write_reg16(0b10, 0x0002)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x9A'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b1'
+        assert results['ParityFlag'] == '0b1'
+        
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
+
 """ ADC TESTS """
+def test_adc_withcarry_reg_to_acc(setup_and_cleanup):
+    pass
+
+def test_adc_withcarry_mem_to_acc(setup_and_cleanup):
+    pass
+
+def test_adc_woutcarry_reg_to_acc(setup_and_cleanup):
+    pass
+
+def test_adc_woutcarry_mem_to_acc(setup_and_cleanup):
+    pass
+
 """ SUB TESTS """
+def test_sub_reg_to_acc(setup_and_cleanup):
+    pass
+
+def test_sub_mem_to_acc(setup_and_cleanup):
+    pass
+
 """ SBB TESTS """
+def test_sbb_withcarry_reg_to_acc(setup_and_cleanup):
+    pass
+
+def test_sbb_withcarry_mem_to_acc(setup_and_cleanup):
+    pass
+
+def test_sbb_woutcarry_reg_to_acc(setup_and_cleanup):
+    pass
+
+def test_sbb_woutcarry_mem_to_acc(setup_and_cleanup):
+    pass
+
 """ ANA TESTS """
+
 """ XRA TESTS """
+
 """ ORA TESTS """
+
 """ CMP TESTS """
 
