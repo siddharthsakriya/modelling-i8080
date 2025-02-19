@@ -95,7 +95,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
         loop = false;
     };
 
-    print_int("cycles: ", clock_cycle_count);
+    // print_int("cycles: ", clock_cycle_count);
 
     loop
 }
