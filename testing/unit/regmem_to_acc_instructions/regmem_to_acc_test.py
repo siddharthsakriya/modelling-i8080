@@ -81,28 +81,150 @@ def test_add_mem_to_acc(setup_and_cleanup):
 
 """ ADC TESTS """
 def test_adc_withcarry_reg_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('adc_m')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x42)", ":run", "write_mem(0x0002, 0x3D)", ":run", "write_reg16(0b10, 0x0002)", ":run", "update_c_flag(0b1)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x80'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b1'
+        assert results['ParityFlag'] == '0b0'
+    
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
+
 
 def test_adc_withcarry_mem_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('adc_r')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x42)", ":run", "write_reg8(0b010, 0x3D)", ":run", "update_c_flag(0b1)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x80'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b1'
+        assert results['ParityFlag'] == '0b0'
+    
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
 
 def test_adc_woutcarry_reg_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('adc_r')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x42)", ":run", "write_reg8(0b010, 0x3D)", ":run", "update_c_flag(0b0)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x7F'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b0'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b0'
+        assert results['ParityFlag'] == '0b0'
+    
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
 
 def test_adc_woutcarry_mem_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('adc_m')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x42)", ":run", "write_mem(0x0002, 0x3D)", ":run", "write_reg16(0b10, 0x0002)", ":run", "update_c_flag(0b0)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x7F'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b0'
+        assert results['ZeroFlag'] == '0b0'
+        assert results['SignFlag'] == '0b0'
+        assert results['ParityFlag'] == '0b0'
+    
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
 
 """ SUB TESTS """
 def test_sub_reg_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('sub_r')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_reg8(0b111, 0x3E)", ":run", "write_reg8(0b010, 0x3E)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x00'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b1'
+        assert results['SignFlag'] == '0b0'
+        assert results['ParityFlag'] == '0b1'
+    
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
+    
 
 def test_sub_mem_to_acc(setup_and_cleanup):
-    pass
+    commands = retrieve_commands('sub_m')
+    commands.extend(["write_mem(0x0001, 0x76)", ":run", "write_mem(0x0002, 0x3E)", ":run", "write_reg8(0b111, 0x3E)", ":run", "write_reg16(0b10, 0x0002)", ":run", "startup_test()", ":run", "main()", ":run", "print_test()", ":run", ":quit"])
+
+    with open(commands_file_path, 'w') as file:
+        for command in commands:
+            file.write(f"{command}\n")
+    
+    try:
+        result = subprocess.run(['sail', '-is', 'commands.txt', 'main.sail'], cwd=three_dirs_back, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.split('\n')
+        results = extract_results(output)
+
+        assert results['A'] == '0x00'
+        assert results['CarryFlag'] == '0b0'
+        assert results['AuxCarryFlag'] == '0b1'
+        assert results['ZeroFlag'] == '0b1'
+        assert results['SignFlag'] == '0b0'
+        assert results['ParityFlag'] == '0b1'
+        
+    except subprocess.CalledProcessError as e:
+        pytest.fail(f"Subprocess failed with error: {e}")
 
 """ SBB TESTS """
 def test_sbb_withcarry_reg_to_acc(setup_and_cleanup):
     pass
-
+    
 def test_sbb_withcarry_mem_to_acc(setup_and_cleanup):
     pass
 
