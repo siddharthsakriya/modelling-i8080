@@ -101,7 +101,8 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 }
 
 function main() : unit -> unit = {
-    // load_program();
-    // startup_cpm();
+    load_program();
+    startup_cpm();
     while (fetch_decode_execute(true)) do ();
 }
+

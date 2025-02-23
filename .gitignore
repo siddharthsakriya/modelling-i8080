@@ -5,3 +5,5 @@ z3_problems
 __pycache__/
 *.pyc
 *.pyo
+./coverage_results/
+./programs8080

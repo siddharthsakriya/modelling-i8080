@@ -36,34 +36,79 @@ def generate_sail_program(commands):
 
     print("Generated program.sail successfully.")
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print("Usage: python runner_binary.py <path_to_com_file>")
     sys.exit(1)
 
 file_path = sys.argv[1]
+cov_or_exec = sys.argv[2]
 commands = read_com_file(file_path)
 generate_sail_program(commands)
 
-make_result = subprocess.run(['make'], capture_output=True, text=True)
+if cov_or_exec == 'e':
+    make_result = subprocess.run(['make'], capture_output=True, text=True)
 
-if make_result.returncode != 0:
-    print("Make failed:")
-    print(make_result.stderr)
-    sys.exit(1)
+    if make_result.returncode != 0:
+        print("Make failed:")
+        print(make_result.stderr)
+        sys.exit(1)
 
-run_result = subprocess.run(['./out'], capture_output=True, text=True)
+    run_result = subprocess.run(['./out'], capture_output=True, text=True)
 
-if run_result.returncode == 0:
-    print(run_result.stdout)
-else:
-    print("Execution failed:")
-    print(run_result.stderr)
-    subprocess.run(['make', 'clean'], capture_output=True, text=True)
+    if run_result.returncode == 0:
+        print(run_result.stdout)
+    else:
+        print("Execution failed:")
+        print(run_result.stderr)
+        subprocess.run(['make', 'clean'], capture_output=True, text=True)
 
-make_clean_result = subprocess.run(['make', 'clean'], capture_output=True, text=True)
+    make_clean_result = subprocess.run(['make', 'clean'], capture_output=True, text=True)
 
-if make_clean_result.returncode == 0:
-    print(make_clean_result.stdout)
-else:
-    print("Make clean failed:")
-    print(make_clean_result.stderr)
+    if make_clean_result.returncode == 0:
+        print(make_clean_result.stdout)
+    else:
+        print("Make clean failed:")
+        print(make_clean_result.stderr)
+else: 
+    make_result = subprocess.run(['make', 'coverage_bin'], capture_output=True, text=True)
+
+    if make_result.returncode != 0:
+        print("Make failed:")
+        print(make_result.stderr)
+        sys.exit(1)
+
+    
+    run_result = subprocess.run(['./out'], capture_output=True, text=True)
+
+    if run_result.returncode == 0:
+        print(run_result.stdout)
+    else:
+        print("Execution failed:")
+        print(run_result.stderr)
+        subprocess.run(['make', 'clean'], capture_output=True, text=True)
+    
+    make_html = subprocess.run(['make', 'coverage_gen', 'ARG1=decoder/instructions'], capture_output=True, text=True)
+
+    if make_html.returncode == 0:
+        print(make_html.stdout)
+    else:
+        print("Make html failed:")
+        print(make_html.stderr)
+
+    make_clean_result = subprocess.run(['make', 'clean'], capture_output=True, text=True)
+
+    #rename the html file to filepath.html
+    subprocess.run(['mv', 'instructions.html', f'{file_path}.html'])
+    subprocess.run(['mkdir', '-p', 'coverage_results'])
+    subprocess.run(['mv', f'{file_path}.html', 'coverage_results'])
+
+
+
+    
+
+
+
+
+
+
+    

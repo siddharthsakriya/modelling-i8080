@@ -127,3 +127,6 @@ def test_cmc_0to1 (setup_and_cleanup):
     except subprocess.CalledProcessError as e:
         pytest.fail(f"Subprocess failed with error: {e}")
 
+
+def write_program_text():
+    pass
