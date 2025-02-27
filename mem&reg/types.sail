@@ -6,11 +6,9 @@ type reg_16bit_num = bits(2)
 type addr_size : Int = 16
 type addr = bits(addr_size)
 
-type word_size : Int = 8
-type word = bits(word_size)
+type word = bits(8)
 
-type dword_size : Int = 16
-type dword = bits(dword_size)
+type dword = bits(16)
 
 /* 8-bit registers */
 enum reg_8bit_enum = {

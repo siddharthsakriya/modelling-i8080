@@ -103,7 +103,7 @@ Tests complete
 ```
 
 ## MISC notes
-- HLT and MOV M M opcode was clashing 
+- HLT and MOV M M opcode was clashing, caused MOV M M to be executed rather than HLT, MOV M M is invalid
 - Was calculating Auxillary flag in the wrong place in ANA
 - Remove startup_cpm from main when running tests
 - Add startup_cpm when running an assembly file

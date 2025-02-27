@@ -1,0 +1,524 @@
+F 0, "neq_bits", "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/vector.sail", 95, 26, 95, 49
+B 0, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 190, 5, 190, 18
+T 0, 0, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 190, 13, 190, 18
+B 1, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 190, 2, 196, 3
+B 2, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 192, 12, 192, 25
+T 2, 1, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 192, 20, 192, 25
+B 3, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 192, 9, 196, 3
+T 3, 2, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 194, 9, 196, 3
+T 3, 3, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 192, 31, 194, 3
+T 1, 4, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 192, 9, 196, 3
+T 1, 5, "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 190, 24, 192, 3
+F 1, "fdiv_int", "/Users/siddharthsakriya/.opam/5.1.0/share/sail/lib/arith.sail", 189, 43, 197, 1
+F 2, "increment_clock_cycle_count", "././utility/timing.sail", 5, 46, 7, 1
+F 3, "increment_machine_cycle_count", "././utility/timing.sail", 10, 48, 12, 1
+F 4, "undefined_reg16", "", 0, 0, 0, 0
+F 5, "_get_reg16_full", "", 0, 0, 0, 0
+F 6, "_get_reg16_high", "", 0, 0, 0, 0
+F 7, "_get_reg16_low", "", 0, 0, 0, 0
+F 8, "read_mem", "././mem&reg/memory.sail", 6, 26, 8, 1
+F 9, "write_mem", "././mem&reg/memory.sail", 12, 33, 14, 1
+B 4, "", 0, 0, 0, 0
+T 4, 6, "././utility/utils.sail", 5, 4, 5, 5
+T 4, 7, "././utility/utils.sail", 6, 4, 6, 5
+T 4, 8, "././utility/utils.sail", 7, 4, 7, 5
+T 4, 9, "././utility/utils.sail", 8, 4, 8, 5
+T 4, 10, "././utility/utils.sail", 9, 4, 9, 5
+T 4, 11, "././utility/utils.sail", 10, 4, 10, 5
+T 4, 12, "././utility/utils.sail", 11, 4, 11, 5
+T 4, 13, "././utility/utils.sail", 12, 4, 12, 5
+F 10, "reg8_num_map_backwards", "", 0, 0, 0, 0
+B 5, "", 0, 0, 0, 0
+T 5, 14, "././utility/utils.sail", 17, 4, 17, 6
+T 5, 15, "././utility/utils.sail", 18, 4, 18, 6
+T 5, 16, "././utility/utils.sail", 19, 4, 19, 6
+T 5, 17, "././utility/utils.sail", 20, 4, 20, 6
+F 11, "reg16_num_map_backwards", "", 0, 0, 0, 0
+B 6, "", 0, 0, 0, 0
+T 6, 18, "././utility/utils.sail", 25, 10, 25, 13
+T 6, 19, "././utility/utils.sail", 26, 10, 26, 13
+T 6, 20, "././utility/utils.sail", 27, 10, 27, 13
+T 6, 21, "././utility/utils.sail", 28, 10, 28, 13
+T 6, 22, "././utility/utils.sail", 29, 10, 29, 13
+T 6, 23, "././utility/utils.sail", 30, 10, 30, 13
+T 6, 24, "././utility/utils.sail", 31, 10, 31, 13
+T 6, 25, "././utility/utils.sail", 32, 10, 32, 13
+F 12, "reg8_str_map_forwards", "", 0, 0, 0, 0
+B 7, "", 0, 0, 0, 0
+T 7, 26, "././utility/utils.sail", 36, 11, 36, 15
+T 7, 27, "././utility/utils.sail", 37, 11, 37, 15
+T 7, 28, "././utility/utils.sail", 38, 11, 38, 15
+T 7, 29, "././utility/utils.sail", 39, 11, 39, 15
+F 13, "reg16_str_map_forwards", "", 0, 0, 0, 0
+B 8, "././utility/utils.sail", 49, 4, 54, 5
+T 8, 30, "././utility/utils.sail", 50, 16, 50, 28
+T 8, 31, "././utility/utils.sail", 51, 16, 51, 28
+T 8, 32, "././utility/utils.sail", 52, 16, 52, 28
+T 8, 33, "././utility/utils.sail", 53, 16, 53, 28
+F 14, "read_reg16", "././utility/utils.sail", 48, 25, 55, 1
+B 9, "././utility/utils.sail", 59, 4, 64, 5
+T 9, 34, "././utility/utils.sail", 60, 16, 60, 28
+T 9, 35, "././utility/utils.sail", 61, 16, 61, 28
+T 9, 36, "././utility/utils.sail", 62, 16, 62, 28
+T 9, 37, "././utility/utils.sail", 63, 16, 63, 28
+F 15, "read_reg16_sp", "././utility/utils.sail", 58, 28, 65, 1
+B 10, "././utility/utils.sail", 70, 4, 75, 5
+T 10, 38, "", 0, 0, 0, 0
+T 10, 39, "", 0, 0, 0, 0
+T 10, 40, "", 0, 0, 0, 0
+T 10, 41, "", 0, 0, 0, 0
+F 16, "write_reg16", "././utility/utils.sail", 69, 29, 76, 1
+B 11, "././utility/utils.sail", 80, 4, 85, 5
+T 11, 42, "", 0, 0, 0, 0
+T 11, 43, "", 0, 0, 0, 0
+T 11, 44, "", 0, 0, 0, 0
+T 11, 45, "", 0, 0, 0, 0
+F 17, "write_reg16_sp", "././utility/utils.sail", 79, 32, 86, 1
+B 12, "././utility/utils.sail", 91, 4, 100, 5
+T 12, 46, "././utility/utils.sail", 92, 17, 92, 29
+T 12, 47, "././utility/utils.sail", 93, 17, 93, 28
+T 12, 48, "././utility/utils.sail", 94, 17, 94, 29
+T 12, 49, "././utility/utils.sail", 95, 17, 95, 28
+T 12, 50, "././utility/utils.sail", 96, 17, 96, 29
+T 12, 51, "././utility/utils.sail", 97, 17, 97, 28
+T 12, 52, "././utility/utils.sail", 98, 17, 98, 43
+T 12, 53, "././utility/utils.sail", 99, 17, 99, 29
+F 18, "read_reg8", "././utility/utils.sail", 90, 24, 101, 1
+B 13, "././utility/utils.sail", 107, 4, 116, 5
+T 13, 54, "", 0, 0, 0, 0
+T 13, 55, "", 0, 0, 0, 0
+T 13, 56, "", 0, 0, 0, 0
+T 13, 57, "", 0, 0, 0, 0
+T 13, 58, "", 0, 0, 0, 0
+T 13, 59, "", 0, 0, 0, 0
+T 13, 60, "././utility/utils.sail", 114, 17, 114, 47
+T 13, 61, "", 0, 0, 0, 0
+F 19, "write_reg8", "././utility/utils.sail", 106, 28, 117, 1
+F 20, "update_s_flag", "././utility/utils.sail", 130, 33, 134, 1
+F 21, "update_z_flag", "././utility/utils.sail", 137, 33, 141, 1
+F 22, "update_a_flag", "././utility/utils.sail", 144, 33, 148, 1
+F 23, "update_p_flag", "././utility/utils.sail", 151, 33, 155, 1
+F 24, "update_c_flag", "././utility/utils.sail", 158, 33, 162, 1
+F 25, "read_s_flag", "././utility/utils.sail", 165, 25, 168, 1
+F 26, "read_z_flag", "././utility/utils.sail", 171, 25, 174, 1
+F 27, "read_a_flag", "././utility/utils.sail", 177, 25, 180, 1
+F 28, "read_p_flag", "././utility/utils.sail", 183, 25, 186, 1
+F 29, "read_c_flag", "././utility/utils.sail", 189, 25, 192, 1
+F 30, "increment_pc", "././utility/utils.sail", 199, 26, 201, 1
+F 31, "push_stack", "././utility/utils.sail", 204, 38, 209, 1
+F 32, "pop_stack", "././utility/utils.sail", 212, 23, 218, 1
+F 33, "write_devacc", "././utility/utils.sail", 317, 30, 319, 1
+F 34, "read_devacc", "././utility/utils.sail", 322, 29, 324, 1
+F 35, "set_interrupt_enable", "././utility/utils.sail", 327, 36, 329, 1
+F 36, "xor_reduce", "././utility/utils.sail", 338, 25, 346, 1
+B 14, "././utility/utils.sail", 350, 4, 350, 34
+T 14, 62, "././utility/utils.sail", 350, 31, 350, 34
+T 14, 63, "././utility/utils.sail", 350, 22, 350, 25
+F 37, "bool_to_bit_converter", "././utility/utils.sail", 349, 36, 351, 1
+B 15, "././utility/utils.sail", 357, 25, 357, 72
+T 15, 64, "././utility/utils.sail", 357, 62, 357, 72
+T 15, 65, "././utility/utils.sail", 357, 46, 357, 56
+B 16, "././utility/utils.sail", 363, 18, 363, 57
+T 16, 66, "././utility/utils.sail", 363, 54, 363, 57
+T 16, 67, "././utility/utils.sail", 363, 45, 363, 48
+F 38, "perform_sub", "././utility/utils.sail", 354, 51, 370, 1
+B 17, "././utility/utils.sail", 374, 25, 374, 72
+T 17, 68, "././utility/utils.sail", 374, 62, 374, 72
+T 17, 69, "././utility/utils.sail", 374, 46, 374, 56
+B 18, "././utility/utils.sail", 382, 18, 382, 57
+T 18, 70, "././utility/utils.sail", 382, 54, 382, 57
+T 18, 71, "././utility/utils.sail", 382, 45, 382, 48
+F 39, "perform_add", "././utility/utils.sail", 373, 36, 389, 1
+B 19, "././decoder/decode.sail", 93, 0, 94, 11
+T 19, 72, "././decoder/decode.sail", 94, 6, 94, 11
+T 19, 73, "././decoder/decode.sail", 96, 6, 96, 11
+B 20, "././decoder/decode.sail", 97, 25, 97, 54
+T 20, 74, "././decoder/decode.sail", 97, 25, 97, 54
+T 19, 75, "././decoder/decode.sail", 98, 6, 98, 12
+B 21, "././decoder/decode.sail", 99, 25, 99, 54
+T 21, 76, "././decoder/decode.sail", 99, 25, 99, 54
+T 19, 77, "././decoder/decode.sail", 100, 6, 100, 12
+T 19, 78, "././decoder/decode.sail", 102, 6, 102, 11
+T 19, 79, "././decoder/decode.sail", 104, 6, 104, 11
+T 19, 80, "././decoder/decode.sail", 106, 6, 106, 11
+T 19, 81, "././decoder/decode.sail", 108, 6, 108, 11
+T 19, 82, "././decoder/decode.sail", 110, 6, 110, 19
+B 22, "././decoder/decode.sail", 111, 25, 111, 59
+T 22, 83, "././decoder/decode.sail", 111, 25, 111, 59
+T 19, 84, "././decoder/decode.sail", 112, 6, 112, 20
+B 23, "././decoder/decode.sail", 113, 25, 113, 59
+T 23, 85, "././decoder/decode.sail", 113, 25, 113, 59
+T 19, 86, "././decoder/decode.sail", 114, 6, 114, 20
+T 19, 87, "././decoder/decode.sail", 116, 6, 116, 12
+T 19, 88, "././decoder/decode.sail", 118, 6, 118, 12
+T 19, 89, "././decoder/decode.sail", 120, 6, 120, 12
+T 19, 90, "././decoder/decode.sail", 122, 6, 122, 12
+T 19, 91, "././decoder/decode.sail", 124, 6, 124, 12
+T 19, 92, "././decoder/decode.sail", 126, 6, 126, 12
+T 19, 93, "././decoder/decode.sail", 128, 6, 128, 12
+T 19, 94, "././decoder/decode.sail", 130, 6, 130, 12
+T 19, 95, "././decoder/decode.sail", 132, 6, 132, 11
+T 19, 96, "././decoder/decode.sail", 134, 6, 134, 11
+T 19, 97, "././decoder/decode.sail", 136, 6, 136, 11
+T 19, 98, "././decoder/decode.sail", 138, 6, 138, 11
+B 24, "././decoder/decode.sail", 139, 25, 139, 58
+T 24, 99, "././decoder/decode.sail", 139, 25, 139, 58
+T 19, 100, "././decoder/decode.sail", 140, 6, 140, 13
+B 25, "././decoder/decode.sail", 141, 25, 141, 58
+T 25, 101, "././decoder/decode.sail", 141, 25, 141, 58
+T 19, 102, "././decoder/decode.sail", 142, 6, 142, 12
+B 26, "././decoder/decode.sail", 143, 25, 143, 58
+T 26, 103, "././decoder/decode.sail", 143, 25, 143, 58
+T 19, 104, "././decoder/decode.sail", 144, 6, 144, 12
+B 27, "././decoder/decode.sail", 145, 25, 145, 58
+T 27, 105, "././decoder/decode.sail", 145, 25, 145, 58
+T 19, 106, "././decoder/decode.sail", 146, 6, 146, 12
+B 28, "././decoder/decode.sail", 147, 25, 147, 58
+T 28, 107, "././decoder/decode.sail", 147, 25, 147, 58
+T 19, 108, "././decoder/decode.sail", 148, 6, 148, 12
+T 19, 109, "././decoder/decode.sail", 150, 6, 150, 12
+T 19, 110, "././decoder/decode.sail", 152, 6, 152, 12
+T 19, 111, "././decoder/decode.sail", 154, 6, 154, 12
+T 19, 112, "././decoder/decode.sail", 156, 6, 156, 12
+T 19, 113, "././decoder/decode.sail", 158, 6, 158, 11
+T 19, 114, "././decoder/decode.sail", 160, 6, 160, 10
+T 19, 115, "././decoder/decode.sail", 162, 6, 162, 11
+T 19, 116, "././decoder/decode.sail", 164, 6, 164, 10
+T 19, 117, "././decoder/decode.sail", 166, 6, 166, 11
+T 19, 118, "././decoder/decode.sail", 168, 6, 168, 10
+T 19, 119, "././decoder/decode.sail", 170, 6, 170, 10
+T 19, 120, "././decoder/decode.sail", 172, 6, 172, 11
+T 19, 121, "././decoder/decode.sail", 174, 6, 174, 11
+B 29, "././decoder/decode.sail", 175, 25, 175, 52
+T 29, 122, "././decoder/decode.sail", 175, 25, 175, 52
+T 19, 123, "././decoder/decode.sail", 176, 6, 176, 14
+T 19, 124, "././decoder/decode.sail", 178, 6, 178, 10
+T 19, 125, "././decoder/decode.sail", 180, 6, 180, 10
+T 19, 126, "././decoder/decode.sail", 183, 6, 183, 21
+F 40, "decode8", "././decoder/decode.sail", 93, 0, 94, 11
+B 30, "././decoder/decode.sail", 187, 0, 188, 18
+B 31, "././decoder/decode.sail", 187, 26, 187, 72
+T 31, 127, "././decoder/decode.sail", 187, 26, 187, 72
+T 30, 128, "././decoder/decode.sail", 188, 6, 188, 18
+T 30, 129, "././decoder/decode.sail", 190, 6, 190, 15
+T 30, 130, "././decoder/decode.sail", 192, 6, 192, 15
+T 30, 131, "././decoder/decode.sail", 194, 6, 194, 15
+T 30, 132, "././decoder/decode.sail", 196, 6, 196, 15
+T 30, 133, "././decoder/decode.sail", 198, 6, 198, 15
+T 30, 134, "././decoder/decode.sail", 200, 6, 200, 15
+T 30, 135, "././decoder/decode.sail", 202, 6, 202, 15
+T 30, 136, "././decoder/decode.sail", 204, 6, 204, 15
+T 30, 137, "././decoder/decode.sail", 206, 6, 206, 14
+T 30, 138, "././decoder/decode.sail", 208, 6, 208, 15
+T 30, 139, "././decoder/decode.sail", 210, 6, 210, 22
+F 41, "decode16", "././decoder/decode.sail", 187, 0, 188, 18
+B 32, "././decoder/decode.sail", 215, 0, 216, 33
+B 33, "././decoder/decode.sail", 215, 26, 215, 99
+T 33, 140, "././decoder/decode.sail", 215, 26, 215, 99
+T 32, 141, "././decoder/decode.sail", 216, 6, 216, 33
+T 32, 142, "././decoder/decode.sail", 218, 6, 218, 30
+T 32, 143, "././decoder/decode.sail", 220, 6, 220, 30
+T 32, 144, "././decoder/decode.sail", 222, 6, 222, 31
+T 32, 145, "././decoder/decode.sail", 224, 6, 224, 31
+T 32, 146, "././decoder/decode.sail", 226, 6, 226, 30
+T 32, 147, "././decoder/decode.sail", 228, 6, 228, 29
+T 32, 148, "././decoder/decode.sail", 230, 6, 230, 30
+T 32, 149, "././decoder/decode.sail", 232, 6, 232, 29
+T 32, 150, "././decoder/decode.sail", 234, 6, 234, 30
+T 32, 151, "././decoder/decode.sail", 236, 6, 236, 29
+T 32, 152, "././decoder/decode.sail", 238, 6, 238, 29
+T 32, 153, "././decoder/decode.sail", 240, 6, 240, 30
+T 32, 154, "././decoder/decode.sail", 242, 6, 242, 30
+T 32, 155, "././decoder/decode.sail", 244, 6, 244, 31
+T 32, 156, "././decoder/decode.sail", 246, 6, 246, 29
+T 32, 157, "././decoder/decode.sail", 248, 6, 248, 30
+T 32, 158, "././decoder/decode.sail", 250, 6, 250, 29
+T 32, 159, "././decoder/decode.sail", 252, 6, 252, 30
+T 32, 160, "././decoder/decode.sail", 254, 6, 254, 29
+T 32, 161, "././decoder/decode.sail", 256, 6, 256, 29
+T 32, 162, "././decoder/decode.sail", 258, 6, 258, 30
+T 32, 163, "././decoder/decode.sail", 260, 6, 260, 30
+T 32, 164, "././decoder/decode.sail", 262, 6, 262, 22
+F 42, "decode24", "././decoder/decode.sail", 215, 0, 216, 33
+B 34, "././decoder/instructions.sail", 7, 0, 15, 1
+T 34, 165, "././decoder/instructions.sail", 7, 34, 15, 1
+T 34, 166, "././decoder/instructions.sail", 18, 34, 28, 1
+B 35, "././decoder/instructions.sail", 43, 32, 43, 86
+T 35, 167, "././decoder/instructions.sail", 43, 85, 43, 86
+T 35, 168, "././decoder/instructions.sail", 43, 77, 43, 79
+B 36, "././decoder/instructions.sail", 44, 34, 44, 87
+T 36, 169, "././decoder/instructions.sail", 44, 86, 44, 87
+T 36, 170, "././decoder/instructions.sail", 44, 79, 44, 80
+T 34, 171, "././decoder/instructions.sail", 31, 35, 47, 1
+B 37, "././decoder/instructions.sail", 61, 32, 61, 86
+T 37, 172, "././decoder/instructions.sail", 61, 85, 61, 86
+T 37, 173, "././decoder/instructions.sail", 61, 77, 61, 79
+B 38, "././decoder/instructions.sail", 62, 34, 62, 87
+T 38, 174, "././decoder/instructions.sail", 62, 86, 62, 87
+T 38, 175, "././decoder/instructions.sail", 62, 79, 62, 80
+T 34, 176, "././decoder/instructions.sail", 50, 35, 65, 1
+T 34, 177, "././decoder/instructions.sail", 68, 34, 79, 1
+B 39, "././decoder/instructions.sail", 90, 8, 90, 48
+T 39, 178, "././decoder/instructions.sail", 90, 31, 90, 48
+B 40, "././decoder/instructions.sail", 90, 4, 92, 5
+B 41, "././decoder/instructions.sail", 94, 8, 94, 91
+B 42, "././decoder/instructions.sail", 94, 31, 94, 91
+B 43, "././decoder/instructions.sail", 94, 52, 94, 90
+T 43, 179, "././decoder/instructions.sail", 94, 73, 94, 90
+T 42, 180, "././decoder/instructions.sail", 94, 52, 94, 90
+T 41, 181, "././decoder/instructions.sail", 94, 31, 94, 91
+B 44, "././decoder/instructions.sail", 94, 4, 97, 5
+T 44, 182, "././decoder/instructions.sail", 97, 5, 97, 5
+T 44, 183, "././decoder/instructions.sail", 94, 98, 97, 5
+T 40, 184, "././decoder/instructions.sail", 92, 5, 92, 5
+T 40, 185, "././decoder/instructions.sail", 90, 55, 92, 5
+T 34, 186, "././decoder/instructions.sail", 82, 34, 108, 1
+T 34, 187, "././decoder/instructions.sail", 111, 34, 117, 1
+B 45, "././decoder/instructions.sail", 125, 35, 125, 114
+T 45, 188, "././decoder/instructions.sail", 125, 76, 125, 114
+B 46, "././decoder/instructions.sail", 125, 32, 125, 128
+T 46, 189, "././decoder/instructions.sail", 125, 127, 125, 128
+T 46, 190, "././decoder/instructions.sail", 125, 120, 125, 121
+B 47, "././decoder/instructions.sail", 126, 37, 126, 116
+T 47, 191, "././decoder/instructions.sail", 126, 78, 126, 116
+B 48, "././decoder/instructions.sail", 126, 34, 126, 130
+T 48, 192, "././decoder/instructions.sail", 126, 129, 126, 130
+T 48, 193, "././decoder/instructions.sail", 126, 122, 126, 123
+T 34, 194, "././decoder/instructions.sail", 120, 42, 129, 1
+T 34, 195, "././decoder/instructions.sail", 132, 43, 143, 1
+T 34, 196, "././decoder/instructions.sail", 146, 43, 155, 1
+B 49, "././decoder/instructions.sail", 167, 32, 167, 85
+T 49, 197, "././decoder/instructions.sail", 167, 84, 167, 85
+T 49, 198, "././decoder/instructions.sail", 167, 77, 167, 78
+B 50, "././decoder/instructions.sail", 168, 34, 168, 87
+T 50, 199, "././decoder/instructions.sail", 168, 86, 168, 87
+T 50, 200, "././decoder/instructions.sail", 168, 79, 168, 80
+T 34, 201, "././decoder/instructions.sail", 158, 35, 171, 1
+B 51, "././decoder/instructions.sail", 184, 32, 184, 85
+T 51, 202, "././decoder/instructions.sail", 184, 84, 184, 85
+T 51, 203, "././decoder/instructions.sail", 184, 77, 184, 78
+B 52, "././decoder/instructions.sail", 185, 34, 185, 87
+T 52, 204, "././decoder/instructions.sail", 185, 86, 185, 87
+T 52, 205, "././decoder/instructions.sail", 185, 79, 185, 80
+T 34, 206, "././decoder/instructions.sail", 174, 35, 188, 1
+B 53, "././decoder/instructions.sail", 202, 32, 202, 85
+T 53, 207, "././decoder/instructions.sail", 202, 84, 202, 85
+T 53, 208, "././decoder/instructions.sail", 202, 77, 202, 78
+B 54, "././decoder/instructions.sail", 203, 34, 203, 87
+T 54, 209, "././decoder/instructions.sail", 203, 86, 203, 87
+T 54, 210, "././decoder/instructions.sail", 203, 79, 203, 80
+T 34, 211, "././decoder/instructions.sail", 191, 35, 206, 1
+T 34, 212, "././decoder/instructions.sail", 209, 35, 225, 1
+B 55, "././decoder/instructions.sail", 241, 32, 241, 85
+T 55, 213, "././decoder/instructions.sail", 241, 84, 241, 85
+T 55, 214, "././decoder/instructions.sail", 241, 77, 241, 78
+B 56, "././decoder/instructions.sail", 242, 34, 242, 87
+T 56, 215, "././decoder/instructions.sail", 242, 86, 242, 87
+T 56, 216, "././decoder/instructions.sail", 242, 79, 242, 80
+T 34, 217, "././decoder/instructions.sail", 228, 35, 245, 1
+B 57, "././decoder/instructions.sail", 260, 32, 260, 85
+T 57, 218, "././decoder/instructions.sail", 260, 84, 260, 85
+T 57, 219, "././decoder/instructions.sail", 260, 77, 260, 78
+B 58, "././decoder/instructions.sail", 261, 34, 261, 87
+T 58, 220, "././decoder/instructions.sail", 261, 86, 261, 87
+T 58, 221, "././decoder/instructions.sail", 261, 79, 261, 80
+T 34, 222, "././decoder/instructions.sail", 248, 35, 264, 1
+B 59, "././decoder/instructions.sail", 279, 32, 279, 85
+T 59, 223, "././decoder/instructions.sail", 279, 84, 279, 85
+T 59, 224, "././decoder/instructions.sail", 279, 77, 279, 78
+B 60, "././decoder/instructions.sail", 280, 34, 280, 87
+T 60, 225, "././decoder/instructions.sail", 280, 86, 280, 87
+T 60, 226, "././decoder/instructions.sail", 280, 79, 280, 80
+T 34, 227, "././decoder/instructions.sail", 267, 35, 283, 1
+B 61, "././decoder/instructions.sail", 296, 4, 296, 115
+B 62, "././decoder/instructions.sail", 297, 4, 297, 119
+T 62, 228, "././decoder/instructions.sail", 297, 87, 297, 119
+T 62, 229, "././decoder/instructions.sail", 297, 49, 297, 81
+T 61, 230, "././decoder/instructions.sail", 296, 85, 296, 115
+T 61, 231, "././decoder/instructions.sail", 296, 49, 296, 79
+T 34, 232, "././decoder/instructions.sail", 286, 35, 300, 1
+T 34, 233, "././decoder/instructions.sail", 303, 34, 317, 1
+T 34, 234, "././decoder/instructions.sail", 320, 33, 334, 1
+T 34, 235, "././decoder/instructions.sail", 337, 33, 351, 1
+T 34, 236, "././decoder/instructions.sail", 354, 33, 368, 1
+T 34, 237, "././decoder/instructions.sail", 371, 35, 380, 1
+B 63, "././decoder/instructions.sail", 386, 4, 390, 5
+T 63, 238, "././decoder/instructions.sail", 390, 5, 390, 5
+T 63, 239, "././decoder/instructions.sail", 386, 52, 390, 5
+T 34, 240, "././decoder/instructions.sail", 383, 34, 399, 1
+T 34, 241, "././decoder/instructions.sail", 402, 34, 416, 1
+T 34, 242, "././decoder/instructions.sail", 419, 34, 429, 1
+T 34, 243, "././decoder/instructions.sail", 432, 34, 442, 1
+T 34, 244, "././decoder/instructions.sail", 445, 34, 457, 1
+T 34, 245, "././decoder/instructions.sail", 460, 34, 478, 1
+T 34, 246, "././decoder/instructions.sail", 481, 34, 490, 1
+T 34, 247, "././decoder/instructions.sail", 493, 55, 501, 1
+B 64, "././decoder/instructions.sail", 508, 4, 508, 116
+T 64, 248, "././decoder/instructions.sail", 508, 86, 508, 116
+T 64, 249, "././decoder/instructions.sail", 508, 49, 508, 80
+T 34, 250, "././decoder/instructions.sail", 504, 40, 511, 1
+T 34, 251, "././decoder/instructions.sail", 514, 37, 525, 1
+T 34, 252, "././decoder/instructions.sail", 528, 37, 539, 1
+T 34, 253, "././decoder/instructions.sail", 542, 37, 555, 1
+T 34, 254, "././decoder/instructions.sail", 558, 37, 573, 1
+T 34, 255, "././decoder/instructions.sail", 577, 37, 592, 1
+T 34, 256, "././decoder/instructions.sail", 595, 37, 610, 1
+T 34, 257, "././decoder/instructions.sail", 613, 37, 628, 1
+T 34, 258, "././decoder/instructions.sail", 631, 37, 641, 1
+T 34, 259, "././decoder/instructions.sail", 644, 52, 654, 1
+T 34, 260, "././decoder/instructions.sail", 657, 52, 667, 1
+T 34, 261, "././decoder/instructions.sail", 670, 53, 681, 1
+T 34, 262, "././decoder/instructions.sail", 684, 53, 695, 1
+T 34, 263, "././decoder/instructions.sail", 698, 34, 707, 1
+T 34, 264, "././decoder/instructions.sail", 710, 52, 719, 1
+B 65, "././decoder/instructions.sail", 723, 4, 725, 5
+T 65, 265, "././decoder/instructions.sail", 725, 5, 725, 5
+T 65, 266, "././decoder/instructions.sail", 723, 33, 725, 5
+T 34, 267, "././decoder/instructions.sail", 722, 51, 733, 1
+B 66, "././decoder/instructions.sail", 737, 4, 739, 5
+T 66, 268, "././decoder/instructions.sail", 739, 5, 739, 5
+T 66, 269, "././decoder/instructions.sail", 737, 33, 739, 5
+T 34, 270, "././decoder/instructions.sail", 736, 52, 747, 1
+B 67, "././decoder/instructions.sail", 751, 4, 753, 5
+T 67, 271, "././decoder/instructions.sail", 753, 5, 753, 5
+T 67, 272, "././decoder/instructions.sail", 751, 33, 753, 5
+T 34, 273, "././decoder/instructions.sail", 750, 51, 761, 1
+B 68, "././decoder/instructions.sail", 765, 4, 767, 5
+T 68, 274, "././decoder/instructions.sail", 767, 5, 767, 5
+T 68, 275, "././decoder/instructions.sail", 765, 33, 767, 5
+T 34, 276, "././decoder/instructions.sail", 764, 52, 775, 1
+B 69, "././decoder/instructions.sail", 779, 4, 781, 5
+T 69, 277, "././decoder/instructions.sail", 781, 5, 781, 5
+T 69, 278, "././decoder/instructions.sail", 779, 33, 781, 5
+T 34, 279, "././decoder/instructions.sail", 778, 51, 789, 1
+B 70, "././decoder/instructions.sail", 793, 4, 795, 5
+T 70, 280, "././decoder/instructions.sail", 795, 5, 795, 5
+T 70, 281, "././decoder/instructions.sail", 793, 33, 795, 5
+T 34, 282, "././decoder/instructions.sail", 792, 51, 803, 1
+B 71, "././decoder/instructions.sail", 807, 4, 809, 5
+T 71, 283, "././decoder/instructions.sail", 809, 5, 809, 5
+T 71, 284, "././decoder/instructions.sail", 807, 33, 809, 5
+T 34, 285, "././decoder/instructions.sail", 806, 52, 817, 1
+B 72, "././decoder/instructions.sail", 821, 4, 823, 5
+T 72, 286, "././decoder/instructions.sail", 823, 5, 823, 5
+T 72, 287, "././decoder/instructions.sail", 821, 33, 823, 5
+T 34, 288, "././decoder/instructions.sail", 820, 52, 831, 1
+T 34, 289, "././decoder/instructions.sail", 834, 53, 843, 1
+B 73, "././decoder/instructions.sail", 847, 4, 855, 5
+T 73, 290, "././decoder/instructions.sail", 852, 11, 855, 5
+T 73, 291, "././decoder/instructions.sail", 847, 33, 852, 5
+T 34, 292, "././decoder/instructions.sail", 846, 51, 860, 1
+B 74, "././decoder/instructions.sail", 864, 4, 872, 5
+T 74, 293, "././decoder/instructions.sail", 869, 11, 872, 5
+T 74, 294, "././decoder/instructions.sail", 864, 33, 869, 5
+T 34, 295, "././decoder/instructions.sail", 863, 52, 877, 1
+B 75, "././decoder/instructions.sail", 881, 4, 889, 5
+T 75, 296, "././decoder/instructions.sail", 886, 11, 889, 5
+T 75, 297, "././decoder/instructions.sail", 881, 33, 886, 5
+T 34, 298, "././decoder/instructions.sail", 880, 51, 894, 1
+B 76, "././decoder/instructions.sail", 898, 4, 906, 5
+T 76, 299, "././decoder/instructions.sail", 903, 11, 906, 5
+T 76, 300, "././decoder/instructions.sail", 898, 33, 903, 5
+T 34, 301, "././decoder/instructions.sail", 897, 52, 911, 1
+B 77, "././decoder/instructions.sail", 915, 4, 923, 5
+T 77, 302, "././decoder/instructions.sail", 920, 11, 923, 5
+T 77, 303, "././decoder/instructions.sail", 915, 33, 920, 5
+T 34, 304, "././decoder/instructions.sail", 914, 51, 928, 1
+B 78, "././decoder/instructions.sail", 932, 4, 940, 5
+T 78, 305, "././decoder/instructions.sail", 937, 11, 940, 5
+T 78, 306, "././decoder/instructions.sail", 932, 33, 937, 5
+T 34, 307, "././decoder/instructions.sail", 931, 51, 945, 1
+B 79, "././decoder/instructions.sail", 949, 4, 957, 5
+T 79, 308, "././decoder/instructions.sail", 954, 11, 957, 5
+T 79, 309, "././decoder/instructions.sail", 949, 33, 954, 5
+T 34, 310, "././decoder/instructions.sail", 948, 52, 962, 1
+B 80, "././decoder/instructions.sail", 966, 4, 974, 5
+T 80, 311, "././decoder/instructions.sail", 971, 11, 974, 5
+T 80, 312, "././decoder/instructions.sail", 966, 33, 971, 5
+T 34, 313, "././decoder/instructions.sail", 965, 52, 979, 1
+T 34, 314, "././decoder/instructions.sail", 982, 33, 991, 1
+B 81, "././decoder/instructions.sail", 995, 4, 1002, 5
+T 81, 315, "././decoder/instructions.sail", 999, 11, 1002, 5
+T 81, 316, "././decoder/instructions.sail", 995, 33, 999, 5
+T 34, 317, "././decoder/instructions.sail", 994, 32, 1007, 1
+B 82, "././decoder/instructions.sail", 1011, 4, 1018, 5
+T 82, 318, "././decoder/instructions.sail", 1015, 11, 1018, 5
+T 82, 319, "././decoder/instructions.sail", 1011, 33, 1015, 5
+T 34, 320, "././decoder/instructions.sail", 1010, 33, 1023, 1
+B 83, "././decoder/instructions.sail", 1027, 4, 1034, 5
+T 83, 321, "././decoder/instructions.sail", 1031, 11, 1034, 5
+T 83, 322, "././decoder/instructions.sail", 1027, 33, 1031, 5
+T 34, 323, "././decoder/instructions.sail", 1026, 32, 1039, 1
+B 84, "././decoder/instructions.sail", 1043, 4, 1050, 5
+T 84, 324, "././decoder/instructions.sail", 1047, 11, 1050, 5
+T 84, 325, "././decoder/instructions.sail", 1043, 33, 1047, 5
+T 34, 326, "././decoder/instructions.sail", 1042, 33, 1055, 1
+B 85, "././decoder/instructions.sail", 1059, 4, 1066, 5
+T 85, 327, "././decoder/instructions.sail", 1063, 11, 1066, 5
+T 85, 328, "././decoder/instructions.sail", 1059, 33, 1063, 5
+T 34, 329, "././decoder/instructions.sail", 1058, 32, 1071, 1
+B 86, "././decoder/instructions.sail", 1075, 4, 1082, 5
+T 86, 330, "././decoder/instructions.sail", 1079, 11, 1082, 5
+T 86, 331, "././decoder/instructions.sail", 1075, 33, 1079, 5
+T 34, 332, "././decoder/instructions.sail", 1074, 32, 1087, 1
+B 87, "././decoder/instructions.sail", 1091, 4, 1098, 5
+T 87, 333, "././decoder/instructions.sail", 1095, 11, 1098, 5
+T 87, 334, "././decoder/instructions.sail", 1091, 33, 1095, 5
+T 34, 335, "././decoder/instructions.sail", 1090, 33, 1103, 1
+B 88, "././decoder/instructions.sail", 1107, 4, 1114, 5
+T 88, 336, "././decoder/instructions.sail", 1111, 11, 1114, 5
+T 88, 337, "././decoder/instructions.sail", 1107, 33, 1111, 5
+T 34, 338, "././decoder/instructions.sail", 1106, 33, 1119, 1
+T 34, 339, "././decoder/instructions.sail", 1122, 36, 1132, 1
+T 34, 340, "././decoder/instructions.sail", 1135, 32, 1143, 1
+T 34, 341, "././decoder/instructions.sail", 1146, 32, 1154, 1
+T 34, 342, "././decoder/instructions.sail", 1157, 36, 1166, 1
+T 34, 343, "././decoder/instructions.sail", 1169, 37, 1178, 1
+T 34, 344, "././decoder/instructions.sail", 1181, 34, 1188, 1
+T 34, 345, "././decoder/instructions.sail", 1190, 43, 1195, 1
+T 34, 346, "././decoder/instructions.sail", 1197, 44, 1202, 1
+T 34, 347, "././decoder/instructions.sail", 1204, 44, 1208, 1
+F 43, "execute", "././decoder/instructions.sail", 7, 0, 15, 1
+F 44, "load_program", "./program.sail", 1, 41, 4611, 1
+B 89, "main.sail", 16, 17, 16, 141
+T 89, 348, "main.sail", 16, 68, 16, 141
+T 89, 349, "main.sail", 16, 53, 16, 62
+F 45, "bdos_9", "main.sail", 15, 40, 18, 1
+B 90, "main.sail", 21, 4, 24, 5
+T 90, 350, "main.sail", 24, 5, 24, 5
+T 90, 351, "main.sail", 21, 39, 24, 5
+B 91, "main.sail", 26, 4, 30, 5
+T 91, 352, "main.sail", 30, 5, 30, 5
+B 92, "main.sail", 27, 8, 29, 9
+T 92, 353, "main.sail", 29, 9, 29, 9
+T 92, 354, "main.sail", 27, 43, 29, 9
+T 91, 355, "main.sail", 26, 39, 30, 5
+F 46, "intercept_BDOS", "main.sail", 20, 43, 31, 1
+F 47, "startup_cpm", "main.sail", 33, 40, 36, 1
+B 93, "main.sail", 48, 4, 50, 5
+B 94, "main.sail", 52, 4, 54, 5
+B 95, "main.sail", 56, 4, 58, 5
+B 96, "main.sail", 64, 4, 66, 5
+B 97, "main.sail", 76, 4, 78, 5
+B 98, "main.sail", 84, 4, 86, 5
+T 98, 356, "main.sail", 86, 5, 86, 5
+T 98, 357, "main.sail", 84, 60, 86, 5
+T 97, 358, "main.sail", 78, 5, 78, 5
+T 97, 359, "main.sail", 76, 60, 78, 5
+T 96, 360, "main.sail", 66, 5, 66, 5
+T 96, 361, "main.sail", 64, 59, 66, 5
+T 95, 362, "main.sail", 58, 5, 58, 5
+T 95, 363, "main.sail", 56, 59, 58, 5
+T 94, 364, "main.sail", 54, 5, 54, 5
+T 94, 365, "main.sail", 52, 58, 54, 5
+T 93, 366, "main.sail", 50, 5, 50, 5
+T 93, 367, "main.sail", 48, 57, 50, 5
+B 99, "main.sail", 91, 4, 93, 5
+B 100, "main.sail", 94, 4, 96, 5
+T 100, 368, "main.sail", 96, 5, 96, 5
+T 100, 369, "main.sail", 94, 37, 96, 5
+T 99, 370, "main.sail", 93, 5, 93, 5
+T 99, 371, "main.sail", 91, 37, 93, 5
+F 48, "fetch_decode_execute", "main.sail", 43, 65, 101, 1
+F 49, "main", "main.sail", 103, 33, 107, 1
+F 50, "initialize_registers", "", 0, 0, 0, 0
