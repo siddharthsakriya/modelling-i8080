@@ -44,25 +44,40 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
     
-
+    
     if (fdiv_int(clock_cycle_count, 10000000) == 1) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag1 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag1 = false;
+        };
     };
 
+    
     if (fdiv_int(clock_cycle_count, 100000000) == 1) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag2 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag2 = false;
+        };
     };
 
+    
     if (fdiv_int(clock_cycle_count, 100000000) == 10) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag3 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag3 = false;
+        };
     };
 
     // if (fdiv_int(clock_cycle_count, 100000000) == 30) then {
     //     print_int("cycles: ", clock_cycle_count);
     // };
 
+    
     if (fdiv_int(clock_cycle_count, 100000000) == 50) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag4 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag4 = false;
+        };
     };
 
     // if (fdiv_int(clock_cycle_count, 100000000) == 80) then {
@@ -73,16 +88,23 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
     //     print_int("cycles: ", clock_cycle_count);
     // };
 
+    
     if (fdiv_int(clock_cycle_count, 100000000) == 130) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag5 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag5 = false;
+        };
     };
 
     // if (fdiv_int(clock_cycle_count, 100000000) == 170) then {
     //     print_int("cycles: ", clock_cycle_count);
     // };
-
+    
     if (fdiv_int(clock_cycle_count, 100000000) == 230) then {
-        print_int("cycles: ", clock_cycle_count);
+        if (flag6 == true) then {
+            print_int("cycles: ", clock_cycle_count);
+            flag6 = false;
+        };
     };
 
     var decoded = decode8(instruction);

@@ -411,4 +411,9 @@ val "shiftr" : forall 'm 'n, 'n >= 0. (bits('m), atom('n)) -> bits('m)
 val "putchar" : int -> unit
 
 
-
+register flag1: bool = true
+register flag2: bool = true
+register flag3: bool = true
+register flag4: bool = true
+register flag5: bool = true
+register flag6: bool = true

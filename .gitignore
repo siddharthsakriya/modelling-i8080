@@ -6,3 +6,4 @@ __pycache__/
 *.pyo
 ./coverage_results/
 ./programs8080
+out.c
