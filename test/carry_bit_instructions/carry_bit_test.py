@@ -18,7 +18,7 @@ def setup_and_cleanup():
 
 def cleanup():
     """Function to perform cleanup tasks."""
-    subprocess.run(['make', 'clean'], cwd=three_dirs_back)
+    # subprocess.run(['make', 'clean'], cwd=three_dirs_back)
 
 def test_stc(setup_and_cleanup):
     program_commands = retrieve_commands('stc')

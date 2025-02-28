@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>instructions</title></head>
 <body>
-<h1>instructions.sail (3/236) 1%</h1>
+<h1>instructions.sail (65/236) 28%</h1>
 <code style="display: block">
 <br>
 /*&nbsp;execute&nbsp;function&nbsp;*/<br>
@@ -12,7 +12,7 @@ val&nbsp;execute&nbsp;:&nbsp;ast&nbsp;-&gt;&nbsp;bool<br>
 scattered&nbsp;function&nbsp;execute<br>
 <br>
 /*&nbsp;STC&nbsp;instruction&nbsp;*/<br>
-<span style="background-color: hsl(120, 85%, 80%)">function&nbsp;clause&nbsp;execute&nbsp;(STC())&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+<span style="background-color: hsl(120, 85%, 80%)">function&nbsp;clause&nbsp;execute&nbsp;(STC())&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 75%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;update_c_flag(0b1);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(&quot;Instruction&nbsp;completed:&nbsp;STC&quot;);&nbsp;&nbsp;&nbsp;&nbsp;<br>
@@ -125,19 +125,19 @@ function&nbsp;clause&nbsp;execute&nbsp;(NOP())&nbsp;=&nbsp;<span style="backgrou
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;MOV&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(MOV(dst,&nbsp;src))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(MOV(dst,&nbsp;src))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg8(dst,&nbsp;read_reg8(src));<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;MOV&nbsp;&quot;,&nbsp;concat_str(reg8_str_map(reg8_num_map(dst)),&nbsp;concat_str(&quot;&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(src))))));<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;<span style="background-color: hsl(0, 85%, 70%)">reg8_str_map(reg8_num_map(dst))&nbsp;==&nbsp;&quot;M&quot;&nbsp;|&nbsp;<span style="background-color: hsl(0, 85%, 65%)">reg8_str_map(reg8_num_map(src))&nbsp;==&nbsp;&quot;M&quot;</span></span>&nbsp;then&nbsp;7&nbsp;else&nbsp;5</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;<span style="background-color: hsl(0, 85%, 70%)">reg8_str_map(reg8_num_map(dst))&nbsp;==&nbsp;&quot;M&quot;&nbsp;|&nbsp;<span style="background-color: hsl(0, 85%, 65%)">reg8_str_map(reg8_num_map(src))&nbsp;==&nbsp;&quot;M&quot;</span></span>&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;<span style="background-color: hsl(120, 85%, 70%)">reg8_str_map(reg8_num_map(dst))&nbsp;==&nbsp;&quot;M&quot;&nbsp;|&nbsp;<span style="background-color: hsl(120, 85%, 65%)">reg8_str_map(reg8_num_map(src))&nbsp;==&nbsp;&quot;M&quot;</span></span>&nbsp;then&nbsp;7&nbsp;else&nbsp;5</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;<span style="background-color: hsl(120, 85%, 70%)">reg8_str_map(reg8_num_map(dst))&nbsp;==&nbsp;&quot;M&quot;&nbsp;|&nbsp;<span style="background-color: hsl(120, 85%, 65%)">reg8_str_map(reg8_num_map(src))&nbsp;==&nbsp;&quot;M&quot;</span></span>&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;<br>
 }</span><br>
 <br>
 /*&nbsp;STAX&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(STAX(reg_pair))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(STAX(reg_pair))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;addr:&nbsp;addr&nbsp;=&nbsp;read_reg16(0b0&nbsp;@&nbsp;reg_pair);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;v&nbsp;=&nbsp;read_reg8(0b111);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;write_mem(addr,&nbsp;v);<br>
@@ -151,7 +151,7 @@ function&nbsp;clause&nbsp;execute&nbsp;(STAX(reg_pair))&nbsp;=&nbsp;<span style=
 }</span><br>
 <br>
 /*&nbsp;LDAX&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(LDAX(reg_pair))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(LDAX(reg_pair))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg8(0b111,&nbsp;read_mem(read_reg16(0b0&nbsp;@&nbsp;reg_pair)));<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;LDAX&nbsp;&quot;,&nbsp;reg16_str_map(reg16_num_map(sail_zero_extend(reg_pair,&nbsp;2)))));<br>
@@ -163,7 +163,7 @@ function&nbsp;clause&nbsp;execute&nbsp;(LDAX(reg_pair))&nbsp;=&nbsp;<span style=
 }</span><br>
 <br>
 /*&nbsp;ADD&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(ADD(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(ADD(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;a:&nbsp;word&nbsp;=&nbsp;read_reg8(0b111);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;b:&nbsp;word&nbsp;=&nbsp;read_reg8(r);<br>
 <br>
@@ -172,14 +172,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(ADD(r))&nbsp;=&nbsp;<span style="backgro
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg8(0b111,&nbsp;result);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;ADD&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 /*&nbsp;ADC&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(ADC(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(ADC(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;v:&nbsp;bits(8)&nbsp;=&nbsp;read_reg8(r);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;acc:&nbsp;bits(8)&nbsp;=&nbsp;read_reg8(0b111);<br>
 <br>
@@ -189,14 +189,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(ADC(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;ADC&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;SUB&nbsp;instruction<br>
-function&nbsp;clause&nbsp;execute&nbsp;(SUB(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(SUB(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;a_value&nbsp;=&nbsp;read_reg8(0b111);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;data&nbsp;=&nbsp;read_reg8(r);<br>
@@ -207,14 +207,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(SUB(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;SUB&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;SBB&nbsp;instruction&nbsp;<br>
-function&nbsp;clause&nbsp;execute&nbsp;(SBB(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(SBB(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;a_value&nbsp;=&nbsp;read_reg8(0b111);&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;data&nbsp;=&nbsp;read_reg8(r);<br>
@@ -233,7 +233,7 @@ function&nbsp;clause&nbsp;execute&nbsp;(SBB(r))&nbsp;=&nbsp;<span style="backgro
 }</span><br>
 <br>
 /*&nbsp;ANA&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(ANA(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(ANA(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;v:&nbsp;word&nbsp;=&nbsp;read_reg8(r);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;update_a_flag(or_vec(read_reg8(0b111)[3..3],&nbsp;v[3..3]));<br>
 <br>
@@ -246,14 +246,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(ANA(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;ANA&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;XRA&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(XRA(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(XRA(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;v:&nbsp;word&nbsp;=&nbsp;read_reg8(r);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg8(0b111,&nbsp;xor_vec(read_reg8(0b111),&nbsp;v));<br>
 <br>
@@ -265,14 +265,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(XRA(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;XRA&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;ORA&nbsp;instruction&nbsp;*/<br>
-function&nbsp;clause&nbsp;execute&nbsp;(ORA(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(ORA(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;v:&nbsp;word&nbsp;=&nbsp;read_reg8(r);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg8(0b111,&nbsp;or_vec(read_reg8(0b111),&nbsp;v));<br>
 <br>
@@ -284,14 +284,14 @@ function&nbsp;clause&nbsp;execute&nbsp;(ORA(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(concat_str(&quot;Instruction&nbsp;completed:&nbsp;ORA&nbsp;&quot;,&nbsp;reg8_str_map(reg8_num_map(r))));<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;7&nbsp;else&nbsp;4</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;2&nbsp;else&nbsp;1</span>);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
 //&nbsp;/*&nbsp;CMP&nbsp;instruction&nbsp;*/&nbsp;NEED&nbsp;TO&nbsp;CHECK&nbsp;LOGIC&nbsp;OF&nbsp;THIS&nbsp;AND&nbsp;UPDATE<br>
-function&nbsp;clause&nbsp;execute&nbsp;(CMP(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+function&nbsp;clause&nbsp;execute&nbsp;(CMP(r))&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;a_value&nbsp;=&nbsp;read_reg8(0b111);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;data_value&nbsp;=&nbsp;read_reg8(r);<br>
@@ -301,8 +301,8 @@ function&nbsp;clause&nbsp;execute&nbsp;(CMP(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(&quot;Instruction&nbsp;completed:&nbsp;CMP&quot;);<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_clock_cycle_count(7)</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_clock_cycle_count(4)</span></span>;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_machine_cycle_count(2)</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_machine_cycle_count(1)</span></span>;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">increment_clock_cycle_count(7)</span>&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 70%)">increment_clock_cycle_count(4)</span></span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">increment_machine_cycle_count(2)</span>&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 70%)">increment_machine_cycle_count(1)</span></span>;&nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
