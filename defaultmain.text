@@ -8,6 +8,10 @@ $include "./decoder/decode.sail"
 $include "./decoder/instructions.sail"
 $include "program.sail"
 
+// /* Refer to page 13 of manual on deramp for startup, SP seems to be unspecified*/
+// /* loads program into mem */
+//undefined keyword for SP
+
 function bdos_9(value) : bool -> bool = {
     var looped = if (read_mem(DE_addr) == 0x24) then { false } else { print_bits("value: ", read_mem(DE_addr)); DE_addr = DE_addr + 1; true;}; 
     looped
@@ -35,6 +39,7 @@ function startup_test() : unit -> unit = {
     PC_reg[full] = 0x0000;
 }
 
+//call a c function for interrupt handling
 function fetch_decode_execute(last_instruction) : bool -> bool = {
     var instruction = read_mem(PC_reg[full]);
     increment_pc();
@@ -49,11 +54,13 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
         loop = false;
     };
 
+
     loop
 }
 
 function main() : unit -> unit = {
     load_program();
+    startup_cpm();
     while (fetch_decode_execute(true)) do ();
-print_carry_bit();
 }
+
