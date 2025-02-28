@@ -8,7 +8,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 from asmfiles.assemble import *
 
 three_dirs_back = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
-commands_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../commands.txt'))
 
 @pytest.fixture
 def setup_and_cleanup():
