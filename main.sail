@@ -55,5 +55,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 function main() : unit -> unit = {
     load_program();
     while (fetch_decode_execute(true)) do ();
-print_test();
+write_reg8(0b111, 0x00);
+read_devacc(0x24);
+print_test()
 }
