@@ -37,7 +37,6 @@ def test_add_reg_to_acc(setup_and_cleanup):
     program_commands = retrieve_commands('add_r')
     program_commands.extend([ "write_reg8(0b111, 0x6C);", "write_reg8(0b010, 0x2E);"])
     main_commands = ["print_test();"]
-
     create_program_and_main(program_commands, main_commands)
     build_sail()
     res = run_sail()
