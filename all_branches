@@ -96,42 +96,28 @@ F 28, "read_c_flag", "././utility/utils.sail", 189, 25, 192, 1
 F 29, "increment_pc", "././utility/utils.sail", 199, 26, 201, 1
 F 30, "push_stack", "././utility/utils.sail", 204, 38, 209, 1
 F 31, "pop_stack", "././utility/utils.sail", 212, 23, 218, 1
-F 32, "print_h_reg", "././utility/utils.sail", 239, 25, 241, 1
-F 33, "print_l_reg", "././utility/utils.sail", 243, 25, 245, 1
-F 34, "print_d_reg", "././utility/utils.sail", 248, 25, 250, 1
-F 35, "print_e_reg", "././utility/utils.sail", 253, 25, 255, 1
-F 36, "print_b_reg", "././utility/utils.sail", 258, 25, 260, 1
-F 37, "print_c_reg", "././utility/utils.sail", 263, 25, 265, 1
-F 38, "print_a_reg", "././utility/utils.sail", 268, 25, 270, 1
-F 39, "print_carry_bit", "././utility/utils.sail", 283, 29, 285, 1
-F 40, "print_parity_bit", "././utility/utils.sail", 288, 30, 290, 1
-F 41, "print_aux_carry_bit", "././utility/utils.sail", 293, 33, 295, 1
-F 42, "print_zero_bit", "././utility/utils.sail", 298, 28, 300, 1
-F 43, "print_sign_bit", "././utility/utils.sail", 303, 28, 305, 1
-F 44, "print_m_reg", "././utility/utils.sail", 308, 25, 310, 1
-F 45, "write_devacc", "././utility/utils.sail", 317, 30, 319, 1
-F 46, "read_devacc", "././utility/utils.sail", 322, 29, 324, 1
-F 47, "set_interrupt_enable", "././utility/utils.sail", 327, 36, 329, 1
-F 48, "xor_reduce", "././utility/utils.sail", 338, 25, 346, 1
+F 32, "write_devacc", "././utility/utils.sail", 317, 30, 319, 1
+F 33, "read_devacc", "././utility/utils.sail", 322, 29, 324, 1
+F 34, "set_interrupt_enable", "././utility/utils.sail", 327, 36, 329, 1
+F 35, "xor_reduce", "././utility/utils.sail", 338, 25, 346, 1
 B 10, "././utility/utils.sail", 350, 4, 350, 34
 T 10, 56, "././utility/utils.sail", 350, 31, 350, 34
 T 10, 57, "././utility/utils.sail", 350, 22, 350, 25
-F 49, "bool_to_bit_converter", "././utility/utils.sail", 349, 36, 351, 1
+F 36, "bool_to_bit_converter", "././utility/utils.sail", 349, 36, 351, 1
 B 11, "././utility/utils.sail", 357, 25, 357, 72
 T 11, 58, "././utility/utils.sail", 357, 62, 357, 72
 T 11, 59, "././utility/utils.sail", 357, 46, 357, 56
 B 12, "././utility/utils.sail", 363, 18, 363, 57
 T 12, 60, "././utility/utils.sail", 363, 54, 363, 57
 T 12, 61, "././utility/utils.sail", 363, 45, 363, 48
-F 50, "perform_sub", "././utility/utils.sail", 354, 51, 370, 1
+F 37, "perform_sub", "././utility/utils.sail", 354, 51, 370, 1
 B 13, "././utility/utils.sail", 374, 25, 374, 72
 T 13, 62, "././utility/utils.sail", 374, 62, 374, 72
 T 13, 63, "././utility/utils.sail", 374, 46, 374, 56
 B 14, "././utility/utils.sail", 382, 18, 382, 57
 T 14, 64, "././utility/utils.sail", 382, 54, 382, 57
 T 14, 65, "././utility/utils.sail", 382, 45, 382, 48
-F 51, "perform_add", "././utility/utils.sail", 373, 36, 389, 1
-F 52, "print_test", "././utility/utils.sail", 392, 24, 407, 1
+F 38, "perform_add", "././utility/utils.sail", 373, 36, 389, 1
 B 15, "././decoder/decode.sail", 93, 0, 94, 11
 T 15, 66, "././decoder/decode.sail", 94, 6, 94, 11
 T 15, 67, "././decoder/decode.sail", 96, 6, 96, 11
@@ -198,7 +184,7 @@ T 15, 117, "././decoder/decode.sail", 176, 6, 176, 14
 T 15, 118, "././decoder/decode.sail", 178, 6, 178, 10
 T 15, 119, "././decoder/decode.sail", 180, 6, 180, 10
 T 15, 120, "././decoder/decode.sail", 183, 6, 183, 21
-F 53, "decode8", "././decoder/decode.sail", 93, 0, 94, 11
+F 39, "decode8", "././decoder/decode.sail", 93, 0, 94, 11
 B 26, "././decoder/decode.sail", 187, 0, 188, 18
 B 27, "././decoder/decode.sail", 187, 26, 187, 72
 T 27, 121, "././decoder/decode.sail", 187, 26, 187, 72
@@ -214,7 +200,7 @@ T 26, 130, "././decoder/decode.sail", 204, 6, 204, 15
 T 26, 131, "././decoder/decode.sail", 206, 6, 206, 14
 T 26, 132, "././decoder/decode.sail", 208, 6, 208, 15
 T 26, 133, "././decoder/decode.sail", 210, 6, 210, 22
-F 54, "decode16", "././decoder/decode.sail", 187, 0, 188, 18
+F 40, "decode16", "././decoder/decode.sail", 187, 0, 188, 18
 B 28, "././decoder/decode.sail", 215, 0, 216, 33
 B 29, "././decoder/decode.sail", 215, 26, 215, 99
 T 29, 134, "././decoder/decode.sail", 215, 26, 215, 99
@@ -242,7 +228,7 @@ T 28, 155, "././decoder/decode.sail", 256, 6, 256, 29
 T 28, 156, "././decoder/decode.sail", 258, 6, 258, 30
 T 28, 157, "././decoder/decode.sail", 260, 6, 260, 30
 T 28, 158, "././decoder/decode.sail", 262, 6, 262, 22
-F 55, "decode24", "././decoder/decode.sail", 215, 0, 216, 33
+F 41, "decode24", "././decoder/decode.sail", 215, 0, 216, 33
 B 30, "././decoder/instructions.sail", 7, 0, 15, 1
 T 30, 159, "././decoder/instructions.sail", 7, 34, 15, 1
 T 30, 160, "././decoder/instructions.sail", 18, 34, 28, 1
@@ -481,12 +467,12 @@ T 30, 338, "././decoder/instructions.sail", 1181, 34, 1188, 1
 T 30, 339, "././decoder/instructions.sail", 1190, 43, 1195, 1
 T 30, 340, "././decoder/instructions.sail", 1197, 44, 1202, 1
 T 30, 341, "././decoder/instructions.sail", 1204, 44, 1208, 1
-F 56, "execute", "././decoder/instructions.sail", 7, 0, 15, 1
-F 57, "load_program", "./program.sail", 1, 41, 6, 1
+F 42, "execute", "././decoder/instructions.sail", 7, 0, 15, 1
+F 43, "load_program", "./program.sail", 1, 41, 5, 1
 B 85, "main.sail", 12, 17, 12, 141
 T 85, 342, "main.sail", 12, 68, 12, 141
 T 85, 343, "main.sail", 12, 53, 12, 62
-F 58, "bdos_9", "main.sail", 11, 40, 14, 1
+F 44, "bdos_9", "main.sail", 11, 40, 14, 1
 B 86, "main.sail", 17, 4, 20, 5
 T 86, 344, "main.sail", 20, 5, 20, 5
 T 86, 345, "main.sail", 17, 39, 20, 5
@@ -496,13 +482,13 @@ B 88, "main.sail", 23, 8, 25, 9
 T 88, 347, "main.sail", 25, 9, 25, 9
 T 88, 348, "main.sail", 23, 43, 25, 9
 T 87, 349, "main.sail", 22, 39, 26, 5
-F 59, "intercept_BDOS", "main.sail", 16, 43, 27, 1
+F 45, "intercept_BDOS", "main.sail", 16, 43, 27, 1
 B 89, "main.sail", 45, 4, 47, 5
 B 90, "main.sail", 48, 4, 50, 5
 T 90, 350, "main.sail", 50, 5, 50, 5
 T 90, 351, "main.sail", 48, 37, 50, 5
 T 89, 352, "main.sail", 47, 5, 47, 5
 T 89, 353, "main.sail", 45, 37, 47, 5
-F 60, "fetch_decode_execute", "main.sail", 38, 65, 53, 1
-F 61, "main", "main.sail", 55, 33, 59, 1
-F 62, "initialize_registers", "", 0, 0, 0, 0
+F 46, "fetch_decode_execute", "main.sail", 38, 65, 53, 1
+F 47, "main", "main.sail", 55, 33, 59, 1
+F 48, "initialize_registers", "", 0, 0, 0, 0

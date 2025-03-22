@@ -55,5 +55,5 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 function main() : unit -> unit = {
     load_program();
     while (fetch_decode_execute(true)) do ();
-print_test();
+print_bits("res ", read_reg16_sp(0b11));
 }
