@@ -59,7 +59,7 @@ def test_di(setup_and_cleanup):
     create_program_and_main(program_commands, main_commands)
     build_sail()
     res = run_sail()
-    save_coverage_info("ei")
+    save_coverage_info("di")
     res = res.split('\n')
     assert res[0] == 'res 0b0'
 

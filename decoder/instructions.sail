@@ -218,9 +218,9 @@ function clause execute (SBB(r)) = {
 
     //print_endline("Instruction completed: SBB");
 
-    increment_clock_cycle_count(7);
-    increment_machine_cycle_count(2);
-
+    if reg8_str_map(reg8_num_map(r)) == "M" then increment_clock_cycle_count(7) else increment_clock_cycle_count(4);
+    if reg8_str_map(reg8_num_map(r)) == "M" then increment_machine_cycle_count(2) else increment_machine_cycle_count(1);
+    
     true
 }
 
@@ -282,7 +282,7 @@ function clause execute (ORA(r)) = {
     true
 }
 
-// /* CMP instruction */ NEED TO CHECK LOGIC OF THIS AND UPDATE
+// /* CMP instruction */ 
 function clause execute (CMP(r)) = {
     
     var a_value = read_reg8(0b111);
@@ -290,6 +290,8 @@ function clause execute (CMP(r)) = {
     var data = read_reg8(r);
 
     var res = perform_sub(a_value, data_value, 0b0);
+
+
 
     // print_endline("Instruction completed: CMP");
 
@@ -450,7 +452,7 @@ function clause execute(XCHG()) = {
     write_reg16_sp(0b10, de);
 
     // print_endline("Instruction completed: XCHG");
-    increment_clock_cycle_count(4);
+    increment_clock_cycle_count(5);
     increment_machine_cycle_count(1);
 
     true

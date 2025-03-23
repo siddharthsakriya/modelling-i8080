@@ -30,6 +30,21 @@ def extract_results(output):
     register_dict = {item.split(': ')[0].replace(' Reg', ''): item.split(': ')[1] for item in res if item}
     return register_dict
 
+"""LXI"""
+def test_lxi():
+    program_commands = retrieve_commands('lxi')
+    main_commands = ["print_test();"]
+
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info('lxi')
+    results = extract_results(res.split('\n'))
+
+    assert results['H'] == '0x01'
+    assert results['L'] == '0x03'
+    
+
 """MVI"""
 def test_mvi_basic():
     program_commands = retrieve_commands('mvi')
@@ -49,6 +64,17 @@ def test_mvi_basic():
     assert results['L'] == '0x22'
     assert results['A'] == '0x22'  
 
+
+def test_mvi_mem():
+    program_commands = retrieve_commands('mvi_m')
+    program_commands.extend(["write_reg16(0b10, 0x2222);"])
+    main_commands = ['print_bits("res ", read_mem(0x2222));']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info('mvi_m')
+    res = res.split('\n')
+    assert res[0] == "res 0x3C"
 
 """ADI"""
 def test_adi():
@@ -76,7 +102,7 @@ def test_aci():
     create_program_and_main(program_commands, main_commands)
     build_sail()
     res = run_sail()
-    save_coverage_info('adc_m')
+    save_coverage_info('aci')
     results = extract_results(res.split('\n'))
     assert results['A'] == '0x80'
     assert results['CarryFlag'] == '0b0'
@@ -204,7 +230,7 @@ def test_cpi_gt():
     create_program_and_main(program_commands, main_commands)
     build_sail()
     res = run_sail()
-    save_coverage_info('cmp')
+    save_coverage_info('cpi_gt')
     results = extract_results(res.split('\n'))
 
     assert results['A'] == '0x0A'

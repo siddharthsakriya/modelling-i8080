@@ -107,7 +107,7 @@ def test_dcx():
     create_program_and_main(commands, main_commands)
     build_sail()
     res = run_sail()
-    save_coverage_info('inx1')
+    save_coverage_info('dcx1')
     results = extract_results(res.split('\n'))
     assert results['B'] == '0x00'
     assert results['C'] == '0x10'

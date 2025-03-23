@@ -364,4 +364,28 @@ def test_cmp_acc_lt(setup_and_cleanup):
     assert results['SignFlag'] == '0b1' 
     assert results['ParityFlag'] == '0b0'
 
-   
+
+def test_cmp_mem_lt(setup_and_cleanup):
+    commands = retrieve_commands('cmp_m')
+    commands.extend(["write_reg8(0b111, 0x02);", "write_reg16(0b10, 0x1111);", "write_mem(0x1111, 0x05);"])
+    main_commands = ["print_test();"]
+
+    create_program_and_main(commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info('cmp2mem')
+    results = extract_results(res.split('\n'))
+    
+    assert results['A'] == '0x02'
+    assert results['CarryFlag'] == '0b1'
+    assert results['AuxCarryFlag'] == '0b0'
+    assert results['ZeroFlag'] == '0b0'
+    assert results['SignFlag'] == '0b1' 
+    assert results['ParityFlag'] == '0b0'
+
+    assert results['A'] == '0x02'
+    assert results['CarryFlag'] == '0b1'
+    assert results['AuxCarryFlag'] == '0b0'
+    assert results['ZeroFlag'] == '0b0'
+    assert results['SignFlag'] == '0b1' 
+    assert results['ParityFlag'] == '0b0'
