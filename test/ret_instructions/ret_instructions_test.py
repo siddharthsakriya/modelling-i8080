@@ -56,6 +56,17 @@ def test_rc(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_rc_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rc')
+    program_commands.extend(['update_c_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rc_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
+
 """RNC"""
 def test_rnc(setup_and_cleanup):
     program_commands = retrieve_commands('rnc')
@@ -67,6 +78,17 @@ def test_rnc(setup_and_cleanup):
     save_coverage_info("rnc")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_rnc_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rnc')
+    program_commands.extend(['update_c_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rnc_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
 
 """RZ"""
 def test_rz(setup_and_cleanup):
@@ -80,6 +102,17 @@ def test_rz(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_rz_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rz')
+    program_commands.extend(['update_z_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rz_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
+
 """RNZ"""
 def test_rnz(setup_and_cleanup):
     program_commands = retrieve_commands('rnz')
@@ -91,6 +124,17 @@ def test_rnz(setup_and_cleanup):
     save_coverage_info("rnz")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_rnz_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rnz')
+    program_commands.extend(['update_z_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rnz_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
 
 """RM"""
 def test_rm(setup_and_cleanup):
@@ -104,6 +148,17 @@ def test_rm(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_rm_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rm')
+    program_commands.extend(['update_s_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rm_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
+
 """RP"""
 def test_rp(setup_and_cleanup):
     program_commands = retrieve_commands('rp')
@@ -116,6 +171,16 @@ def test_rp(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_rp_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rp')
+    program_commands.extend(['update_s_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rp_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
 
 """RPE"""
 def test_rpe(setup_and_cleanup):
@@ -129,6 +194,17 @@ def test_rpe(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_rpe_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rpe')
+    program_commands.extend(['update_p_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rpe_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'
+
 """RPO"""
 def test_rpo(setup_and_cleanup):
     program_commands = retrieve_commands('rpo')
@@ -140,3 +216,14 @@ def test_rpo(setup_and_cleanup):
     save_coverage_info("rpo")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_rpo_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('rpo')
+    program_commands.extend(['update_p_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("rpo_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0002'

@@ -69,6 +69,17 @@ def test_jc(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_jc_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jc')
+    program_commands.extend(['update_c_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jc_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
+
 """JNC"""
 def test_jnc(setup_and_cleanup):
     program_commands = retrieve_commands('jnc')
@@ -80,6 +91,17 @@ def test_jnc(setup_and_cleanup):
     save_coverage_info("jnc")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_jnc_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jnc')
+    program_commands.extend(['update_c_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jnc_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
 
 """JZ"""
 def test_jz(setup_and_cleanup):
@@ -93,6 +115,17 @@ def test_jz(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_jz_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jz')
+    program_commands.extend(['update_z_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jz_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
+
 """JNZ"""
 def test_jnz(setup_and_cleanup):
     program_commands = retrieve_commands('jnz')
@@ -104,6 +137,17 @@ def test_jnz(setup_and_cleanup):
     save_coverage_info("jnz")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_jnz_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jnz')
+    program_commands.extend(['update_z_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jnz_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
 
 """JM"""
 def test_jm(setup_and_cleanup):
@@ -117,6 +161,17 @@ def test_jm(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_jm_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jm')
+    program_commands.extend(['update_s_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jm_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
+
 """JP"""
 def test_jp(setup_and_cleanup):
     program_commands = retrieve_commands('jp')
@@ -128,6 +183,17 @@ def test_jp(setup_and_cleanup):
     save_coverage_info("jp")
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
+
+def test_jp_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jp')
+    program_commands.extend(['update_s_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jp_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
 
 """JPE"""
 def test_jpe(setup_and_cleanup):
@@ -141,6 +207,17 @@ def test_jpe(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_jpe_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jpe')
+    program_commands.extend(['update_p_flag(0b0)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jpe_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
+
 """JPO"""
 def test_jpo(setup_and_cleanup):
     program_commands = retrieve_commands('jpo')
@@ -153,3 +230,13 @@ def test_jpo(setup_and_cleanup):
     res = res.split('\n')
     assert res[0] == 'res 0x0153'
 
+def test_jpo_nt(setup_and_cleanup):
+    program_commands = retrieve_commands('jpo')
+    program_commands.extend(['update_p_flag(0b1)'])
+    main_commands = ['print_bits("res ", PC_reg[full])']
+    create_program_and_main(program_commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info("jpo_nt")
+    res = res.split('\n')
+    assert res[0] == 'res 0x0004'
