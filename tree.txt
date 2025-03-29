@@ -1,0 +1,34 @@
+├── compile_coverage.py
+├── coverage_results/
+├── decoder/
+│   ├── decode.sail
+│   └── instructions.sail
+├── helper.py
+├── main.sail
+├── makefile
+├── mem&reg/
+│   ├── memory.sail
+│   └── types.sail
+├── programs8080/
+├── run.sh
+├── runner_binary.py
+├── runner_interactive.py
+├── test/
+│   ├── asmfiles/
+│   ├── call_instructions/
+│   ├── carry_bit_instructions/
+│   ├── data_transfer_instructions/
+│   ├── direct_addressing_instructions/
+│   ├── immediate_instructions/
+│   ├── interrupt_instructions/
+│   ├── jump_instructions/
+│   ├── regmem_to_acc_instructions/
+│   ├── regpair_instructions/
+│   ├── ret_instructions/
+│   ├── rotate_acc_instructions/
+│   └── single_reg_instructions/
+├── tree.txt
+└── utility/
+    ├── timing.sail
+    └── utils.sail
+

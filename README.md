@@ -1,25 +1,48 @@
 # Modern Modelling of the Intel 8080
-A formal specification of the Intel 8080 CPU written in  [Sail](https://github.com/rems-project/sail "Sail Github Page") .
-## Files
-There are several folders for different parts/areas of the processor, the main Fetch-Decode-Execute cycle can be found in `main.sail`. I have done my best to keep function and variable names very clear, and to keep some commenting to allow for readable code.
+A formal specification of the Intel 8080 CPU written in [Sail](https://github.com/rems-project/sail "Sail Github Page").
+## Project Structure
+```
+├── compile_coverage.py                  # generates coverage report for custom test suite
+├── coverage_results/                    # html coverage reports
+├── decoder/                             # decode and instructions sail files
+│   ├── decode.sail                      # sail code to decode instruction
+│   └── instructions.sail                # instruction semantics for execution
+├── helper.py                            # helper script to convert hex to ascii
+├── main.sail                            # main control loop/ fetch-decode-execute loop
+├── makefile                             # makefile with different build options
+├── mem&reg/                             # memory and type file
+│   ├── memory.sail                      # memory and functions to interface it
+│   └── types.sail                       # custom type synonyms
+├── programs8080/                        # existing intel 8080 binaries 
+├── run.sh                               # bash script for automating build + run process
+├── runner_binary.py                     # script to run existing 8080 code on model via binary
+├── runner_interactive.py                # script to run existing 8080 code via sail interactive mode
+├── test/                                # contains asm files and custom test suites for each instruction
+└── utility/                             # contains utility sail files
+    ├── timing.sail                      # contails sail functions for counting cycles
+    └── utils.sail                       # additional utility functions 
+```
+
+## Requirements
+This project requires 3.10.10+, Pytest, and Sail.
 
 ## How to Run
-
 I have provided a `makefile` that compiles the Sail code to C, and then compiles the C into an executable file (binary). This project can also be run via Sails Interactive Mode. 
-The python script `runner.py` allows for a `.COM` file to be loaded in and executed. I have mocked CP/M syscalls using the information provided, and the logic for that can be found [here](https://retrocomputing.stackexchange.com/questions/9361/test-emulated-8080-cpu-without-an-os "cp/m syscall mocking") .
+
+To run a test suite, use `runner_binary.py`, specify Intel 8080 binary and specify if you want execution or coverage mode. Example usage from root directory to run in execution mode:
+```
+> python3 runner_binary.py programs8080/TST8080.COM e
+```
 Pytest is used to run the unit tests, this is simply enabled by typing out the following command from the **root** directory of the project:
 ```
 > pytest testing/unit
 ```
 ## Test Results
-
 The external tests used and their respective owners:
 - `CPUTEST.COM` © 1981 Supersoft Associates - Passed
 - `TEST.COM` © 1980 Microcosm Associates - Passed
 - `8080PRE.COM` (GPLv3) © 1994 Frank D. Cringle © 2009 Ian Bartholomew - Passed
 - `8080EXM.COM` (GPLv3) © 1994 Frank D. Cringle © 2009 Ian Bartholomew - TBC (takes extremely long to run)
-
-Notably with the generated emulator, `CPUTEST` takes roughly 35-40 minutes to run, and completes around 250 million cycles.
 
 ```
 #CPUTEST.COM output:
@@ -102,7 +125,7 @@ stax <b,d>....................  PASS! crc is:2b0471e9
 Tests complete
 ```
 
-## MISC notes
+<!-- ## MISC notes
 - HLT and MOV M M opcode was clashing, caused MOV M M to be executed rather than HLT, MOV M M is invalid
 - Was calculating Auxillary flag in the wrong place in ANA
 - Remove startup_cpm from main when running tests
@@ -111,4 +134,4 @@ Tests complete
 - Presentation: 
     - Spend more time time discussing SAIL.
     - c_include filename.c
-    - can run interrupt from 
+    - can run interrupt from  -->
