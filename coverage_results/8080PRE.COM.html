@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>instructions</title></head>
 <body>
-<h1>instructions.sail (117/236) 50%</h1>
+<h1>instructions.sail (117/242) 48%</h1>
 <code style="display: block">
 <br>
 /*&nbsp;execute&nbsp;function&nbsp;*/<br>
@@ -226,9 +226,9 @@ function&nbsp;clause&nbsp;execute&nbsp;(SBB(r))&nbsp;=&nbsp;<span style="backgro
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//print_endline(&quot;Instruction&nbsp;completed:&nbsp;SBB&quot;);<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(7);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(2);<br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_clock_cycle_count(7)</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_clock_cycle_count(4)</span></span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;reg8_str_map(reg8_num_map(r))&nbsp;==&nbsp;&quot;M&quot;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_machine_cycle_count(2)</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 70%)">increment_machine_cycle_count(1)</span></span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
@@ -290,7 +290,7 @@ function&nbsp;clause&nbsp;execute&nbsp;(ORA(r))&nbsp;=&nbsp;<span style="backgro
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
 }</span><br>
 <br>
-//&nbsp;/*&nbsp;CMP&nbsp;instruction&nbsp;*/&nbsp;NEED&nbsp;TO&nbsp;CHECK&nbsp;LOGIC&nbsp;OF&nbsp;THIS&nbsp;AND&nbsp;UPDATE<br>
+//&nbsp;/*&nbsp;CMP&nbsp;instruction&nbsp;*/&nbsp;<br>
 function&nbsp;clause&nbsp;execute&nbsp;(CMP(r))&nbsp;=&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;a_value&nbsp;=&nbsp;read_reg8(0b111);<br>
@@ -298,6 +298,8 @@ function&nbsp;clause&nbsp;execute&nbsp;(CMP(r))&nbsp;=&nbsp;<span style="backgro
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;data&nbsp;=&nbsp;read_reg8(r);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;res&nbsp;=&nbsp;perform_sub(a_value,&nbsp;data_value,&nbsp;0b0);<br>
+<br>
+<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(&quot;Instruction&nbsp;completed:&nbsp;CMP&quot;);<br>
 <br>
@@ -458,7 +460,7 @@ function&nbsp;clause&nbsp;execute(XCHG())&nbsp;=&nbsp;<span style="background-co
 &nbsp;&nbsp;&nbsp;&nbsp;write_reg16_sp(0b10,&nbsp;de);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print_endline(&quot;Instruction&nbsp;completed:&nbsp;XCHG&quot;);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(4);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;increment_clock_cycle_count(5);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;increment_machine_cycle_count(1);<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;true<br>
