@@ -204,8 +204,28 @@ def test_daa():
     assert results['AuxCarryFlag'] == '0b1'
     assert results['CarryFlag'] == '0b1'
 
+def test_daa2():
+    commands = retrieve_commands('daa')
+    commands.extend(["write_reg8(0b111, 0x6C)"])
+    main_commands = ["print_test();"]
+    create_program_and_main(commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info('daa2')
+    results = extract_results(res.split('\n'))
+    assert results['A'] == '0x72'
 
-
+def test_daa3():
+    commands = retrieve_commands('daa')
+    commands.extend(["write_reg8(0b111, 0x25)"])
+    main_commands = ["print_test();"]
+    create_program_and_main(commands, main_commands)
+    build_sail()
+    res = run_sail()
+    save_coverage_info('daa3')
+    results = extract_results(res.split('\n'))
+    assert results['A'] == '0x25'
+    
 """NOP tests"""
 #basic test
 def test_nop():

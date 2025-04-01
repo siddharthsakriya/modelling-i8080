@@ -53,7 +53,7 @@ function fetch_decode_execute(last_instruction) : bool -> bool = {
 }
 
 function main() : unit -> unit = {
-    startup_cpm();
     load_program();
     while (fetch_decode_execute(true)) do ();
+print_test();
 }
