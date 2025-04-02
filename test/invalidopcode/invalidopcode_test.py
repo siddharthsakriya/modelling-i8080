@@ -21,8 +21,8 @@ def extract_results(output):
 @pytest.fixture
 def setup_and_cleanup():
     """Fixture to ensure cleanup is called after the test."""
-    yield  # This is where the test function runs
-    cleanup()  # Cleanup is executed after the test finishes
+    yield  
+    cleanup()
 
 
 def cleanup():
