@@ -540,7 +540,7 @@ function clause execute(ACI(data)) = {
     true
 }
 
-/* SUI instruction: TODO */
+/* SUI instruction */
 function clause execute(SUI(data)) = {
     
     var a_value = read_reg8(0b111); // Read accumulator (A)
@@ -556,7 +556,7 @@ function clause execute(SUI(data)) = {
     true
 }
 
-/* SBI instruction: TODO */
+/* SBI instruction */
 function clause execute(SBI(data)) = {
     var a_value = read_reg8(0b111); 
     var carry = read_c_flag(); 
