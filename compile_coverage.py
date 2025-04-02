@@ -14,11 +14,10 @@ def get_filenames_in_directory(directory_path):
     except PermissionError:
         print(f"Error: Permission denied to access '{directory_path}'.")
         return []
-    except OSError as e: # catch other OS errors.
+    except OSError as e: 
         print(f"An OS error occured: {e}")
         return []
 
-# Example usage:
 directory = "coverage_files" 
 files = get_filenames_in_directory(directory)
 

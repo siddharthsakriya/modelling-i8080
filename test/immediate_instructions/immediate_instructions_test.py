@@ -11,7 +11,6 @@ three_dirs_back = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..
 
 @pytest.fixture
 def setup_and_cleanup():
-    """Fixture to ensure cleanup is called after the test."""
     yield
     cleanup()
 
