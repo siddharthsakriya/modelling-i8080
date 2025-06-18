@@ -1,4 +1,4 @@
-# Modern Modelling of the Intel 8080
+# Modern Modelling of the Intel 8080 - Achieved 80% (A2)
 A formal specification of the Intel 8080 CPU written in [Sail](https://github.com/rems-project/sail "Sail Github Page").
 ## Project Structure
 ```
@@ -42,7 +42,7 @@ The external tests used and their respective owners:
 - `CPUTEST.COM` © 1981 Supersoft Associates - Passed
 - `TEST.COM` © 1980 Microcosm Associates - Passed
 - `8080PRE.COM` (GPLv3) © 1994 Frank D. Cringle © 2009 Ian Bartholomew - Passed
-- `8080EXM.COM` (GPLv3) © 1994 Frank D. Cringle © 2009 Ian Bartholomew - TBC (takes extremely long to run)
+- `8080EXM.COM` (GPLv3) © 1994 Frank D. Cringle © 2009 Ian Bartholomew - Passed
 
 ```
 #CPUTEST.COM output:
